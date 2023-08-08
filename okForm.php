@@ -30,6 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
  $book_type = $_POST["book_type"];
  $book_level = $_POST["book_level"];
  $subject = $_POST["subject"];
+ $author_type = $_POST["author_type"];
 
   // Validate username
   if (empty($uname)) {
@@ -70,12 +71,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     include('connect.php');
 
     // Insert the new user record into the database
-    $sql_insert_user = "INSERT INTO authors (authorfullname, email, year_of_birth, phone, authorAddress, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql_insert_user = "INSERT INTO authors (authorfullname, email, year_of_birth, phone, authorAddress, author_type, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt_insert_user = mysqli_prepare($conn, $sql_insert_user);
-    mysqli_stmt_bind_param($stmt_insert_user, "sssssiii", $uname, $email, $year_of_birth, $phone, $address, $book_type, $book_level, $subject);
+    mysqli_stmt_bind_param($stmt_insert_user, "ssssssiii", $uname, $email, $year_of_birth, $phone, $address, $author_type, $book_type, $book_level, $subject);
     mysqli_stmt_execute($stmt_insert_user);
     // Registration successful, show success message
 
+    // Retrieve the user ID of the inserted user
+    $user_id = mysqli_insert_id($conn);
+
+        // Insert student-specific or teacher-specific data based on user role
+        if ($author_type === 'student') {
+          $studentLevel = trim($_POST["studentLevel"]);
+          $studentSpecialty = trim($_POST["studentSpecialty"]);
+          $baccalaureateRate = trim($_POST["baccalaureateRate"]);
+          $baccalaureateYear = trim($_POST["baccalaureateYear"]);
+          // Insert the student data into the student_data table
+          $sql_insert_student_data = "INSERT INTO student_data (user_id, studentLevel, studentSpecialty, baccalaureateRate, baccalaureateYear) VALUES (?, ?, ?, ?, ?)";
+          $stmt_insert_student_data = mysqli_prepare($conn, $sql_insert_student_data);
+          mysqli_stmt_bind_param($stmt_insert_student_data, "issss", $user_id, $studentLevel, $studentSpecialty, $baccalaureateRate, $baccalaureateYear);
+          mysqli_stmt_execute($stmt_insert_student_data);
+        } elseif ($author_type === 'teacher') {
+          $teacherExperience = trim($_POST["teacherExperience"]);
+          $teacherCertificate = trim($_POST["teacherCertificate"]);
+          $teacherRank = trim($_POST["teacherRank"]);
+          $workFoundation = trim($_POST["workFoundation"]);
+          // Insert the student data into the student_data table
+          $sql_insert_teacher_data = "INSERT INTO teacher_data (user_id, teacherExperience, teacherCertificate, teacherRank, workFoundation) VALUES (?, ?, ?, ?, ?)";
+          $stmt_insert_teacher_data = mysqli_prepare($conn, $sql_insert_teacher_data);
+          mysqli_stmt_bind_param($stmt_insert_teacher_data, "issss", $user_id, $teacherExperience, $teacherCertificate, $teacherRank, $workFoundation);
+          mysqli_stmt_execute($stmt_insert_teacher_data);
+        }
     // Store the success message in a session variable
     session_start();
     $_SESSION['register_success_msg'] = "Author Registration successful.";
@@ -155,7 +181,7 @@ $register_success_msg = isset($_SESSION['register_success_msg']) ? $_SESSION['re
               </div>
                           <div class="mb-4">
                   <label for="book_type" class="form-label">Book Type</label>
-                  <select class="form-select" id="book_type" name="book_type">
+                  <select class="form-select" id="book_type" name="book_type" required>
                     <option value="">Select Book Type</option>
                     <?php while ($row = mysqli_fetch_assoc($result_book_types)) { ?>
                       <option value="<?php echo $row['id']; ?>"><?php echo $row['type_name']; ?></option>
@@ -164,7 +190,7 @@ $register_success_msg = isset($_SESSION['register_success_msg']) ? $_SESSION['re
                 </div>
                 <div class="mb-4">
                   <label for="book_level" class="form-label">Book Level</label>
-                  <select class="form-select" id="book_level" name="book_level">
+                  <select class="form-select" id="book_level" name="book_level" required>
                     <option value="">Select Book Level</option>
                     <?php while ($row = mysqli_fetch_assoc($result_book_levels)) { ?>
                       <option value="<?php echo $row['id']; ?>" data-book-type-id="<?php echo $row['book_type_id']; ?>">
@@ -175,7 +201,7 @@ $register_success_msg = isset($_SESSION['register_success_msg']) ? $_SESSION['re
                 </div>
                 <div class="mb-4">
                   <label for="subject" class="form-label">Subject</label>
-                  <select class="form-select" id="subject" name="subject">
+                  <select class="form-select" id="subject" name="subject" required>
                     <option value="">Select Subject</option>
                     <?php while ($row = mysqli_fetch_assoc($result_subjects)) { ?>
                       <option value="<?php echo $row['id']; ?>" data-book-level-id="<?php echo $row['book_level_id']; ?>">
@@ -184,6 +210,37 @@ $register_success_msg = isset($_SESSION['register_success_msg']) ? $_SESSION['re
                     <?php } ?>
                   </select>
                 </div>
+                  <div class="mb-4">
+                <label for="author_type" class="form-label">User Role</label>
+                <select class="form-select" id="author_type" name="author_type" required>
+                  <option value="" disabled selected>Select User Role</option>
+                  <option value="student">Student</option>
+                  <option value="teacher">Teacher</option>
+                </select>
+              </div>
+              <!-- Student Specific Inputs -->
+                   <div class="mb-4" id="studentInputs" style="display: none;">
+                  <label for="studentLevel" class="form-label">Student Level</label>
+                  <input type="text" class="form-control" id="studentLevel" name="studentLevel">
+                  <label for="studentSpecialty" class="form-label">Student Specialty</label>
+                  <input type="text" class="form-control" id="studentSpecialty" name="studentSpecialty">
+                  <label for="baccalaureateRate" class="form-label">Baccalaureate Rate</label>
+                  <input type="text" class="form-control" id="baccalaureateRate" name="baccalaureateRate">
+                  <label for="baccalaureateYear" class="form-label">Baccalaureate Year</label>
+                  <input type="text" class="form-control" id="baccalaureateYear" name="baccalaureateYear">
+                </div>
+                <div class="mb-4" id="teacherInputs" style="display: none;">
+                  <label for="teacherExperience" class="form-label">Teacher Experience</label>
+                  <input type="text" class="form-control" id="teacherExperience" name="teacherExperience">
+                  <label for="teacherCertificate" class="form-label">Teacher Certificate</label>
+                  <input type="text" class="form-control" id="teacherCertificate" name="teacherCertificate">
+                  <label for="teacherRank" class="form-label">Teacher Rank</label>
+                  <input type="text" class="form-control" id="teacherRank" name="teacherRank">
+                  <label for="workFoundation" class="form-label">Teacher Experience</label>
+                  <input type="text" class="form-control" id="workFoundation" name="workFoundation">
+                 
+                </div>
+
               <div class="d-grid">
                 <button type="submit" class="btn text-light main-bg" name="but_submit">Register</button>
               </div>
@@ -278,6 +335,22 @@ $register_success_msg = isset($_SESSION['register_success_msg']) ? $_SESSION['re
     bookLevelSelect.disabled = true;
     clearSubject();
   }
+
+  document.getElementById('author_type').addEventListener('change', function() {
+    const studentInputs = document.getElementById('studentInputs');
+    const teacherInputs = document.getElementById('teacherInputs');
+
+    if (this.value === 'student') {
+      studentInputs.style.display = 'block';
+      teacherInputs.style.display = 'none';
+    } else if (this.value === 'teacher') {
+      studentInputs.style.display = 'none';
+      teacherInputs.style.display = 'block';
+    } else {
+      studentInputs.style.display = 'none';
+      teacherInputs.style.display = 'none';
+    }
+  });
 </script>
 
 
