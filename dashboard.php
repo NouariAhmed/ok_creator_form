@@ -99,22 +99,41 @@ else {
 
 <body class="main-bg">
   <!-- Header Section -->
-  <header class="bg-primary text-white py-3">
-    <div class="container">
-      <div class="row">
-        <div class="col text-center">
-          <h1>مكتبة عكاشة أكثر من مجرد دار نشر</h1>
-        </div>
+  <header class="bg-primary py-3">
+  <div class="container">
+    <div class="row">
+      <div class="col text-center">
+        <h1>مكتبة عكاشة أكثر من مجرد دار نشر</h1>
       </div>
-      <div class="row mt-2 text-center">
-        <div class="col">
-          <a href="#" class="btn btn-light me-2">جميع أنواع الكتب</a>
-          <a href="#" class="btn btn-light me-2">المستويات</a>
-          <a href="#" class="btn btn-light me-2">المواد</a>
-          
+    </div>
+    <div class="row mt-2 text-center">
+      <div class="col">
+        <div class="card-group">
+          <div class="card bg-info">
+            <div class="card-body">
+              <h5 class="card-title">جميع أنواع الكتب</h5>
+              <p class="card-text">استكشف جميع أنواع الكتب.</p>
+              <a href="book_types/display_book_types.php" class="btn btn-light btn-lg">تصفح</a>
+            </div>
+          </div>
+          <div class="card bg-success">
+            <div class="card-body">
+              <h5 class="card-title">المستويات</h5>
+              <p class="card-text">تصفح المستويات المختلفة للكتب.</p>
+              <a href="book_levels/display_book_levels.php" class="btn btn-light btn-lg">تصفح</a>
+            </div>
+          </div>
+          <div class="card bg-warning">
+            <div class="card-body">
+              <h5 class="card-title">المواد</h5>
+              <p class="card-text">استكشف مختلف المواد والموضوعات المتاحة.</p>
+              <a href="subjects/display_subjects.php" class="btn btn-light btn-lg">تصفح</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
   </header>
 
   <!-- Dashboard Content -->
