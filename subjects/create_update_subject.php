@@ -98,23 +98,51 @@ mysqli_close($conn);
         ?>
         <!-- Form For Edit Data -->
         <form action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $id; ?>" method="post">
-            <div class="form-group">
-                <label class="text-right">اسم المادة الدراسية:</label>
-                <input type="text" name="subject_name" class="form-control" value="<?php echo $subject_name; ?>" required>
+        <div class="form-group">
+                <label class="text-right">نوع الكتاب:</label>
+                <select name="book_type_id" id="book_type"  class="form-control" required>
+                <option value="" disabled selected>-- اختر نوع الكتاب --</option>
+                    <?php
+                    // Database connection configuration
+                    include('../connect.php');
+
+                    // Fetch book types for dropdown
+                    $bookTypesResult = mysqli_query($conn, "SELECT * FROM book_types");
+                    while ($bookType = mysqli_fetch_assoc($bookTypesResult)) {
+                        $type_id = htmlspecialchars($bookType["id"]);
+                        $type_name = htmlspecialchars($bookType["type_name"]);
+                        echo '<option value="' . $type_id . '">' . $type_name . '</option>';
+                    }
+
+                    // Close the database connection
+                    mysqli_close($conn);
+                    ?>
+                </select>
             </div>
             <div class="form-group">
                 <label class="text-right">مستوى الكتاب:</label>
-                <select name="book_level_id" class="form-control" required>
+                <select name="book_level_id" id="book_level" class="form-control" required>
                     <option value="" disabled selected>-- اختر مستوى الكتاب --</option>
                     <?php
+                    // Database connection configuration
+                    include('../connect.php');
+
+                    // Fetch book levels for dropdown
+                    $bookLevelsResult = mysqli_query($conn, "SELECT * FROM book_levels");
                     while ($bookLevel = mysqli_fetch_assoc($bookLevelsResult)) {
                         $level_id = htmlspecialchars($bookLevel["id"]);
                         $level_name = htmlspecialchars($bookLevel["level_name"]);
-                        $selected = ($level_id == $book_level_id) ? 'selected' : '';
-                        echo '<option value="' . $level_id . '" ' . $selected . '>' . $level_name . '</option>';
+                        echo '<option value="' . $level_id . '">' . $level_name . '</option>';
                     }
+
+                    // Close the database connection
+                    mysqli_close($conn);
                     ?>
                 </select>
+            </div>
+            <div class="form-group">
+                <label class="text-right">اسم المادة الدراسية:</label>
+                <input type="text" name="subject_name" id="subject" class="form-control" value="<?php echo htmlspecialchars(isset($item['subject_name']) ? $item['subject_name'] : ''); ?>" required>
             </div>
             <button type="submit" name="updateData" class="btn btn-primary">حفظ</button>
         </form>
@@ -124,5 +152,6 @@ mysqli_close($conn);
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
 </body>
 </html>
