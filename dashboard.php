@@ -5,12 +5,41 @@ session_start();
 if (isset($_SESSION['id']) && $_SESSION['role'] === "admin") {
     // The user is an admin, continue with dashboard content
 
-    // Include your database connection code here
-    include('connect.php');
+  // Pagination
+  include('connect.php');
+  $table = "authors";
 
-    // Fetch authors data from the database
-    $sql_fetch_authors = "SELECT * FROM authors";
-    $result_authors = mysqli_query($conn, $sql_fetch_authors);
+  $itemsPerPage = 10; // Number of items per page
+
+  $currentPage = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 ? intval($_GET['page']) : 1;
+
+  // Get the total number of items in the database
+  $sql = "SELECT COUNT(*) AS total_items FROM $table";
+  $result = mysqli_query($conn, $sql);
+  $row = mysqli_fetch_assoc($result);
+  $totalItems = $row['total_items'];
+
+  $totalPages = ceil($totalItems / $itemsPerPage);
+  $currentPage = max(1, min($currentPage, $totalPages));
+
+  if (!is_numeric($_GET['page']) || $_GET['page'] <= 0) {
+      header("Location: ?page=1");
+      exit;
+  }
+
+  if ($currentPage > $totalPages) {    
+      header("Location: ?page=$totalPages");
+      exit;
+  }
+
+  $startIndex = ($currentPage - 1) * $itemsPerPage;
+
+  // Retrieve items for the current page
+  $result = mysqli_query($conn, "SELECT * FROM $table LIMIT $startIndex, $itemsPerPage");
+  $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+
+
             // Function to get the book type name by its ID
         function getBookTypeName($conn, $bookTypeId) {
           $sql = "SELECT type_name FROM book_types WHERE id = ?";
@@ -112,7 +141,7 @@ else {
           <div class="card bg-info">
             <div class="card-body">
               <h5 class="card-title">جميع أنواع الكتب</h5>
-              <p class="card-text">استكشف جميع أنواع الكتب.</p>
+              <p class="card-text">استكشف جميع أنواع الكتب  .</p>
               <a href="book_types/display_book_types.php" class="btn btn-light btn-lg">تصفح</a>
             </div>
           </div>
@@ -163,7 +192,7 @@ else {
                 </tr>
               </thead>
               <tbody>
-                <?php while ($row = mysqli_fetch_assoc($result_authors)) { ?>
+                <?php foreach ($items as $row) { ?>
                   <tr>
                     <td><?php echo $row['id']; ?></td>
                     <td><?php echo $row['authorfullname']; ?></td>
@@ -199,6 +228,13 @@ else {
                 <?php } ?>
               </tbody>
             </table>
+            <div id="pagination-controls" class="text-center mt-4">
+        <?php
+         include('pagination.php');
+           // Close the database connection
+  mysqli_close($conn);
+          ?>
+        </div>
           </div>
           <div class="card-footer text-center">
             <a href="logout.php" class="btn btn-danger">تسجيل الخروج</a>

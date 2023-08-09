@@ -1,5 +1,40 @@
 <?php
 session_start();
+include('../connect.php');
+$table = "subjects";
+
+$itemsPerPage = 2; // Number of items per page
+
+$currentPage = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 ? intval($_GET['page']) : 1;
+
+// Get the total number of items in the database
+$sql = "SELECT COUNT(*) AS total_items FROM $table";
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($result);
+$totalItems = $row['total_items'];
+
+$totalPages = ceil($totalItems / $itemsPerPage);
+$currentPage = max(1, min($currentPage, $totalPages));
+
+if (!is_numeric($_GET['page']) || $_GET['page'] <= 0) {
+    header("Location: ?page=1");
+    exit;
+}
+
+if ($currentPage > $totalPages) {    
+    header("Location: ?page=$totalPages");
+    exit;
+}
+
+$startIndex = ($currentPage - 1) * $itemsPerPage;
+
+// Retrieve items for the current page
+$result = mysqli_query($conn, "SELECT s.id, s.subject_name, bl.level_name, bt.type_name 
+FROM subjects s INNER JOIN book_levels bl ON s.book_level_id = bl.id INNER JOIN book_types bt ON bl.book_type_id = bt.id LIMIT $startIndex, $itemsPerPage");
+$items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+// Close the database connection
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
@@ -106,12 +141,9 @@ session_start();
     include('../connect.php');
 
     // Fetch and display items from the database using procedural approach
-    $result = mysqli_query($conn, "SELECT s.id, s.subject_name, bl.level_name, bt.type_name 
-                                    FROM subjects s 
-                                    INNER JOIN book_levels bl ON s.book_level_id = bl.id
-                                    INNER JOIN book_types bt ON bl.book_type_id = bt.id");
+
                                     
-    while ($item = mysqli_fetch_assoc($result)) {
+    foreach ($items as $item) {
         $id = htmlspecialchars($item["id"]);
         $subject_name = htmlspecialchars($item["subject_name"]);
         $level_name = htmlspecialchars($item["level_name"]);
@@ -134,6 +166,11 @@ session_start();
     ?>
 </tbody>
         </table>
+        <div id="pagination-controls" class="text-center mt-4">
+        <?php
+         include('../pagination.php');
+          ?>
+        </div>
     </div>
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
