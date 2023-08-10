@@ -22,16 +22,6 @@ if (isset($_SESSION['id']) && $_SESSION['role'] === "admin") {
   $totalPages = ceil($totalItems / $itemsPerPage);
   $currentPage = max(1, min($currentPage, $totalPages));
 
-  if (!is_numeric($_GET['page']) || $_GET['page'] <= 0) {
-      header("Location: ?page=1");
-      exit;
-  }
-
-  if ($currentPage > $totalPages) {    
-      header("Location: ?page=$totalPages");
-      exit;
-  }
-
   $startIndex = ($currentPage - 1) * $itemsPerPage;
 
   // Retrieve items for the current page
@@ -108,6 +98,69 @@ if (isset($_SESSION['id']) && $_SESSION['role'] === "admin") {
             'workFoundation' => $workFoundation
         ];
         }
+        
+    // Get the selected category from the query parameter
+    $selectedCategory = isset($_GET['category']) ? $_GET['category'] : 'all';
+    $selectedBookType = isset($_GET['bookType']) ? $_GET['bookType'] : 'all';
+
+    if ($selectedCategory === 'all' && $selectedBookType === 'all') {
+      $sql = "SELECT * FROM $table LIMIT $startIndex, $itemsPerPage";
+  } elseif ($selectedCategory === 'all') {
+      $sql = "SELECT * FROM $table WHERE book_type_id = ? LIMIT $startIndex, $itemsPerPage";
+  } elseif ($selectedBookType === 'all') {
+      $sql = "SELECT * FROM $table WHERE author_type = ? LIMIT $startIndex, $itemsPerPage";
+  } else {
+      $sql = "SELECT * FROM $table WHERE author_type = ? AND book_type_id = ? LIMIT $startIndex, $itemsPerPage";
+  }
+  
+  $stmt = mysqli_prepare($conn, $sql);
+  
+  if ($selectedCategory !== 'all' && $selectedBookType !== 'all') {
+      mysqli_stmt_bind_param($stmt, "si", $selectedCategory, $selectedBookType);
+  } elseif ($selectedCategory !== 'all') {
+      mysqli_stmt_bind_param($stmt, "s", $selectedCategory);
+  } elseif ($selectedBookType !== 'all') {
+      mysqli_stmt_bind_param($stmt, "i", $selectedBookType);
+  }
+  
+  $countQuery = "SELECT COUNT(*) AS total_filtered_items FROM $table";
+
+  if ($selectedCategory === 'all' && $selectedBookType === 'all') {
+      // No additional WHERE clauses needed
+  } elseif ($selectedCategory === 'all') {
+      $countQuery .= " WHERE book_type_id = ?";
+  } elseif ($selectedBookType === 'all') {
+      $countQuery .= " WHERE author_type = ?";
+  } else {
+      $countQuery .= " WHERE author_type = ? AND book_type_id = ?";
+  }
+  
+  $countStmt = mysqli_prepare($conn, $countQuery);
+  
+  if ($selectedCategory !== 'all' && $selectedBookType !== 'all') {
+      mysqli_stmt_bind_param($countStmt, "si", $selectedCategory, $selectedBookType);
+  } elseif ($selectedCategory !== 'all') {
+      mysqli_stmt_bind_param($countStmt, "s", $selectedCategory);
+  } elseif ($selectedBookType !== 'all') {
+      mysqli_stmt_bind_param($countStmt, "i", $selectedBookType);
+  }
+  
+  mysqli_stmt_execute($countStmt);
+  $countResult = mysqli_stmt_get_result($countStmt);
+  $countRow = mysqli_fetch_assoc($countResult);
+  $totalFilteredItems = $countRow['total_filtered_items'];
+  
+  // Calculate Total Pages
+  $totalPages = ceil($totalFilteredItems / $itemsPerPage);
+    
+    // Execute the query
+    mysqli_stmt_execute($stmt);
+
+    // Get the result set
+    $result = mysqli_stmt_get_result($stmt);
+
+    // Fetch the items for the current page
+    $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 } 
 
 else {
@@ -175,6 +228,30 @@ else {
           </div>
           <div class="card-body">
             <h4>قائمة الكتّاب</h4>
+            <form class="mb-4">
+          <label for="category" class="form-label">اختر الفئة:</label>
+          <select class="form-select" id="category" name="category">
+          <option value="all" <?php echo $selectedCategory === 'all' ? 'selected' : ''; ?>>الكل</option>
+          <option value="teacher" <?php echo $selectedCategory === 'teacher' ? 'selected' : ''; ?>>معلم</option>
+          <option value="student" <?php echo $selectedCategory === 'student' ? 'selected' : ''; ?>>طالب</option>
+          <option value="agent" <?php echo $selectedCategory === 'agent' ? 'selected' : ''; ?>>وكيل</option>
+          </select>
+          <label for="bookType" class="form-label">اختر نوع الكتاب:</label>
+          <select class="form-select" id="bookType" name="bookType">
+          <option value="all" <?php echo $selectedBookType === 'all' ? 'selected' : ''; ?>>الكل</option>
+          <!-- Fetch and display book types dynamically from the database -->
+          <?php
+          $bookTypesQuery = "SELECT * FROM book_types";
+          $bookTypesResult = mysqli_query($conn, $bookTypesQuery);
+          while ($bookTypeRow = mysqli_fetch_assoc($bookTypesResult)) {
+              $isSelected = $selectedBookType == $bookTypeRow['id'] ? 'selected' : '';
+              echo '<option value="' . $bookTypeRow['id'] . '" ' . $isSelected . '>' . $bookTypeRow['type_name'] . '</option>';
+          }
+          ?>
+      </select>
+          <button type="submit" class="btn btn-primary mt-2">تصفية</button>
+          
+        </form>
             <table class="table table-bordered">
               <thead>
                 <tr>
