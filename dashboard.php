@@ -98,11 +98,10 @@ if (isset($_SESSION['id']) && $_SESSION['role'] === "admin") {
             'workFoundation' => $workFoundation
         ];
         }
-        
-    // Get the selected category from the query parameter
-    $selectedCategory = isset($_GET['category']) ? $_GET['category'] : 'all';
-    $selectedBookType = isset($_GET['bookType']) ? $_GET['bookType'] : 'all';
-    $selectedBookLevel = isset($_GET['bookLevel']) ? $_GET['bookLevel'] : 'all';
+// Get the selected category from the query parameter
+$selectedCategory = isset($_GET['category']) ? $_GET['category'] : 'all';
+$selectedBookType = isset($_GET['bookType']) ? $_GET['bookType'] : 'all';
+$selectedBookLevel = isset($_GET['bookLevel']) ? $_GET['bookLevel'] : 'all';
 
 // Construct the SQL query based on selected filters
 $sql = "SELECT COUNT(*) AS total_filtered_items FROM $table WHERE 1 = 1"; // Initial SQL with a dummy condition
@@ -128,14 +127,21 @@ if ($selectedBookLevel !== 'all') {
     $bindValues[] = &$selectedBookLevel;
 }
 
+// ... (previous code)
+
 $countStmt = mysqli_prepare($conn, $sql);
 
 // Bind parameters for the count query prepared statement
-$bindParams = array_merge([$countStmt, $bindTypes], $bindValues);
-call_user_func_array('mysqli_stmt_bind_param', $bindParams);
+if (!empty($bindValues)) {
+    $bindParams = array_merge([$bindTypes], $bindValues);
+    $countStmt->bind_param(...$bindParams);
+}
 
 // Execute the count query
 mysqli_stmt_execute($countStmt);
+
+// ... (remaining code)
+
 $countResult = mysqli_stmt_get_result($countStmt);
 $countRow = mysqli_fetch_assoc($countResult);
 $totalFilteredItems = $countRow['total_filtered_items'];
@@ -160,20 +166,29 @@ if ($selectedBookLevel !== 'all') {
 
 $sql .= " LIMIT $startIndex, $itemsPerPage";
 
+// ... (previous code)
+
+
 $stmt = mysqli_prepare($conn, $sql);
 
 // Bind parameters for the query prepared statement
-$bindParams = array_merge([$stmt, $bindTypes], $bindValues);
-call_user_func_array('mysqli_stmt_bind_param', $bindParams);
+if (!empty($bindValues)) {
+    $bindParams = array_merge([$bindTypes], $bindValues);
+    $stmt->bind_param(...$bindParams);
+}
 
 // Execute the query
 mysqli_stmt_execute($stmt);
+
+// ... (remaining code)
+
 
 // Get the result set
 $result = mysqli_stmt_get_result($stmt);
 
 // Fetch the items for the current page
 $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
 
 } 
 
