@@ -102,65 +102,79 @@ if (isset($_SESSION['id']) && $_SESSION['role'] === "admin") {
     // Get the selected category from the query parameter
     $selectedCategory = isset($_GET['category']) ? $_GET['category'] : 'all';
     $selectedBookType = isset($_GET['bookType']) ? $_GET['bookType'] : 'all';
+    $selectedBookLevel = isset($_GET['bookLevel']) ? $_GET['bookLevel'] : 'all';
 
-    if ($selectedCategory === 'all' && $selectedBookType === 'all') {
-      $sql = "SELECT * FROM $table LIMIT $startIndex, $itemsPerPage";
-  } elseif ($selectedCategory === 'all') {
-      $sql = "SELECT * FROM $table WHERE book_type_id = ? LIMIT $startIndex, $itemsPerPage";
-  } elseif ($selectedBookType === 'all') {
-      $sql = "SELECT * FROM $table WHERE author_type = ? LIMIT $startIndex, $itemsPerPage";
-  } else {
-      $sql = "SELECT * FROM $table WHERE author_type = ? AND book_type_id = ? LIMIT $startIndex, $itemsPerPage";
-  }
-  
-  $stmt = mysqli_prepare($conn, $sql);
-  
-  if ($selectedCategory !== 'all' && $selectedBookType !== 'all') {
-      mysqli_stmt_bind_param($stmt, "si", $selectedCategory, $selectedBookType);
-  } elseif ($selectedCategory !== 'all') {
-      mysqli_stmt_bind_param($stmt, "s", $selectedCategory);
-  } elseif ($selectedBookType !== 'all') {
-      mysqli_stmt_bind_param($stmt, "i", $selectedBookType);
-  }
-  
-  $countQuery = "SELECT COUNT(*) AS total_filtered_items FROM $table";
+// Construct the SQL query based on selected filters
+$sql = "SELECT COUNT(*) AS total_filtered_items FROM $table WHERE 1 = 1"; // Initial SQL with a dummy condition
 
-  if ($selectedCategory === 'all' && $selectedBookType === 'all') {
-      // No additional WHERE clauses needed
-  } elseif ($selectedCategory === 'all') {
-      $countQuery .= " WHERE book_type_id = ?";
-  } elseif ($selectedBookType === 'all') {
-      $countQuery .= " WHERE author_type = ?";
-  } else {
-      $countQuery .= " WHERE author_type = ? AND book_type_id = ?";
-  }
-  
-  $countStmt = mysqli_prepare($conn, $countQuery);
-  
-  if ($selectedCategory !== 'all' && $selectedBookType !== 'all') {
-      mysqli_stmt_bind_param($countStmt, "si", $selectedCategory, $selectedBookType);
-  } elseif ($selectedCategory !== 'all') {
-      mysqli_stmt_bind_param($countStmt, "s", $selectedCategory);
-  } elseif ($selectedBookType !== 'all') {
-      mysqli_stmt_bind_param($countStmt, "i", $selectedBookType);
-  }
-  
-  mysqli_stmt_execute($countStmt);
-  $countResult = mysqli_stmt_get_result($countStmt);
-  $countRow = mysqli_fetch_assoc($countResult);
-  $totalFilteredItems = $countRow['total_filtered_items'];
-  
-  // Calculate Total Pages
-  $totalPages = ceil($totalFilteredItems / $itemsPerPage);
-    
-    // Execute the query
-    mysqli_stmt_execute($stmt);
+$bindTypes = ''; // String to store parameter types
+$bindValues = []; // Array to store parameter values
 
-    // Get the result set
-    $result = mysqli_stmt_get_result($stmt);
+if ($selectedCategory !== 'all') {
+    $sql .= " AND author_type = ?";
+    $bindTypes .= 's'; // Assuming author_type is a string
+    $bindValues[] = &$selectedCategory;
+}
 
-    // Fetch the items for the current page
-    $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+if ($selectedBookType !== 'all') {
+    $sql .= " AND book_type_id = ?";
+    $bindTypes .= 'i'; // Assuming book_type_id is an integer
+    $bindValues[] = &$selectedBookType;
+}
+
+if ($selectedBookLevel !== 'all') {
+    $sql .= " AND book_level_id = ?";
+    $bindTypes .= 'i'; // Assuming book_level_id is an integer
+    $bindValues[] = &$selectedBookLevel;
+}
+
+$countStmt = mysqli_prepare($conn, $sql);
+
+// Bind parameters for the count query prepared statement
+$bindParams = array_merge([$countStmt, $bindTypes], $bindValues);
+call_user_func_array('mysqli_stmt_bind_param', $bindParams);
+
+// Execute the count query
+mysqli_stmt_execute($countStmt);
+$countResult = mysqli_stmt_get_result($countStmt);
+$countRow = mysqli_fetch_assoc($countResult);
+$totalFilteredItems = $countRow['total_filtered_items'];
+
+// Calculate Total Pages
+$totalPages = ceil($totalFilteredItems / $itemsPerPage);
+
+// Construct the main SQL query for pagination
+$sql = "SELECT * FROM $table WHERE 1 = 1"; // Initial SQL with a dummy condition
+
+if ($selectedCategory !== 'all') {
+    $sql .= " AND author_type = ?";
+}
+
+if ($selectedBookType !== 'all') {
+    $sql .= " AND book_type_id = ?";
+}
+
+if ($selectedBookLevel !== 'all') {
+    $sql .= " AND book_level_id = ?";
+}
+
+$sql .= " LIMIT $startIndex, $itemsPerPage";
+
+$stmt = mysqli_prepare($conn, $sql);
+
+// Bind parameters for the query prepared statement
+$bindParams = array_merge([$stmt, $bindTypes], $bindValues);
+call_user_func_array('mysqli_stmt_bind_param', $bindParams);
+
+// Execute the query
+mysqli_stmt_execute($stmt);
+
+// Get the result set
+$result = mysqli_stmt_get_result($stmt);
+
+// Fetch the items for the current page
+$items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
 } 
 
 else {
@@ -246,6 +260,17 @@ else {
           while ($bookTypeRow = mysqli_fetch_assoc($bookTypesResult)) {
               $isSelected = $selectedBookType == $bookTypeRow['id'] ? 'selected' : '';
               echo '<option value="' . $bookTypeRow['id'] . '" ' . $isSelected . '>' . $bookTypeRow['type_name'] . '</option>';
+          }
+          ?>
+      </select>
+      <label for="bookLevel" class="form-label">Book Level:</label>
+      <select class="form-select" name="bookLevel" id="bookLevel">
+          <option value="all" <?php echo ($selectedBookLevel === 'all') ? 'selected' : ''; ?>>All Levels</option>
+          <!-- Fetch and populate the book levels from the database -->
+          <?php
+          $bookLevels = mysqli_query($conn, "SELECT * FROM book_levels");
+          while ($level = mysqli_fetch_assoc($bookLevels)) {
+              echo '<option value="' . $level['id'] . '" ' . ($selectedBookLevel === $level['id'] ? 'selected' : '') . '>' . $level['level_name'] . '</option>';
           }
           ?>
       </select>
