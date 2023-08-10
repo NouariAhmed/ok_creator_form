@@ -29,8 +29,9 @@ if ($currentPage > $totalPages) {
 $startIndex = ($currentPage - 1) * $itemsPerPage;
 
 // Retrieve items for the current page
-$result = mysqli_query($conn, "SELECT s.id, s.subject_name, bl.level_name, bt.type_name 
+$result = mysqli_query($conn, "SELECT s.id, s.subject_name, bl.level_name, bt.type_name, bl.book_type_id 
 FROM subjects s INNER JOIN book_levels bl ON s.book_level_id = bl.id INNER JOIN book_types bt ON bl.book_type_id = bt.id LIMIT $startIndex, $itemsPerPage");
+
 $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 // Close the database connection
@@ -123,8 +124,7 @@ mysqli_close($conn);
             <button type="submit" name="submit" class="btn btn-primary">حفظ</button>
         </form>
         <hr>
-        <h2 class="text-right">قائمة المواد الدراسية</h2>
-        <a href="create_update_subject.php" class="btn btn-primary">إضافة مادة دراسية جديدة</a>
+       
         <table class="table mt-3">
             <thead>
                 <tr>
@@ -148,14 +148,14 @@ mysqli_close($conn);
         $subject_name = htmlspecialchars($item["subject_name"]);
         $level_name = htmlspecialchars($item["level_name"]);
         $type_name = htmlspecialchars($item["type_name"]);
-
+        $book_type_id = htmlspecialchars($item["book_type_id"]);
         echo "<tr>";
         echo "<td>" . $id . "</td>";
         echo "<td>" . $subject_name . "</td>";
         echo "<td>" . $level_name . "</td>";
         echo "<td>" . $type_name . "</td>"; // Display the book type
         echo '<td>
-                <a href="create_update_subject.php?id=' . $id . '" class="btn btn-sm btn-primary">تحرير</a>
+                <a href="create_update_subject.php?id=' . $id . '&book_type_id=' . $item['book_type_id'] . '" class="btn btn-sm btn-primary">تحرير</a>
                 <a href="delete_subject.php?id=' . $id . '" class="btn btn-sm btn-danger">حذف</a>
               </td>';
         echo "</tr>";

@@ -33,12 +33,13 @@ if (isset($_SESSION['item_not_found']) && $_SESSION['item_not_found'] === true) 
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             $id = intval($_GET['id']);
 
-            $stmt = mysqli_prepare($conn, "SELECT id FROM subjects WHERE id = ?");
+            // Check if there are any records in the authors table referencing the subject
+            $stmt = mysqli_prepare($conn, "SELECT id FROM authors WHERE subject_id = ?");
             mysqli_stmt_bind_param($stmt, "i", $id);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_store_result($stmt);
 
-            if (mysqli_stmt_num_rows($stmt) > 0) {
+            if (mysqli_stmt_num_rows($stmt) === 0) {
                 if (isset($_POST['confirm'])) {
                     $sql = "DELETE FROM subjects WHERE id = ?";
                     $stmt = mysqli_prepare($conn, $sql);
@@ -65,9 +66,8 @@ if (isset($_SESSION['item_not_found']) && $_SESSION['item_not_found'] === true) 
                     ';
                 }
             } else {
-                $_SESSION['item_not_found'] = true;
-                header("Location: display_subjects.php");
-                exit;
+                echo '<div class="alert alert-warning text-right">لا يمكن حذف هاته المادة لأن هناك سجلات مرتبطة به في جدول المؤلفين.</div>';
+                echo '<a href="display_subjects.php" class="btn btn-secondary">العودة إلى قائمة المواد الدراسية</a>';
             }
 
             mysqli_stmt_close($stmt);
