@@ -3,7 +3,7 @@ session_start();
 include('../connect.php');
 $table = "subjects";
 
-$itemsPerPage = 2; // Number of items per page
+$itemsPerPage = 10; // Number of items per page
 
 $currentPage = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 ? intval($_GET['page']) : 1;
 
@@ -33,6 +33,32 @@ $result = mysqli_query($conn, "SELECT s.id, s.subject_name, bl.level_name, bt.ty
 FROM subjects s INNER JOIN book_levels bl ON s.book_level_id = bl.id INNER JOIN book_types bt ON bl.book_type_id = bt.id LIMIT $startIndex, $itemsPerPage");
 
 $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+
+include('../connect.php');
+
+// Check if form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $id = $_POST['id'];
+    $book_level_id = $_POST['book_level_id'];
+    $subject_name = htmlspecialchars($_POST['subject_name']);
+        // Insert new subject
+        $sql = "INSERT INTO subjects (subject_name, book_level_id) VALUES (?, ?)";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "si", $subject_name, $book_level_id);
+    // Execute the statement
+    if (mysqli_stmt_execute($stmt)) {
+        // Set session variable for success message
+        $_SESSION['create_update_success'] = true;
+        // Redirect to the display_subjects page after successful creation/update
+        header("Location: display_subjects.php");
+        exit; // Important! Ensure the script stops executing after redirection header is sent
+    } else {
+        echo '<div class="alert alert-danger text-right">خطأ: ' . mysqli_error($conn) . '</div>';
+    }
+        // Close the prepared statement
+        mysqli_stmt_close($stmt);
+}
 
 // Close the database connection
 mysqli_close($conn);
@@ -72,7 +98,7 @@ mysqli_close($conn);
             unset($_SESSION['item_not_found']);
         }
         ?>
-        <form action="create_update_subject.php" method="post">
+        <form method="post" action="">
             <input type="hidden" name="id" value="<?php echo htmlspecialchars(isset($item['id']) ? $item['id'] : ''); ?>">
 
             <div class="form-group">

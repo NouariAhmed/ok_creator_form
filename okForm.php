@@ -78,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Registration successful, show success message
 
     // Retrieve the user ID of the inserted user
-    $user_id = mysqli_insert_id($conn);
+    $author_id = mysqli_insert_id($conn);
 
         // Insert student-specific or teacher-specific data based on user role
         if ($author_type === 'student') {
@@ -87,9 +87,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           $baccalaureateRate = trim($_POST["baccalaureateRate"]);
           $baccalaureateYear = trim($_POST["baccalaureateYear"]);
           // Insert the student data into the student_data table
-          $sql_insert_student_data = "INSERT INTO student_data (user_id, studentLevel, studentSpecialty, baccalaureateRate, baccalaureateYear) VALUES (?, ?, ?, ?, ?)";
+          $sql_insert_student_data = "INSERT INTO student_data (author_id, studentLevel, studentSpecialty, baccalaureateRate, baccalaureateYear) VALUES (?, ?, ?, ?, ?)";
           $stmt_insert_student_data = mysqli_prepare($conn, $sql_insert_student_data);
-          mysqli_stmt_bind_param($stmt_insert_student_data, "issss", $user_id, $studentLevel, $studentSpecialty, $baccalaureateRate, $baccalaureateYear);
+          mysqli_stmt_bind_param($stmt_insert_student_data, "issss", $author_id, $studentLevel, $studentSpecialty, $baccalaureateRate, $baccalaureateYear);
           mysqli_stmt_execute($stmt_insert_student_data);
         } elseif ($author_type === 'teacher') {
           $teacherExperience = trim($_POST["teacherExperience"]);
@@ -97,11 +97,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           $teacherRank = trim($_POST["teacherRank"]);
           $workFoundation = trim($_POST["workFoundation"]);
           // Insert the student data into the student_data table
-          $sql_insert_teacher_data = "INSERT INTO teacher_data (user_id, teacherExperience, teacherCertificate, teacherRank, workFoundation) VALUES (?, ?, ?, ?, ?)";
+          $sql_insert_teacher_data = "INSERT INTO teacher_data (author_id, teacherExperience, teacherCertificate, teacherRank, workFoundation) VALUES (?, ?, ?, ?, ?)";
           $stmt_insert_teacher_data = mysqli_prepare($conn, $sql_insert_teacher_data);
-          mysqli_stmt_bind_param($stmt_insert_teacher_data, "issss", $user_id, $teacherExperience, $teacherCertificate, $teacherRank, $workFoundation);
+          mysqli_stmt_bind_param($stmt_insert_teacher_data, "issss", $author_id, $teacherExperience, $teacherCertificate, $teacherRank, $workFoundation);
           mysqli_stmt_execute($stmt_insert_teacher_data);
         }
+        elseif ($author_type === 'inspector') {
+          // Insert inspector-specific data
+          $inspectorExperience = trim($_POST["inspectorExperience"]);
+          $inspectorCertificate = trim($_POST["InspectorCertificate"]);
+          $inspectorRank = trim($_POST["inspectorRank"]);
+          $inspectorWorkFoundation = trim($_POST["inspectorWorkFoundation"]);
+      
+          $sql_insert_inspector_data = "INSERT INTO inspector_data (author_id, inspectorExperience, InspectorCertificate, inspectorRank, inspectorWorkFoundation) VALUES (?, ?, ?, ?, ?)";
+          $stmt_insert_inspector_data = mysqli_prepare($conn, $sql_insert_inspector_data);
+          mysqli_stmt_bind_param($stmt_insert_inspector_data, "issss", $author_id, $inspectorExperience, $inspectorCertificate, $inspectorRank, $inspectorWorkFoundation);
+          mysqli_stmt_execute($stmt_insert_inspector_data);
+      }
+      elseif ($author_type === 'doctor') {
+        // Insert doctor-specific data
+        $specialty = trim($_POST["specialty"]);
+        $drWorkFoundation = trim($_POST["drWorkFoundation"]);
+    
+        $sql_insert_doctor_data = "INSERT INTO doctor_data (author_id, specialty, drWorkFoundation) VALUES (?, ?, ?)";
+        $stmt_insert_doctor_data = mysqli_prepare($conn, $sql_insert_doctor_data);
+        mysqli_stmt_bind_param($stmt_insert_doctor_data, "iss", $author_id, $specialty, $drWorkFoundation);
+        mysqli_stmt_execute($stmt_insert_doctor_data);
+    } elseif ($author_type === 'trainer') {
+        // Insert trainer-specific data
+        $field = trim($_POST["field"]);
+        $trainerExperience = trim($_POST["trainerExperience"]);
+    
+        $sql_insert_trainer_data = "INSERT INTO trainer_data (author_id, field, trainerExperience) VALUES (?, ?, ?)";
+        $stmt_insert_trainer_data = mysqli_prepare($conn, $sql_insert_trainer_data);
+        mysqli_stmt_bind_param($stmt_insert_trainer_data, "iss", $author_id, $field, $trainerExperience);
+        mysqli_stmt_execute($stmt_insert_trainer_data);
+    } elseif ($author_type === 'novelist') {
+        // Insert novelist-specific data
+        $novelistfield = trim($_POST["novelistfield"]);
+    
+        $sql_insert_novelist_data = "INSERT INTO novelist_data (author_id, novelistfield) VALUES (?, ?)";
+        $stmt_insert_novelist_data = mysqli_prepare($conn, $sql_insert_novelist_data);
+        mysqli_stmt_bind_param($stmt_insert_novelist_data, "is", $author_id, $novelistfield);
+        mysqli_stmt_execute($stmt_insert_novelist_data);
+    }
     // Store the success message in a session variable
     session_start();
     $_SESSION['register_success_msg'] = "Author Registration successful.";
@@ -216,6 +255,10 @@ $register_success_msg = isset($_SESSION['register_success_msg']) ? $_SESSION['re
                   <option value="" disabled selected>Select User Role</option>
                   <option value="student">Student</option>
                   <option value="teacher">Teacher</option>
+                  <option value="inspector">inspector</option>
+                  <option value="doctor">doctor</option>
+                  <option value="trainer">trainer</option>
+                  <option value="novelist">novelist</option>
                 </select>
               </div>
               <!-- Student Specific Inputs -->
@@ -229,6 +272,7 @@ $register_success_msg = isset($_SESSION['register_success_msg']) ? $_SESSION['re
                   <label for="baccalaureateYear" class="form-label">Baccalaureate Year</label>
                   <input type="text" class="form-control" id="baccalaureateYear" name="baccalaureateYear">
                 </div>
+                 <!-- Teacher Specific Inputs -->
                 <div class="mb-4" id="teacherInputs" style="display: none;">
                   <label for="teacherExperience" class="form-label">Teacher Experience</label>
                   <input type="text" class="form-control" id="teacherExperience" name="teacherExperience">
@@ -236,11 +280,39 @@ $register_success_msg = isset($_SESSION['register_success_msg']) ? $_SESSION['re
                   <input type="text" class="form-control" id="teacherCertificate" name="teacherCertificate">
                   <label for="teacherRank" class="form-label">Teacher Rank</label>
                   <input type="text" class="form-control" id="teacherRank" name="teacherRank">
-                  <label for="workFoundation" class="form-label">Teacher Experience</label>
+                  <label for="workFoundation" class="form-label">Work Experience</label>
                   <input type="text" class="form-control" id="workFoundation" name="workFoundation">
-                 
                 </div>
-
+                 <!-- Inspector Specific Inputs -->
+                <div class="mb-4" id="inspectorInputs" style="display: none;">
+                  <label for="inspectorExperience" class="form-label">Inspector Experience</label>
+                  <input type="text" class="form-control" id="inspectorExperience" name="inspectorExperience">
+                  <label for="InspectorCertificate" class="form-label">Inspector Certificate</label>
+                  <input type="text" class="form-control" id="InspectorCertificate" name="InspectorCertificate">
+                  <label for="inspectorRank" class="form-label">Inspector Rank</label>
+                  <input type="text" class="form-control" id="inspectorRank" name="inspectorRank">
+                  <label for="inspectorWorkFoundation" class="form-label">Inspector Work Experience</label>
+                  <input type="text" class="form-control" id="inspectorWorkFoundation" name="inspectorWorkFoundation">
+                </div>
+                  <!-- Doctor Specific Inputs -->
+                <div class="mb-4" id="doctorInputs" style="display: none;">
+                  <label for="specialty" class="form-label">specialty</label>
+                  <input type="text" class="form-control" id="specialty" name="specialty">
+                  <label for="drWorkFoundation" class="form-label">Dr Work Foundation</label>
+                  <input type="text" class="form-control" id="drWorkFoundation" name="drWorkFoundation">
+                </div>
+                   <!-- trainer Specific Inputs -->
+                <div class="mb-4" id="trainerInputs" style="display: none;">
+                  <label for="field" class="form-label">The field</label>
+                  <input type="text" class="form-control" id="field" name="field">
+                  <label for="trainerExperience" class="form-label">trainer Experience</label>
+                  <input type="text" class="form-control" id="trainerExperience" name="trainerExperience">
+                </div>
+                    <!-- novelist Specific Inputs -->
+                <div class="mb-4" id="novelistInputs" style="display: none;">
+                  <label for="novelistfield" class="form-label">The field</label>
+                  <input type="text" class="form-control" id="novelistfield" name="novelistfield">
+                </div>
               <div class="d-grid">
                 <button type="submit" class="btn text-light main-bg" name="but_submit">Register</button>
               </div>
@@ -335,22 +407,39 @@ $register_success_msg = isset($_SESSION['register_success_msg']) ? $_SESSION['re
     bookLevelSelect.disabled = true;
     clearSubject();
   }
+  // Function to display special input for authors types 
 
   document.getElementById('author_type').addEventListener('change', function() {
-    const studentInputs = document.getElementById('studentInputs');
-    const teacherInputs = document.getElementById('teacherInputs');
+  const studentInputs = document.getElementById('studentInputs');
+  const teacherInputs = document.getElementById('teacherInputs');
+  const inspectorInputs = document.getElementById('inspectorInputs');
+  const doctorInputs = document.getElementById('doctorInputs');
+  const trainerInputs = document.getElementById('trainerInputs');
+  const novelistInputs = document.getElementById('novelistInputs');
 
-    if (this.value === 'student') {
-      studentInputs.style.display = 'block';
-      teacherInputs.style.display = 'none';
-    } else if (this.value === 'teacher') {
-      studentInputs.style.display = 'none';
-      teacherInputs.style.display = 'block';
-    } else {
-      studentInputs.style.display = 'none';
-      teacherInputs.style.display = 'none';
-    }
-  });
+  studentInputs.style.display = 'none';
+  teacherInputs.style.display = 'none';
+  inspectorInputs.style.display = 'none';
+  doctorInputs.style.display = 'none';
+  trainerInputs.style.display = 'none';
+  novelistInputs.style.display = 'none';
+
+  const selectedValue = this.value;
+  if (selectedValue === 'student') {
+    studentInputs.style.display = 'block';
+  } else if (selectedValue === 'teacher') {
+    teacherInputs.style.display = 'block';
+  } else if (selectedValue === 'inspector') {
+    inspectorInputs.style.display = 'block';
+  } else if (selectedValue === 'doctor') {
+    doctorInputs.style.display = 'block';
+  } else if (selectedValue === 'trainer') {
+    trainerInputs.style.display = 'block';
+  } else if (selectedValue === 'novelist') {
+    novelistInputs.style.display = 'block';
+  }
+});
+
 </script>
 
 

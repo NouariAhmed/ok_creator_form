@@ -29,75 +29,9 @@ if (isset($_SESSION['id']) && $_SESSION['role'] === "admin") {
   $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 
+   include('dash_functions.php'); 
 
-            // Function to get the book type name by its ID
-        function getBookTypeName($conn, $bookTypeId) {
-          $sql = "SELECT type_name FROM book_types WHERE id = ?";
-          $stmt = mysqli_prepare($conn, $sql);
-          mysqli_stmt_bind_param($stmt, "i", $bookTypeId);
-          mysqli_stmt_execute($stmt);
-          mysqli_stmt_bind_result($stmt, $typeName);
-          mysqli_stmt_fetch($stmt);
-          mysqli_stmt_close($stmt);
-          return $typeName;
-        }
 
-        // Function to get the book level name by its ID
-        function getBookLevelName($conn, $bookLevelId) {
-          $sql = "SELECT level_name FROM book_levels WHERE id = ?";
-          $stmt = mysqli_prepare($conn, $sql);
-          mysqli_stmt_bind_param($stmt, "i", $bookLevelId);
-          mysqli_stmt_execute($stmt);
-          mysqli_stmt_bind_result($stmt, $levelName);
-          mysqli_stmt_fetch($stmt);
-          mysqli_stmt_close($stmt);
-          return $levelName;
-        }
-
-        // Function to get the subject name by its ID
-        function getSubjectName($conn, $subjectId) {
-          $sql = "SELECT subject_name FROM subjects WHERE id = ?";
-          $stmt = mysqli_prepare($conn, $sql);
-          mysqli_stmt_bind_param($stmt, "i", $subjectId);
-          mysqli_stmt_execute($stmt);
-          mysqli_stmt_bind_result($stmt, $subjectName);
-          mysqli_stmt_fetch($stmt);
-          mysqli_stmt_close($stmt);
-          return $subjectName;
-        }
-        // Function to get student data by user ID
-        function getStudentData($conn, $userId) {
-        $sql = "SELECT studentLevel, studentSpecialty, baccalaureateRate, baccalaureateYear FROM student_data WHERE user_id = ?";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "i", $userId);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_bind_result($stmt, $studentLevel, $studentSpecialty, $baccalaureateRate, $baccalaureateYear);
-        mysqli_stmt_fetch($stmt);
-        mysqli_stmt_close($stmt);
-        return [
-            'studentLevel' => $studentLevel,
-            'studentSpecialty' => $studentSpecialty,
-            'baccalaureateRate' => $baccalaureateRate,
-            'baccalaureateYear' => $baccalaureateYear
-        ];
-        }
-
-        // Function to get teacher data by user ID
-        function getTeacherData($conn, $userId) {
-        $sql = "SELECT teacherExperience, teacherCertificate, teacherRank, workFoundation FROM teacher_data WHERE user_id = ?";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "i", $userId);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_bind_result($stmt, $teacherExperience, $teacherCertificate, $teacherRank, $workFoundation);
-        mysqli_stmt_fetch($stmt);
-        mysqli_stmt_close($stmt);
-        return [
-            'teacherExperience' => $teacherExperience,
-            'teacherCertificate' => $teacherCertificate,
-            'teacherRank' => $teacherRank,
-            'workFoundation' => $workFoundation
-        ];
-        }
 // Get the selected category from the query parameter
 $selectedCategory = isset($_GET['category']) ? $_GET['category'] : 'all';
 $selectedBookType = isset($_GET['bookType']) ? $_GET['bookType'] : 'all';
@@ -261,9 +195,12 @@ else {
           <label for="category" class="form-label">اختر الفئة:</label>
           <select class="form-select" id="category" name="category">
           <option value="all" <?php echo $selectedCategory === 'all' ? 'selected' : ''; ?>>الكل</option>
-          <option value="teacher" <?php echo $selectedCategory === 'teacher' ? 'selected' : ''; ?>>معلم</option>
           <option value="student" <?php echo $selectedCategory === 'student' ? 'selected' : ''; ?>>طالب</option>
-          <option value="agent" <?php echo $selectedCategory === 'agent' ? 'selected' : ''; ?>>وكيل</option>
+          <option value="teacher" <?php echo $selectedCategory === 'teacher' ? 'selected' : ''; ?>>أستاذ</option>
+          <option value="inspector" <?php echo $selectedCategory === 'inspector' ? 'selected' : ''; ?>>مفتش</option>
+          <option value="doctor" <?php echo $selectedCategory === 'doctor' ? 'selected' : ''; ?>>طبيب</option>
+          <option value="trainer" <?php echo $selectedCategory === 'trainer' ? 'selected' : ''; ?>>مدرب</option>
+          <option value="novelist" <?php echo $selectedCategory === 'novelist' ? 'selected' : ''; ?>>روائي</option> 
           </select>
           <label for="bookType" class="form-label">اختر نوع الكتاب:</label>
           <select class="form-select" id="bookType" name="bookType">
@@ -322,7 +259,7 @@ else {
                     <td><?php echo getBookLevelName($conn, $row['book_level_id']); ?></td> <!-- Display book_level -->
                     <td><?php echo getSubjectName($conn, $row['subject_id']); ?></td> <!-- Display subject -->
                         <!-- Display student-specific or teacher-specific data -->
-                        <?php if ($row['author_type'] === 'student') { ?>
+                     <?php if ($row['author_type'] === 'student') { ?>       
                         <?php $studentData = getStudentData($conn, $row['id']); ?>
                         <td><?php echo $studentData['studentLevel']; ?></td>
                         <td><?php echo $studentData['studentSpecialty']; ?></td>
@@ -336,6 +273,27 @@ else {
                         <td><?php echo $teacherData['teacherRank']; ?></td>
                         <td><?php echo $teacherData['workFoundation']; ?></td>
                         <!-- Add more columns for teacher data here -->
+                    <?php } elseif ($row['author_type'] === 'inspector') { ?>
+                        <?php $inspectorData = getInspectorData($conn, $row['id']); ?>
+                        <td><?php echo $inspectorData['inspectorExperience']; ?></td>
+                        <td><?php echo $inspectorData['InspectorCertificate']; ?></td>
+                        <td><?php echo $inspectorData['inspectorRank']; ?></td>
+                        <td><?php echo $inspectorData['inspectorWorkFoundation']; ?></td>
+                        <!-- Add more columns for inspector data here -->
+                    <?php } elseif ($row['author_type'] === 'doctor') { ?>
+                        <?php $doctorData = getDoctorData($conn, $row['id']); ?>
+                        <td><?php echo $doctorData['specialty']; ?></td>
+                        <td><?php echo $doctorData['drWorkFoundation']; ?></td>
+                        <!-- Add more columns for doctor data here -->
+                    <?php } elseif ($row['author_type'] === 'trainer') { ?>
+                        <?php $trainerData = getTrainerData($conn, $row['id']); ?>
+                        <td><?php echo $trainerData['field']; ?></td>
+                        <td><?php echo $trainerData['trainerExperience']; ?></td>
+                        <!-- Add more columns for trainer data here -->
+                    <?php } elseif ($row['author_type'] === 'novelist') { ?>
+                        <?php $novelistData = getNovelistData($conn, $row['id']); ?>
+                        <td><?php echo $novelistData['novelistfield']; ?></td>
+                        <!-- Add more columns for novelist data here -->
                     <?php } else { ?>
                         <td colspan="4">N/A</td>
                         <!-- Add more columns for other author types if needed -->
