@@ -36,6 +36,7 @@ if (isset($_SESSION['id']) && $_SESSION['role'] === "admin") {
 $selectedCategory = isset($_GET['category']) ? $_GET['category'] : 'all';
 $selectedBookType = isset($_GET['bookType']) ? $_GET['bookType'] : 'all';
 $selectedBookLevel = isset($_GET['bookLevel']) ? $_GET['bookLevel'] : 'all';
+$selectedSubject = isset($_GET['subject']) ? $_GET['subject'] : 'all';
 
 // Construct the SQL query based on selected filters
 $sql = "SELECT COUNT(*) AS total_filtered_items FROM $table WHERE 1 = 1"; // Initial SQL with a dummy condition
@@ -61,6 +62,11 @@ if ($selectedBookLevel !== 'all') {
     $bindValues[] = &$selectedBookLevel;
 }
 
+if ($selectedSubject !== 'all') {
+  $sql .= " AND subject_id = ?";
+  $bindTypes .= 'i'; // Assuming subject_id is an integer
+  $bindValues[] = &$selectedSubject;
+}
 // ... (previous code)
 
 $countStmt = mysqli_prepare($conn, $sql);
@@ -97,7 +103,9 @@ if ($selectedBookType !== 'all') {
 if ($selectedBookLevel !== 'all') {
     $sql .= " AND book_level_id = ?";
 }
-
+if ($selectedSubject !== 'all') {
+  $sql .= " AND subject_id = ?";
+}
 $sql .= " LIMIT $startIndex, $itemsPerPage";
 
 // ... (previous code)
@@ -226,6 +234,20 @@ else {
           }
           ?>
       </select>
+      <label for="subject" class="form-label">اختر المادة:</label>
+      <select class="form-select" id="subject" name="subject">
+          <option value="all" <?php echo $selectedSubject === 'all' ? 'selected' : ''; ?>>الكل</option>
+          <!-- Fetch and display subjects dynamically from the database -->
+          <?php
+          $subjectsQuery = "SELECT * FROM subjects";
+          $subjectsResult = mysqli_query($conn, $subjectsQuery);
+          while ($subjectRow = mysqli_fetch_assoc($subjectsResult)) {
+              $isSelected = $selectedSubject == $subjectRow['id'] ? 'selected' : '';
+              echo '<option value="' . $subjectRow['id'] . '" ' . $isSelected . '>' . $subjectRow['subject_name'] . '</option>';
+          }
+          ?>
+      </select>
+
           <button type="submit" class="btn btn-primary mt-2">تصفية</button>
           
         </form>
