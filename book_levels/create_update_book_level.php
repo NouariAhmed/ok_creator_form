@@ -34,36 +34,26 @@ if (!empty($id)) {
 }
 
 // Handle form submission
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['submit']) || isset($_POST['updateData'])) {
+    if (isset($_POST['updateData'])) {
+        // Validate user input
         $level_name = htmlspecialchars($_POST['level_name']);
         $book_type_id = $_POST['book_type_id'];
 
-        // Prepare the SQL statement
-        if (!empty($id)) {
-            $stmt = mysqli_prepare($conn, "UPDATE book_levels SET level_name = ?, book_type_id = ? WHERE id = ?");
-            mysqli_stmt_bind_param($stmt, "sii", $level_name, $book_type_id, $id);
-        } else {
-            $stmt = mysqli_prepare($conn, "INSERT INTO book_levels (level_name, book_type_id) VALUES (?, ?)");
-            mysqli_stmt_bind_param($stmt, "si", $level_name, $book_type_id);
-        }
-
-        // Execute the prepared statement
+        // Prepare and execute SQL query
+        $stmt = mysqli_prepare($conn, "UPDATE book_levels SET level_name = ?, book_type_id = ? WHERE id = ?");
+        mysqli_stmt_bind_param($stmt, "sii", $level_name, $book_type_id, $id);
         if (mysqli_stmt_execute($stmt)) {
-            // Set session variable for success message
             $_SESSION['create_update_success'] = true;
-            // Redirect to the display_book_levels page after successful creation/update
             header("Location: display_book_levels.php");
-            exit; // Important! Ensure the script stops executing after redirection header is sent
+            exit;
         } else {
-            echo '<div class="alert alert-danger text-right">خطأ: ' . mysqli_error($conn) . '</div>';
+            echo "<div class='alert alert-danger text-right'>حدث خطأ أثناء الإضافة</div>";
         }
-
-        // Close the prepared statement
         mysqli_stmt_close($stmt);
     }
 }
-
 // Fetch book types for dropdown
 $bookTypesResult = mysqli_query($conn, "SELECT * FROM book_types");
 

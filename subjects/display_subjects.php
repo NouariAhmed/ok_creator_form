@@ -39,6 +39,7 @@ include('../connect.php');
 
 // Check if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['submit'])) {
     $id = $_POST['id'];
     $book_level_id = $_POST['book_level_id'];
     $subject_name = htmlspecialchars($_POST['subject_name']);
@@ -58,6 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
         // Close the prepared statement
         mysqli_stmt_close($stmt);
+}
 }
 
 // Close the database connection

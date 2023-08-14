@@ -32,6 +32,28 @@ $startIndex = ($currentPage - 1) * $itemsPerPage;
 $result = mysqli_query($conn, "SELECT * FROM book_types LIMIT $startIndex, $itemsPerPage");
 $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['submit'])) {
+        // Validate user input
+        $type_name = htmlspecialchars($_POST['type_name']);
+        if (empty($type_name)) {
+            echo "<div class='alert alert-danger text-right'>عنوان الكتاب مطلوب</div>";
+        } else {
+            // Prepare and execute SQL query
+            $stmt = mysqli_prepare($conn, "INSERT INTO book_types (type_name) VALUES (?)");
+            mysqli_stmt_bind_param($stmt, "s", $type_name);
+            if (mysqli_stmt_execute($stmt)) {
+                $_SESSION['create_update_success'] = true;
+                header("Location: display_book_types.php");
+                exit;
+            } else {
+                $error_message = "حدث خطأ أثناء الإضافة: " . mysqli_error($conn);
+            }
+            mysqli_stmt_close($stmt);
+        }
+    }
+}
+
 // Close the database connection
 mysqli_close($conn);
 ?>
@@ -69,7 +91,7 @@ mysqli_close($conn);
             unset($_SESSION['item_not_found']);
         }
         ?>
-        <form action="create_update_book_type.php" method="post">
+        <form action="" method="post">
             <input type="hidden" name="id" value="<?php echo htmlspecialchars(isset($item['id']) ? $item['id'] : ''); ?>">
             <div class="form-group">
                 <label class="text-right">اسم نوع الكتاب:</label>
@@ -79,7 +101,7 @@ mysqli_close($conn);
         </form>
         <hr>
         <h2 class="text-right">قائمة أنواع الكتب</h2>
-        <a href="create_update_book_type.php" class="btn btn-primary">إضافة نوع كتاب جديد</a>
+      
         <table class="table mt-3">
             <thead>
                 <tr>

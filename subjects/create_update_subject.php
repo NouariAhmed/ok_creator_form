@@ -36,7 +36,7 @@ if (!empty($id)) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['submit']) || isset($_POST['updateData'])) {
+    if (isset($_POST['updateData'])) {
         $subject_name = htmlspecialchars($_POST['subject_name']);
         $book_level_id = $_POST['book_level_id'];
 

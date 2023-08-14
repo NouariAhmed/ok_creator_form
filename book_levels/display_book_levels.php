@@ -32,6 +32,26 @@ session_start();
   // Retrieve items for the current page
   $result = mysqli_query($conn, "SELECT bl.id, bl.level_name, bt.type_name FROM book_levels bl INNER JOIN book_types bt ON bl.book_type_id = bt.id LIMIT $startIndex, $itemsPerPage");
   $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['submit'])) {
+        // Validate user input
+        $level_name = htmlspecialchars($_POST['level_name']);
+        $book_type_id = $_POST['book_type_id'];
+
+        // Prepare and execute SQL query
+        $stmt = mysqli_prepare($conn, "INSERT INTO book_levels (level_name, book_type_id) VALUES (?, ?)");
+        mysqli_stmt_bind_param($stmt, "si", $level_name, $book_type_id);
+        if (mysqli_stmt_execute($stmt)) {
+            $_SESSION['create_update_success'] = true;
+            header("Location: display_book_levels.php");
+            exit;
+        } else {
+            echo "<div class='alert alert-danger text-right'>حدث خطأ أثناء الإضافة</div>";
+        }
+        mysqli_stmt_close($stmt);
+    }
+}
+
 
   // Close the database connection
   mysqli_close($conn);
@@ -71,7 +91,7 @@ session_start();
             unset($_SESSION['item_not_found']);
         }
         ?>
-        <form action="create_update_book_level.php" method="post">
+        <form action="" method="post">
             <input type="hidden" name="id" value="<?php echo htmlspecialchars(isset($item['id']) ? $item['id'] : ''); ?>">
             <div class="form-group">
                 <label class="text-right">اسم مستوى الكتاب:</label>
@@ -102,7 +122,6 @@ session_start();
         </form>
         <hr>
         <h2 class="text-right">قائمة مستويات الكتب</h2>
-        <a href="create_update_book_level.php" class="btn btn-primary">إضافة مستوى كتاب جديد</a>
         <table class="table mt-3">
             <thead>
                 <tr>
