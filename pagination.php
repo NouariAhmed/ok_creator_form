@@ -13,11 +13,11 @@
     $filterQueryString = http_build_query($filterQueryArray);
 
     // Display "Previous" button with "disabled" style if on first page
-    echo '<a href="?page=' . $prevPage . '&' . $filterQueryString . '" class="btn btn-primary ' . ($currentPage === 1 ? 'disabled' : '') . '">Previous</a>';
+    echo '<a href="?page=' . $prevPage . '&' . $filterQueryString . '" class="btn btn-secondary text-white ' . ($currentPage === 1 ? 'disabled' : '') . '">Previous</a>';
 
     // Display page numbers with ellipsis
     if ($startPage > 1) {
-        echo '<a href="?page=1&' . $filterQueryString . '" class="btn btn-primary">1</a>';
+        echo '<a href="?page=1&' . $filterQueryString . '" class="btn btn-secondary text-white mx-1">1</a>';
         if ($startPage > 2) {
             echo '<span>...</span>';
         }
@@ -25,17 +25,17 @@
 
     for ($i = $startPage; $i <= $endPage; $i++) {
         $activeClass = ($i === $currentPage) ? 'active' : '';
-        echo '<a href="?page=' . $i . '&' . $filterQueryString . '" class="btn btn-primary ' . $activeClass . '">' . $i . '</a>';
+        echo '<a href="?page=' . $i . '&' . $filterQueryString . '" class="btn btn-secondary text-white mx-1 ' . $activeClass . '">' . $i . '</a>';
     }
 
     if ($endPage < $totalPages) {
         if ($endPage < $totalPages - 1) {
             echo '<span>...</span>';
         }
-        echo '<a href="?page=' . $totalPages . '&' . $filterQueryString . '" class="btn btn-primary">' . $totalPages . '</a>';
+        echo '<a href="?page=' . $totalPages . '&' . $filterQueryString . '" class="btn btn-secondary text-white mx-1">' . $totalPages . '</a>';
     }
 
     // Display "Next" button with "disabled" style if on last page
-    echo '<a href="?page=' . $nextPage . '&' . $filterQueryString . '" class="btn btn-primary ' . ($currentPage == $totalPages || $totalPages === 1 ? 'disabled' : '') . '">Next</a>';
+    echo '<a href="?page=' . $nextPage . '&' . $filterQueryString . '" class="btn btn-secondary text-white ' . ($currentPage == $totalPages || $totalPages === 1 ? 'disabled' : '') . '">Next</a>';
     ?>
 </div>

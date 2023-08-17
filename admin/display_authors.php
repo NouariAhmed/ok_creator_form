@@ -1,0 +1,307 @@
+<?php
+session_start();
+include('../connect.php');
+include('../dash_functions.php'); 
+$table = "authors";
+
+$itemsPerPage = 10; // Number of items per page
+
+$currentPage = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 ? intval($_GET['page']) : 1;
+
+// Get the total number of items in the database
+$sql = "SELECT COUNT(*) AS total_items FROM $table";
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($result);
+$totalItems = $row['total_items'];
+
+$totalPages = ceil($totalItems / $itemsPerPage);
+$currentPage = max(1, min($currentPage, $totalPages));
+
+$startIndex = ($currentPage - 1) * $itemsPerPage;
+
+// Retrieve items for the current page
+$result = mysqli_query($conn, "SELECT * FROM $table LIMIT $startIndex, $itemsPerPage");
+$items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+ 
+// Get the selected category from the query parameter
+$selectedCategory = isset($_GET['category']) ? $_GET['category'] : 'all';
+$selectedBookType = isset($_GET['bookType']) ? $_GET['bookType'] : 'all';
+$selectedBookLevel = isset($_GET['bookLevel']) ? $_GET['bookLevel'] : 'all';
+$selectedSubject = isset($_GET['subject']) ? $_GET['subject'] : 'all';
+
+// Construct the SQL query based on selected filters
+$sql = "SELECT COUNT(*) AS total_filtered_items FROM $table WHERE 1 = 1"; // Initial SQL with a dummy condition
+
+$bindTypes = ''; // String to store parameter types
+$bindValues = []; // Array to store parameter values
+
+if ($selectedCategory !== 'all') {
+  $sql .= " AND author_type = ?";
+  $bindTypes .= 's'; // Assuming author_type is a string
+  $bindValues[] = &$selectedCategory;
+}
+
+if ($selectedBookType !== 'all') {
+  $sql .= " AND book_type_id = ?";
+  $bindTypes .= 'i'; // Assuming book_type_id is an integer
+  $bindValues[] = &$selectedBookType;
+}
+
+if ($selectedBookLevel !== 'all') {
+  $sql .= " AND book_level_id = ?";
+  $bindTypes .= 'i'; // Assuming book_level_id is an integer
+  $bindValues[] = &$selectedBookLevel;
+}
+
+if ($selectedSubject !== 'all') {
+$sql .= " AND subject_id = ?";
+$bindTypes .= 'i'; // Assuming subject_id is an integer
+$bindValues[] = &$selectedSubject;
+}
+// ... (previous code)
+
+$countStmt = mysqli_prepare($conn, $sql);
+
+// Bind parameters for the count query prepared statement
+if (!empty($bindValues)) {
+  $bindParams = array_merge([$bindTypes], $bindValues);
+  $countStmt->bind_param(...$bindParams);
+}
+
+// Execute the count query
+mysqli_stmt_execute($countStmt);
+
+$countResult = mysqli_stmt_get_result($countStmt);
+$countRow = mysqli_fetch_assoc($countResult);
+$totalFilteredItems = $countRow['total_filtered_items'];
+
+// Calculate Total Pages
+$totalPages = ceil($totalFilteredItems / $itemsPerPage);
+
+// Construct the main SQL query for pagination
+$sql = "SELECT * FROM $table WHERE 1 = 1"; // Initial SQL with a dummy condition
+
+if ($selectedCategory !== 'all') {
+  $sql .= " AND author_type = ?";
+}
+
+if ($selectedBookType !== 'all') {
+  $sql .= " AND book_type_id = ?";
+}
+
+if ($selectedBookLevel !== 'all') {
+  $sql .= " AND book_level_id = ?";
+}
+if ($selectedSubject !== 'all') {
+$sql .= " AND subject_id = ?";
+}
+$sql .= " LIMIT $startIndex, $itemsPerPage";
+
+$stmt = mysqli_prepare($conn, $sql);
+
+// Bind parameters for the query prepared statement
+if (!empty($bindValues)) {
+  $bindParams = array_merge([$bindTypes], $bindValues);
+  $stmt->bind_param(...$bindParams);
+}
+// Execute the query
+mysqli_stmt_execute($stmt);
+
+// Get the result set
+$result = mysqli_stmt_get_result($stmt);
+
+// Fetch the items for the current page
+$items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+include('header.php');
+?>
+    <div class="container-fluid py-4">
+      <?php
+    // Check if create_update_success session variable is set
+        if (isset($_SESSION['create_update_success']) && $_SESSION['create_update_success'] === true) {
+            echo '<div class="alert alert-success text-right">تم إنشاء/تحديث العنصر بنجاح.</div>';
+            // Unset the session variable to avoid displaying the message on page refresh
+            unset($_SESSION['create_update_success']);
+        }
+        // Check if delete_success session variable is set
+        if (isset($_SESSION['delete_success']) && $_SESSION['delete_success'] === true) {
+            echo '<div class="alert alert-success text-right">تم حذف العنصر بنجاح.</div>';
+            // Unset the session variable to avoid displaying the message on page refresh
+            unset($_SESSION['delete_success']);
+        }
+        // Check if item_not_found session variable is set
+        if (isset($_SESSION['item_not_found']) && $_SESSION['item_not_found'] === true) {
+            echo '<div class="alert alert-danger text-right">العنصر غير موجود.</div>';
+            // Unset the session variable to avoid displaying the message on page refresh
+            unset($_SESSION['item_not_found']);
+        }
+        ?>
+       
+        <h4 class="mb-3">إضافة مؤلف</h4>
+          <div class="input-group input-group-outline my-3">
+          <a href="../okForm.php" class="btn btn-secondary">Create</a>
+              </div>
+                
+          <form role="form">
+          <h5 class="mb-3">فلترة</h5>
+        <div class="input-group input-group-outline my-3">
+          <select class="form-control" id="category" name="category">
+          <option value="all" <?php echo $selectedCategory === 'all' ? 'selected' : ''; ?>>-- جميع أنواع المؤلفين --</option>
+          <option value="student" <?php echo $selectedCategory === 'student' ? 'selected' : ''; ?>>طالب</option>
+          <option value="teacher" <?php echo $selectedCategory === 'teacher' ? 'selected' : ''; ?>>أستاذ</option>
+          <option value="inspector" <?php echo $selectedCategory === 'inspector' ? 'selected' : ''; ?>>مفتش</option>
+          <option value="doctor" <?php echo $selectedCategory === 'doctor' ? 'selected' : ''; ?>>طبيب</option>
+          <option value="trainer" <?php echo $selectedCategory === 'trainer' ? 'selected' : ''; ?>>مدرب</option>
+          <option value="novelist" <?php echo $selectedCategory === 'novelist' ? 'selected' : ''; ?>>روائي</option> 
+          </select>
+          </div>
+
+          <div class="input-group input-group-outline my-3">
+          <select class="form-control" id="bookType" name="bookType">
+          <option value="all" <?php echo $selectedBookType === 'all' ? 'selected' : ''; ?>>-- جميع أنواع الكتب -- </option>
+          <!-- Fetch and display book types dynamically from the database -->
+          <?php
+          $bookTypesQuery = "SELECT * FROM book_types";
+          $bookTypesResult = mysqli_query($conn, $bookTypesQuery);
+          while ($bookTypeRow = mysqli_fetch_assoc($bookTypesResult)) {
+              $isSelected = $selectedBookType == $bookTypeRow['id'] ? 'selected' : '';
+              echo '<option value="' . $bookTypeRow['id'] . '" ' . $isSelected . '>' . $bookTypeRow['type_name'] . '</option>';
+          }
+          ?>
+      </select>
+      </div>
+      <div class="input-group input-group-outline my-3">
+      <select class="form-control" name="bookLevel" id="bookLevel">
+          <option value="all" <?php echo ($selectedBookLevel === 'all') ? 'selected' : ''; ?>>-- جميع المستويات --</option>
+          <!-- Fetch and populate the book levels from the database -->
+          <?php
+          $bookLevels = mysqli_query($conn, "SELECT * FROM book_levels");
+          while ($level = mysqli_fetch_assoc($bookLevels)) {
+              echo '<option value="' . $level['id'] . '" ' . ($selectedBookLevel === $level['id'] ? 'selected' : '') . '>' . $level['level_name'] . '</option>';
+          }
+          ?>
+      </select>
+      </div>
+
+      <div class="input-group input-group-outline my-3">
+      <select class="form-control" id="subject" name="subject">
+          <option value="all" <?php echo $selectedSubject === 'all' ? 'selected' : ''; ?>>-- جميع المواد --</option>
+          <!-- Fetch and display subjects dynamically from the database -->
+          <?php
+          $subjectsQuery = "SELECT * FROM subjects";
+          $subjectsResult = mysqli_query($conn, $subjectsQuery);
+          while ($subjectRow = mysqli_fetch_assoc($subjectsResult)) {
+              $isSelected = $selectedSubject == $subjectRow['id'] ? 'selected' : '';
+              echo '<option value="' . $subjectRow['id'] . '" ' . $isSelected . '>' . $subjectRow['subject_name'] . '</option>';
+          }
+          ?>
+      </select>
+       </div>
+
+          <button type="submit"  class="btn bg-gradient-primary" >Filter</button> 
+        </form>
+    <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                <h6 class="text-white text-capitalize pe-3">Teachers table</h6>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0 table-hover">
+                  <thead>
+                    <tr>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 " >المعرف</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المؤلف</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">عنوان الكتاب</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">نوع الكتاب</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المستوى</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المادة</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">العنوان</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">من طرف</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الشهادة</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الخبرة</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الرتبة ومؤسسة العمل</th>
+                      <th class="text-center text-secondary text-lg font-weight-bolder opacity-7">الإجراءات</th>
+                    
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <?php
+                foreach ($items as $item) {
+                ?>
+                    <tr>
+                    <td class="align-middle text-sm">
+                      <h6 class="mb-0 text-sm  pe-3"><?php echo htmlspecialchars($item["id"]);?></h6>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div>
+                            <img src="../assets/img/team-2.jpg" class="avatar avatar-sm ms-3 border-radius-lg" alt="user1">
+                          </div>
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["authorfullname"]);?></h6>
+                            <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["phone"]);?></p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="align-middle text-sm">
+                      <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["book_title"]);?></h6>
+                      </td>
+                      <td class="align-middle text-sm">
+                      <h6 class="mb-0 text-sm"><?php echo getBookTypeName($conn, $item['book_type_id']); ?></h6>
+                      </td>
+                      <td class="align-middle text-sm">
+                      <h6 class="mb-0 text-sm"><?php echo getBookLevelName($conn, $item['book_level_id']); ?></h6>
+                      </td>
+                      <td class="align-middle text-sm">
+                      <h6 class="mb-0 text-sm"><?php echo getSubjectName($conn, $item['subject_id']); ?></h6>
+                      </td>
+                      <td class="align-middle text-sm">
+                      <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["authorAddress"]);?></h6>
+                      <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["email"]);?></p>
+                      </td>
+                      <td class="align-middle text-sm">
+                      <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["created_at"]);?></h6>
+                      <p class="text-xs text-secondary mb-0">ahmed</p>
+                      </td>
+                      <!-- Get Special Data For Teacher ! --> 
+                      <?php $teacherData = getTeacherData($conn, $item['id']); ?>
+                      <td class="align-middle text-sm">
+                      <h6 class="mb-0 text-sm"><?php echo $teacherData['teacherCertificate']; ?></h6>
+                      </td>
+                      <td class="align-middle text-sm">
+                      <h6 class="mb-0 text-sm"><?php echo $teacherData['teacherExperience']; ?></h6>
+                      </td>
+                      <td class="align-middle text-sm">
+                      <h6 class="mb-0 text-sm"><?php echo $teacherData['teacherRank']; ?></h6>
+                      <p class="text-xs text-secondary mb-0"><?php echo $teacherData['workFoundation']; ?>></p>
+                      </td>
+
+                      <td class="align-middle text-center">
+                            <a href="update_authors.php?id=<?php echo $id;?>" class="btn badge-sm bg-gradient-primary"> <i class="material-icons-round align-middle" style="font-size: 18px;">edit</i></a>
+                            <a href="delete_authors.php?id=<?php echo $id;?>" class="btn badge-sm bg-gradient-danger"> <i class="material-icons-round align-middle" style="font-size: 18px;">delete</i></a>
+                      </td>
+                    </tr>
+                    <?php
+                }
+                ?>
+                  </tbody>
+                </table>
+                <?php
+                include('../pagination.php');
+                  ?>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+<?php
+ mysqli_close($conn);
+include('footer.php');
+?>
+
+          
