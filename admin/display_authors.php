@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('secure.php');
 include('../connect.php');
 include('../dash_functions.php'); 
 $table = "authors";
@@ -139,7 +140,7 @@ include('header.php');
        
         <h4 class="mb-3">إضافة مؤلف</h4>
           <div class="input-group input-group-outline my-3">
-          <a href="../okForm.php" class="btn btn-secondary">Create</a>
+          <a href="add_author.php" class="btn btn-secondary">Create</a>
               </div>
                 
           <form role="form">
@@ -235,7 +236,7 @@ include('header.php');
                 ?>
                     <tr>
                     <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm  pe-3"><?php echo htmlspecialchars($item["id"]);?></h6>
+                      <h6 class="mb-0 text-sm pe-3"><?php echo htmlspecialchars($item["id"]);?></h6>
                       </td>
                       <td>
                         <div class="d-flex px-2 py-1">
@@ -265,8 +266,8 @@ include('header.php');
                       <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["email"]);?></p>
                       </td>
                       <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["created_at"]);?></h6>
-                      <p class="text-xs text-secondary mb-0">ahmed</p>
+                      <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["inserted_by_username"]);?></h6>
+                      <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["created_at"]);?></p>
                       </td>
                       <!-- Get Special Data For Teacher ! --> 
                       <?php $teacherData = getTeacherData($conn, $item['id']); ?>
@@ -282,8 +283,8 @@ include('header.php');
                       </td>
 
                       <td class="align-middle text-center">
-                            <a href="update_authors.php?id=<?php echo $id;?>" class="btn badge-sm bg-gradient-primary"> <i class="material-icons-round align-middle" style="font-size: 18px;">edit</i></a>
-                            <a href="delete_authors.php?id=<?php echo $id;?>" class="btn badge-sm bg-gradient-danger"> <i class="material-icons-round align-middle" style="font-size: 18px;">delete</i></a>
+                            <a href="update_author.php?id=<?php echo htmlspecialchars($item["id"]);?>&type=<?php echo htmlspecialchars($item["author_type"]);?>&book_type_id=<?php echo htmlspecialchars($item["book_type_id"]); ?>" class="btn badge-sm bg-gradient-primary"> <i class="material-icons-round align-middle" style="font-size: 18px;">edit</i></a>
+                            <a href="delete_author.php?id=<?php echo htmlspecialchars($item["id"]);?>&type=<?php echo htmlspecialchars($item["author_type"]);?>" class="btn badge-sm bg-gradient-danger"> <i class="material-icons-round align-middle" style="font-size: 18px;">delete</i></a>
                       </td>
                     </tr>
                     <?php

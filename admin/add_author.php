@@ -75,12 +75,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // If there are no errors, proceed with registration
 if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($address_err) && empty($book_type_err) && empty($book_level_err) && empty($subject_err)) {
     // Create a database connection
-    include('../connect.php');
 
-    // Insert the new user record into the database
-    $sql_insert_user = "INSERT INTO authors (authorfullname, book_title, email, year_of_birth, phone, authorAddress, author_type, created_at, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?)";
+    include('../connect.php');
+    session_start();
+    $user_id = $_SESSION['id'];
+    $inserted_by = $_SESSION['username'];
+
+
+    // Insert the new user record into the database inserted_by_username
+    $sql_insert_user = "INSERT INTO authors (authorfullname, book_title, email, year_of_birth, phone, authorAddress, author_type, created_at, inserted_by_username,inserted_by_user_id, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)";
     $stmt_insert_user = mysqli_prepare($conn, $sql_insert_user);
-    mysqli_stmt_bind_param($stmt_insert_user, "sssssssiii", $uname, $book_title, $email, $year_of_birth, $phone, $address, $author_type, $book_type, $book_level, $subject);
+    mysqli_stmt_bind_param($stmt_insert_user, "ssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $address, $author_type, $inserted_by, $user_id, $book_type, $book_level, $subject);
+    
     mysqli_stmt_execute($stmt_insert_user);
 
     // Retrieve the user ID of the inserted user
@@ -111,11 +117,11 @@ if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($y
         elseif ($author_type === 'inspector') {
           // Insert inspector-specific data
           $inspectorExperience = trim($_POST["inspectorExperience"]);
-          $inspectorCertificate = trim($_POST["InspectorCertificate"]);
+          $inspectorCertificate = trim($_POST["inspectorCertificate"]);
           $inspectorRank = trim($_POST["inspectorRank"]);
           $inspectorWorkFoundation = trim($_POST["inspectorWorkFoundation"]);
       
-          $sql_insert_inspector_data = "INSERT INTO inspector_data (author_id, inspectorExperience, InspectorCertificate, inspectorRank, inspectorWorkFoundation) VALUES (?, ?, ?, ?, ?)";
+          $sql_insert_inspector_data = "INSERT INTO inspector_data (author_id, inspectorExperience, inspectorCertificate, inspectorRank, inspectorWorkFoundation) VALUES (?, ?, ?, ?, ?)";
           $stmt_insert_inspector_data = mysqli_prepare($conn, $sql_insert_inspector_data);
           mysqli_stmt_bind_param($stmt_insert_inspector_data, "issss", $author_id, $inspectorExperience, $inspectorCertificate, $inspectorRank, $inspectorWorkFoundation);
           mysqli_stmt_execute($stmt_insert_inspector_data);
@@ -148,17 +154,17 @@ if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($y
         mysqli_stmt_execute($stmt_insert_novelist_data);
     }
     // Store the success message in a session variable
-    session_start();
     $_SESSION['register_success_msg'] = "Author Registration successful.";
     // Registration successful, redirect to login page or dashboard
     header("Location: add_author.php");
     exit();
-
+    mysqli_stmt_close($stmt_insert_user);
     // Close the connection
     mysqli_close($conn);
   }
 }
 session_start();
+include('secure.php');
 $register_success_msg = isset($_SESSION['register_success_msg']) ? $_SESSION['register_success_msg'] : "";
 include('header.php');
 ?>
@@ -171,19 +177,21 @@ include('header.php');
      <?php unset($_SESSION['register_success_msg']); }  ?>
         <form role="form" action="" method="post">
             <h4 class="mb-3">إضافة مؤلف</h4>
-            <div class="d-flex">
-            <div class="input-group input-group-outline m-3">
+
+            <div class="border rounded p-4 shadow">
+    <h6 class="border-bottom pb-2 mb-3">معلومات المؤلف</h6>
+           <div class="d-flex">
+               <div class="input-group input-group-outline m-3">
                 <label for="username" class="form-label">اسم المؤلف</label>
                 <input type="text" class="form-control <?php echo (!empty($uname_err)) ? 'is-invalid' : ''; ?>"
                     id="username" name="txt_uname" value="<?php echo $uname; ?>" required/>
                     <span class="invalid-feedback"><?php echo $uname_err; ?></span>
                 </div>
-
-              <div class="input-group input-group-outline my-3">
-                <label for="book_title" class="form-label">عنوان الكتاب</label>
-                <input type="text" class="form-control <?php echo (!empty($book_title_err)) ? 'is-invalid' : ''; ?>"
-                  id="book_title" name="book_title" value="<?php echo $book_title; ?>" />
-                <span class="invalid-feedback"><?php echo $book_title_err; ?></span>
+                <div class="input-group input-group-outline my-3">
+                <label for="phone" class="form-label">الهاتف</label>
+                <input type="text" class="form-control <?php echo (!empty($phone_err)) ? 'is-invalid' : ''; ?>" id="phone"
+                  name="txt_phone" value="<?php echo $phone; ?>" />
+                <span class="invalid-feedback"><?php echo $phone_err; ?></span>
               </div>
               </div>
 
@@ -204,52 +212,13 @@ include('header.php');
 
               <div class="d-flex">
               <div class="input-group input-group-outline m-3">
-                <label for="phone" class="form-label">الهاتف</label>
-                <input type="text" class="form-control <?php echo (!empty($phone_err)) ? 'is-invalid' : ''; ?>" id="phone"
-                  name="txt_phone" value="<?php echo $phone; ?>" />
-                <span class="invalid-feedback"><?php echo $phone_err; ?></span>
-              </div>
-              <div class="input-group input-group-outline my-3">
                 <label for="address" class="form-label">العنوان</label>
                 <input type="text" class="form-control <?php echo (!empty($address_err)) ? 'is-invalid' : ''; ?>" id="address"
                   name="txt_address" value="<?php echo $address; ?>" />
                 <span class="invalid-feedback"><?php echo $address_err; ?></span>
               </div>
-              </div>
 
-              <div class="d-flex">
-                <div class="input-group input-group-outline m-3">
-                  <select class="form-control" id="book_type" name="book_type" required>
-                    <option value="" disabled selected>-- نوع الكتاب --</option>
-                    <?php while ($row = mysqli_fetch_assoc($result_book_types)) { ?>
-                      <option value="<?php echo $row['id']; ?>"><?php echo $row['type_name']; ?></option>
-                    <?php } ?>
-                  </select>
-                </div>
-                <div class="input-group input-group-outline my-3">
-                  <select class="form-control" id="book_level" name="book_level" required>
-                    <option value="" disabled selected>-- مستوى الكتاب --</option>
-                    <?php while ($row = mysqli_fetch_assoc($result_book_levels)) { ?>
-                      <option value="<?php echo $row['id']; ?>" data-book-type-id="<?php echo $row['book_type_id']; ?>">
-                        <?php echo $row['level_name']; ?>
-                      </option>
-                    <?php } ?>
-                  </select>
-                </div>
-                </div>
-
-                <div class="d-flex">
-                <div class="input-group input-group-outline m-3">
-                  <select class="form-control" id="subject" name="subject" required>
-                    <option value="">-- المادة --</option>
-                    <?php while ($row = mysqli_fetch_assoc($result_subjects)) { ?>
-                      <option value="<?php echo $row['id']; ?>" data-book-level-id="<?php echo $row['book_level_id']; ?>">
-                        <?php echo $row['subject_name']; ?>
-                      </option>
-                    <?php } ?>
-                  </select>
-                </div>
-                <div class="input-group input-group-outline my-3">
+              <div class="input-group input-group-outline my-3">
                 <select class="form-control" id="author_type" name="author_type" required>
                   <option value="" disabled selected>-- نوع المؤلف --</option>
                   <option value="student">Student</option>
@@ -261,7 +230,7 @@ include('header.php');
                 </select>
               </div>
               </div>
-            <!-- Student Specific Inputs -->
+               <!-- Student Specific Inputs -->
             <div class="d-flex">
             <div class="input-group input-group-outline m-3" id="studentInputs" style="display: none;">
           
@@ -291,9 +260,6 @@ include('header.php');
                 </div>
             </div>
             </div>
-
-
-
 
             <!-- Teacher Specific Inputs -->
             <div class="d-flex">
@@ -325,7 +291,6 @@ include('header.php');
             </div>
             </div>
 
-
                 <!-- Inspector Specific Inputs -->
                 <div class="d-flex">
                 <div class="input-group input-group-outline m-3" id="inspectorInputs" style="display: none;">
@@ -337,8 +302,8 @@ include('header.php');
                     </div>
                     <div class="col-md-6">
                     <div class="input-group input-group-outline me-3">
-                        <label for="InspectorCertificate" class="form-label">Inspector Certificate</label>
-                        <input type="text" class="form-control" id="InspectorCertificate" name="InspectorCertificate">
+                        <label for="inspectorCertificate" class="form-label">Inspector Certificate</label>
+                        <input type="text" class="form-control" id="inspectorCertificate" name="inspectorCertificate">
                     </div>
                     </div>
                     <div class="col-md-6">
@@ -355,7 +320,6 @@ include('header.php');
                     </div>
                 </div>
                 </div>
-
 
                <!-- Doctor Specific Inputs -->
                 <div class="d-flex">
@@ -375,7 +339,6 @@ include('header.php');
                 </div>
                 </div>
 
-
                 <!-- Trainer Specific Inputs -->
                 <div class="d-flex">
                 <div class="input-group input-group-outline m-3" id="trainerInputs" style="display: none;">
@@ -394,13 +357,61 @@ include('header.php');
                 </div>
                 </div>
 
-
                     <!-- novelist Specific Inputs -->
                 <div class="input-group input-group-outline my-3" id="novelistInputs" style="display: none;">
                   <label for="novelistfield" class="form-label">The field</label>
                   <input type="text" class="form-control" id="novelistfield" name="novelistfield">
                 </div>
-                
+
+                </div>
+            <!-- Author Info End-->
+             
+              
+              
+              <div class="border rounded p-4 my-4 shadow">
+          <h6 class="border-bottom pb-2 mb-3">معلومات الكتاب</h6>
+              <div class="d-flex">
+                <div class="input-group input-group-outline m-3">
+                  <label for="book_title" class="form-label">عنوان الكتاب</label>
+                  <input type="text" class="form-control <?php echo (!empty($book_title_err)) ? 'is-invalid' : ''; ?>"
+                    id="book_title" name="book_title" value="<?php echo $book_title; ?>" />
+                  <span class="invalid-feedback"><?php echo $book_title_err; ?></span>
+              </div>
+
+                <div class="input-group input-group-outline my-3">
+                  <select class="form-control" id="book_type" name="book_type" required>
+                    <option value="" disabled selected>-- نوع الكتاب --</option>
+                    <?php while ($row = mysqli_fetch_assoc($result_book_types)) { ?>
+                      <option value="<?php echo $row['id']; ?>"><?php echo $row['type_name']; ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+                </div>
+
+                <div class="d-flex">
+                <div class="input-group input-group-outline m-3">
+                  <select class="form-control" id="book_level" name="book_level" required>
+                    <option value="" disabled selected>-- مستوى الكتاب --</option>
+                    <?php while ($row = mysqli_fetch_assoc($result_book_levels)) { ?>
+                      <option value="<?php echo $row['id']; ?>" data-book-type-id="<?php echo $row['book_type_id']; ?>">
+                        <?php echo $row['level_name']; ?>
+                      </option>
+                    <?php } ?>
+                  </select>
+                </div>
+               
+                <div class="input-group input-group-outline my-3">
+                  <select class="form-control" id="subject" name="subject" required>
+                    <option value="">-- المادة --</option>
+                    <?php while ($row = mysqli_fetch_assoc($result_subjects)) { ?>
+                      <option value="<?php echo $row['id']; ?>" data-book-level-id="<?php echo $row['book_level_id']; ?>">
+                        <?php echo $row['subject_name']; ?>
+                      </option>
+                    <?php } ?>
+                  </select>
+                </div>
+              </div>
+              </div>
 
                 <button type="submit" name="but_submit" class="btn bg-gradient-primary" >Create</button>
                 <?php if (!empty($register_err)) { ?>

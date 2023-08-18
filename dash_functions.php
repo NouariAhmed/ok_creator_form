@@ -69,16 +69,16 @@
             }
                     // Function to get inspector data by user ID
             function getInspectorData($conn, $userId) {
-            $sql = "SELECT inspectorExperience, InspectorCertificate, inspectorRank, inspectorWorkFoundation FROM inspector_data WHERE author_id = ?";
+            $sql = "SELECT inspectorExperience, inspectorCertificate, inspectorRank, inspectorWorkFoundation FROM inspector_data WHERE author_id = ?";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, "i", $userId);
             mysqli_stmt_execute($stmt);
-            mysqli_stmt_bind_result($stmt, $inspectorExperience, $InspectorCertificate, $inspectorRank, $inspectorWorkFoundation);
+            mysqli_stmt_bind_result($stmt, $inspectorExperience, $inspectorCertificate, $inspectorRank, $inspectorWorkFoundation);
             mysqli_stmt_fetch($stmt);
             mysqli_stmt_close($stmt);
             return [
                 'inspectorExperience' => $inspectorExperience,
-                'InspectorCertificate' => $InspectorCertificate,
+                'inspectorCertificate' => $inspectorCertificate,
                 'inspectorRank' => $inspectorRank,
                 'inspectorWorkFoundation' => $inspectorWorkFoundation
             ];

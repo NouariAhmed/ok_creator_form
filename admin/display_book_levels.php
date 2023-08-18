@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('secure.php');
 include('../connect.php');
 $table = "book_levels";
 
@@ -137,7 +138,7 @@ include('header.php');
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm"><?php echo $id;?></h6>
+                            <h6 class="mb-0 text-sm pe-3"><?php echo $id;?></h6>
                           </div>
                         </div>
                       </td>

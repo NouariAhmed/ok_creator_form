@@ -1,6 +1,7 @@
 <?php
 session_start();
 ob_start(); // Start output buffering
+include('secure.php');
 include('header.php');
 ?>
     <div class="container-fluid py-4">

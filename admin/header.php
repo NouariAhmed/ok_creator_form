@@ -44,15 +44,6 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link " href="add_author.php">
-            <div class="text-white text-center ms-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons-round opacity-10">person_add</i>
-            </div>
-            <span class="nav-link-text me-1">إضافة مؤلف</span>
-          </a>
-        </li>
-
-        <li class="nav-item">
           <a class="nav-link " href="display_book_types.php?page=1">
             <div class="text-white text-center ms-2 d-flex align-items-center justify-content-center">
               <i class="material-icons-round opacity-10">menu_book</i>
@@ -80,9 +71,9 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link " href="../register.php">
+          <a class="nav-link " href="display_users.php">
             <div class="text-white text-center ms-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons-round opacity-10">account_circle</i>
+              <i class="material-icons-round opacity-10">person_add</i>
             </div>
             <span class="nav-link-text me-1">إضافة أدمن</span>
           </a>

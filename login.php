@@ -57,7 +57,7 @@ if (empty($uname_err) && empty($pwd_err)) {
             $_SESSION['username'] = $username;
             if ($role == "admin") {
                 // Admin user, redirect to dashboard
-                header("Location: admin/admin.php");
+                header("Location: admin/index.php");
             } else {
                 // Member user, redirect to welcome page
                 header("Location: register.php");

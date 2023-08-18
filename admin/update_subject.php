@@ -1,6 +1,7 @@
 <?php
 session_start();
 ob_start(); // Start output buffering
+include('secure.php');
 include('header.php');
 ?>
     <div class="container-fluid py-4">
@@ -165,6 +166,7 @@ include('header.php');
 
     // On page load, populate book levels based on the initial selected book type
     populateBookLevels(<?php echo json_encode($book_type_id); ?>, <?php echo json_encode($book_level_id); ?>);
+
 </script>
 <?php
      // Close the database connection
