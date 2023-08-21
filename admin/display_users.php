@@ -158,25 +158,25 @@ include('header.php');
                   <h4 class="mb-3">إضافة أدمن</h4>
                   
                     <div class="input-group input-group-outline my-3">
-                      <label class="form-label">Username</label>
+                      <label class="form-label">إسم المستخدم</label>
                       <input type="text" class="form-control <?php echo (!empty($uname_err)) ? 'is-invalid' : ''; ?>"
                         id="username" name="txt_uname" value="<?php echo $uname; ?>" />
                       <span class="invalid-feedback"><?php echo $uname_err; ?></span>
                     </div>
                     <div class="input-group input-group-outline my-3">
-                      <label class="form-label">Email</label>
+                      <label class="form-label">الإيميل</label>
                       <input type="email" class="form-control <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>"
                         id="email" name="txt_email" value="<?php echo $email; ?>" />
                       <span class="invalid-feedback"><?php echo $email_err; ?></span>
                     </div>
                     <div class="input-group input-group-outline my-3">
-                      <label class="form-label">Password</label>
+                      <label class="form-label">كلمة السر</label>
                       <input type="password" class="form-control <?php echo (!empty($pwd_err)) ? 'is-invalid' : ''; ?>"
                         id="password" name="txt_pwd" />
                       <span class="invalid-feedback"><?php echo $pwd_err; ?></span>
                     </div>
                     <div class="input-group input-group-outline my-3">
-                      <label class="form-label">Confirm Password</label>
+                      <label class="form-label">تأكيد كلمة السر</label>
                       <input type="password" class="form-control <?php echo (!empty($confirm_pwd_err)) ? 'is-invalid' : ''; ?>" id="confirm_pwd"
                       name="txt_confirm_pwd" />
                     <span class="invalid-feedback"><?php echo $confirm_pwd_err; ?></span>
@@ -185,8 +185,8 @@ include('header.php');
                     <div class="input-group input-group-outline my-3">
                     <select name="user_type" class="form-control" required>
                     <option value="" disabled selected> -- اختر دور المستخدم -- </option>
-                    <option value="Admin">Admin</option>
-                    <option value="member">member</option>
+                    <option value="Admin">أدمن</option>
+                    <option value="member">عضو</option>
                    </select>
                     </div>
                                    

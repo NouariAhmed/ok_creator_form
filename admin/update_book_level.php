@@ -93,7 +93,7 @@ include('header.php');
                  </div>
                  <div class="form-group">
                   <label class="form-label">اسم مستوى الكتاب:</label>
-                  <input type="text" name="level_name" class="form-control border pe-2" value="<?php echo htmlspecialchars($level_name); ?>" required>
+                  <input type="text" name="level_name" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($level_name); ?>" required>
               </div>
               <div class="form-group mt-3">
                   <button type="submit" name="updateData" class="btn btn-primary">Update</button>

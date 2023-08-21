@@ -47,8 +47,16 @@ include('header.php');
     
                         mysqli_stmt_close($stmt);
                     } else {
+                          // Get user data to display the name in the confirmation message
+                            $sql = "SELECT username FROM users WHERE id = ?";
+                            $delete_stmt = mysqli_prepare($conn, $sql);
+                            mysqli_stmt_bind_param($delete_stmt, "i", $id);
+                            mysqli_stmt_execute($delete_stmt);
+                            $result = mysqli_stmt_get_result($delete_stmt);
+                            $userData = mysqli_fetch_assoc($result);
+                            mysqli_stmt_close($delete_stmt);
                         echo '
-                        <p class="text-right">هل أنت متأكد أنك تريد حذف العنصر؟</p>
+                        <p class="text-right">هل أنت متأكد أنك تريد حذف المستخدم  ' . htmlspecialchars($userData['username']) .' ؟</p>
                         <form action="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '" method="post" class="d-inline">
                             <button type="submit" name="confirm" value="yes" class="btn btn-danger">نعم</button>
                         </form>

@@ -256,34 +256,34 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                     <div class="form-group col-md-6">
                     <input type="hidden" name="author_type_for_update" value="<?php echo htmlspecialchars($author_type); ?>">
 
-                        <label class="form-label">Full Author Name:</label>
-                        <input type="text" name="authorfullname" class="form-control border pe-2" value="<?php echo htmlspecialchars($uname); ?>" required>
+                        <label class="form-label">إسم المؤلف:</label>
+                        <input type="text" name="authorfullname" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($uname); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                    <label class="form-label">Phone:</label>
-                    <input type="text" name="phone" class="form-control border pe-2" value="<?php echo htmlspecialchars($phone); ?>" required>
+                    <label class="form-label">الهاتف:</label>
+                    <input type="text" name="phone" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($phone); ?>" required>
                 </div>
                 </div>
 
                 <div class="row">
                 <div class="form-group col-md-6">
-                    <label class="form-label">Email:</label>
-                    <input type="email" name="email" class="form-control border pe-2" value="<?php echo htmlspecialchars($email); ?>" required>
+                    <label class="form-label">الإيميل:</label>
+                    <input type="email" name="email" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($email); ?>" required>
                 </div>
                 <div class="form-group col-md-6">
-                    <label class="form-label">Year of Birth:</label>
-                    <input type="text" name="year_of_birth" class="form-control border pe-2" value="<?php echo htmlspecialchars($year_of_birth); ?>" required>
+                    <label class="form-label">سنة الميلاد:</label>
+                    <input type="text" name="year_of_birth" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($year_of_birth); ?>" required>
                 </div>
                 </div>
 
                 <div class="row">
                 <div class="form-group col-md-6">
-                    <label class="form-label">authorAddress:</label>
-                    <input type="text" name="authorAddress" class="form-control border pe-2" value="<?php echo htmlspecialchars($authorAddress); ?>" required>
+                    <label class="form-label">عنوان المؤلف:</label>
+                    <input type="text" name="authorAddress" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($authorAddress); ?>" required>
                 </div>
                 <div class="form-group col-md-6">
-                <label class="form-label">author Type:</label>
-                    <input type="text" name="author_type" class="form-control border pe-2" value="<?php echo htmlspecialchars($author_type); ?>" disabled>
+                <label class="form-label">نوع المؤلف:</label>
+                    <input type="text" name="author_type" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($author_type); ?>" disabled>
                 </div>
                 </div>
            
@@ -291,100 +291,100 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                 <?php if ($author_type === 'student') {?>
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">Student Level:</label>
-                        <input type="text" name="studentLevel" class="form-control border pe-2" value="<?php echo htmlspecialchars($studentLevel); ?>" required>
+                        <label class="form-label">مستوى الطالب:</label>
+                        <input type="text" name="studentLevel" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($studentLevel); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">Student Specialty:</label>
-                        <input type="text" name="studentSpecialty" class="form-control border pe-2" value="<?php echo htmlspecialchars($studentSpecialty); ?>" required>
+                        <label class="form-label">التخصص:</label>
+                        <input type="text" name="studentSpecialty" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($studentSpecialty); ?>" required>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">Baccalaureate Rate:</label>
-                        <input type="text" name="baccalaureateRate" class="form-control border pe-2" value="<?php echo htmlspecialchars($baccalaureateRate); ?>" required>
+                        <label class="form-label">معدل البكالوريا:</label>
+                        <input type="text" name="baccalaureateRate" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($baccalaureateRate); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">Baccalaureate Year:</label>
-                        <input type="text" name="baccalaureateYear" class="form-control border pe-2" value="<?php echo htmlspecialchars($baccalaureateYear); ?>" required>
+                        <label class="form-label">سنة البكالوريا:</label>
+                        <input type="text" name="baccalaureateYear" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($baccalaureateYear); ?>" required>
                     </div>
                 </div>
                   <!-- Specific Inputs for Techer -->
                 <?php } elseif ($author_type === 'teacher') {?>
                     <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">Teacher Experience:</label>
-                        <input type="text" name="teacherExperience" class="form-control border pe-2" value="<?php echo htmlspecialchars($teacherExperience); ?>" required>
+                        <label class="form-label">الخبرة:</label>
+                        <input type="text" name="teacherExperience" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($teacherExperience); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">Teacher Certificate:</label>
-                        <input type="text" name="teacherCertificate" class="form-control border pe-2" value="<?php echo htmlspecialchars($teacherCertificate); ?>" required>
+                        <label class="form-label">الشهادة:</label>
+                        <input type="text" name="teacherCertificate" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($teacherCertificate); ?>" required>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">Teacher Rank:</label>
-                        <input type="text" name="teacherRank" class="form-control border pe-2" value="<?php echo htmlspecialchars($teacherRank); ?>" required>
+                        <label class="form-label">الرتبة:</label>
+                        <input type="text" name="teacherRank" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($teacherRank); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">Work Foundation:</label>
-                        <input type="text" name="workFoundation" class="form-control border pe-2" value="<?php echo htmlspecialchars($workFoundation); ?>" required>
+                        <label class="form-label">مؤسسة العمل:</label>
+                        <input type="text" name="workFoundation" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($workFoundation); ?>" required>
                     </div>
                 </div>
                   <!-- Specific Inputs for Inspector -->
                 <?php  } elseif ($author_type === 'inspector') {?>
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">Inspector Experience:</label>
-                        <input type="text" name="inspectorExperience" class="form-control border pe-2" value="<?php echo htmlspecialchars($inspectorExperience); ?>" required>
+                        <label class="form-label">خبرة المفتش:</label>
+                        <input type="text" name="inspectorExperience" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($inspectorExperience); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">Inspector Certificate:</label>
-                        <input type="text" name="inspectorCertificate" class="form-control border pe-2" value="<?php echo htmlspecialchars($inspectorCertificate); ?>" required>
+                        <label class="form-label">الشهادة:</label>
+                        <input type="text" name="inspectorCertificate" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($inspectorCertificate); ?>" required>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">Inspector Rank:</label>
-                        <input type="text" name="inspectorRank" class="form-control border pe-2" value="<?php echo htmlspecialchars($inspectorRank); ?>" required>
+                        <label class="form-label">الرتبة:</label>
+                        <input type="text" name="inspectorRank" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($inspectorRank); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">Inspector Work Foundation:</label>
-                        <input type="text" name="inspectorWorkFoundation" class="form-control border pe-2" value="<?php echo htmlspecialchars($inspectorWorkFoundation); ?>" required>
+                        <label class="form-label">الولاية :</label>
+                        <input type="text" name="inspectorWorkFoundation" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($inspectorWorkFoundation); ?>" required>
                     </div>
                 </div>
                 <!-- Specific Inputs for Doctor -->  
                 <?php } elseif ($author_type === 'doctor') {?>
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">Doctor Specialty:</label>
-                        <input type="text" name="specialty" class="form-control border pe-2" value="<?php echo htmlspecialchars($specialty); ?>" required>
+                        <label class="form-label">التخصص:</label>
+                        <input type="text" name="specialty" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($specialty); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">Doctor Work Foundation:</label>
-                        <input type="text" name="drWorkFoundation" class="form-control border pe-2" value="<?php echo htmlspecialchars($drWorkFoundation); ?>" required>
+                        <label class="form-label">مكان العمل:</label>
+                        <input type="text" name="drWorkFoundation" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($drWorkFoundation); ?>" required>
                     </div>
                 </div>
                 <!-- Specific Inputs for trainer -->
                 <?php } elseif ($author_type === 'trainer') {?>
                     <div class="row">
                 <div class="form-group col-md-6">
-                    <label class="form-label">Field:</label>
-                    <input type="text" name="field" class="form-control border pe-2" value="<?php echo htmlspecialchars($field); ?>" required>
+                    <label class="form-label">المجال:</label>
+                    <input type="text" name="field" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($field); ?>" required>
                 </div>
                 <div class="form-group col-md-6">
-                    <label class="form-label">Trainer Experience:</label>
-                    <input type="text" name="trainerExperience" class="form-control border pe-2" value="<?php echo htmlspecialchars($trainerExperience); ?>" required>
+                    <label class="form-label">الخبرة:</label>
+                    <input type="text" name="trainerExperience" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($trainerExperience); ?>" required>
                 </div>
             </div>
                 <?php } elseif ($author_type === 'novelist') {?>
                     <div class="row">
                         <div class="form-group col-md-12">
-                            <label class="form-label">Novelist Field:</label>
-                            <input type="text" name="novelistfield" class="form-control border pe-2" value="<?php echo htmlspecialchars($novelistfield); ?>" required>
+                            <label class="form-label">المجال :</label>
+                            <input type="text" name="novelistfield" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($novelistfield); ?>" required>
                         </div>
                     </div>
                 <?php } ?>
@@ -447,7 +447,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
              </div>
         <div class="input-group input-group-outline my-3 me-3" style="width: 50%;">
                 <label for="book_title" class="form-label"></label>
-                <input type="text" name="book_title" id="book_title" class="form-control border" placeholder="Book title" value="<?php echo htmlspecialchars($book_title); ?>" required>
+                <input type="text" name="book_title" id="book_title" class="form-control border" placeholder="عنوان الكتاب" value="<?php echo htmlspecialchars($book_title); ?>" required>
             </div>
         </div>
         </div>

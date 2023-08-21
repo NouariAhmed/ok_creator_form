@@ -160,28 +160,28 @@ $username = $email = $role ='';
                         <h4 class="mb-3">إضافة أدمن</h4>
                   
                     <div class="form-group">
-                      <label class="form-label">Username</label>
+                      <label class="form-label">إسم المستخدم</label>
                       <input type="text" name="txt_uname" class="form-control border pe-2" value="<?php echo htmlspecialchars($username); ?>">
                     </div>
 
                     <div class="form-group">
-                      <label class="form-label">Email</label>
+                      <label class="form-label">الإيميل</label>
                       <input type="email" name="txt_email" class="form-control border pe-2" value="<?php echo htmlspecialchars($email); ?>">
                     </div>
                     <div class="form-group">
-                    <label class="form-label">Password</label>
+                    <label class="form-label">كلمة السر</label>
                     <input type="password" name="txt_password" class="form-control border pe-2">
                    </div>
                     <div class="form-group">
-                        <label class="form-label">Confirm Password</label>
+                        <label class="form-label">تأكيد كلة السر</label>
                         <input type="password" name="txt_confirm_password" class="form-control border pe-2">
                     </div>
                     <div class="form-group">
-                    <label class="form-label">User Role</label>
+                    <label class="form-label">دور المستخدم</label>
                     <select name="user_type" class="form-control border pe-2" required>
-                        <option value="" disabled> -- Select User Role -- </option>
-                        <option value="admin" <?php if ($role === 'admin') echo 'selected'; ?>>Admin</option>
-                        <option value="member" <?php if ($role === 'member') echo 'selected'; ?>>Member</option>
+                        <option value="" disabled> -- إختر دور المستخدم -- </option>
+                        <option value="admin" <?php if ($role === 'admin') echo 'selected'; ?>>أدمن</option>
+                        <option value="member" <?php if ($role === 'member') echo 'selected'; ?>>عضو</option>
                     </select>
                     </div>
 

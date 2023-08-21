@@ -20,6 +20,10 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <!-- CSS Files -->
   <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.0.0" rel="stylesheet" />
+  <!-- Pure JavaScript Modal Library -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pure-js-modal@1.0.0/dist/modal.css">
+<script src="https://cdn.jsdelivr.net/npm/pure-js-modal@1.0.0/dist/modal.js"></script>
+
 </head>
 
 <body class="g-sidenav-show rtl bg-gray-200">
@@ -75,7 +79,7 @@
             <div class="text-white text-center ms-2 d-flex align-items-center justify-content-center">
               <i class="material-icons-round opacity-10">person_add</i>
             </div>
-            <span class="nav-link-text me-1">إضافة أدمن</span>
+            <span class="nav-link-text me-1">المستخدمون</span>
           </a>
         </li>
     

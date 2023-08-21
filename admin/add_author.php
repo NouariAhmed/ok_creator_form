@@ -221,12 +221,12 @@ include('header.php');
               <div class="input-group input-group-outline my-3">
                 <select class="form-control" id="author_type" name="author_type" required>
                   <option value="" disabled selected>-- نوع المؤلف --</option>
-                  <option value="student">Student</option>
-                  <option value="teacher">Teacher</option>
-                  <option value="inspector">inspector</option>
-                  <option value="doctor">doctor</option>
-                  <option value="trainer">trainer</option>
-                  <option value="novelist">novelist</option>
+                  <option value="student">طالب</option>
+                  <option value="teacher">أستاذ</option>
+                  <option value="inspector">مفتش</option>
+                  <option value="doctor">طبيب</option>
+                  <option value="trainer">مدرب</option>
+                  <option value="novelist">روائي</option>
                 </select>
               </div>
               </div>
@@ -236,25 +236,25 @@ include('header.php');
           
                 <div class="col-md-6">
                 <div class="input-group input-group-outline mb-3">
-                    <label for="studentLevel" class="form-label">Student Level</label>
+                    <label for="studentLevel" class="form-label">المستوى</label>
                     <input type="text" class="form-control" id="studentLevel" name="studentLevel">
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline me-3">
-                    <label for="studentSpecialty" class="form-label">Student Specialty</label>
+                    <label for="studentSpecialty" class="form-label">التخصص</label>
                     <input type="text" class="form-control" id="studentSpecialty" name="studentSpecialty">
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline mb-3">
-                    <label for="baccalaureateRate" class="form-label">Baccalaureate Rate</label>
+                    <label for="baccalaureateRate" class="form-label">معدل البكالوريا</label>
                     <input type="text" class="form-control" id="baccalaureateRate" name="baccalaureateRate">
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline me-3">
-                    <label for="baccalaureateYear" class="form-label">Baccalaureate Year</label>
+                    <label for="baccalaureateYear" class="form-label">سنة البكالوريا</label>
                     <input type="text" class="form-control" id="baccalaureateYear" name="baccalaureateYear">
                 </div>
                 </div>
@@ -266,25 +266,25 @@ include('header.php');
             <div class="input-group input-group-outline m-3" id="teacherInputs" style="display: none;">
                 <div class="col-md-6">
                 <div class="input-group input-group-outline mb-3">
-                    <label for="teacherExperience" class="form-label">Teacher Experience</label>
+                    <label for="teacherExperience" class="form-label">الخبرة</label>
                     <input type="text" class="form-control" id="teacherExperience" name="teacherExperience">
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline me-3">
-                    <label for="teacherCertificate" class="form-label">Teacher Certificate</label>
+                    <label for="teacherCertificate" class="form-label">الشهادة</label>
                     <input type="text" class="form-control" id="teacherCertificate" name="teacherCertificate">
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline mb-3">
-                    <label for="teacherRank" class="form-label">Teacher Rank</label>
+                    <label for="teacherRank" class="form-label">الرتبة</label>
                     <input type="text" class="form-control" id="teacherRank" name="teacherRank">
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline me-3">
-                    <label for="workFoundation" class="form-label">Work Experience</label>
+                    <label for="workFoundation" class="form-label">مؤسسة العمل</label>
                     <input type="text" class="form-control" id="workFoundation" name="workFoundation">
                 </div>
                 </div>
@@ -296,25 +296,25 @@ include('header.php');
                 <div class="input-group input-group-outline m-3" id="inspectorInputs" style="display: none;">
                     <div class="col-md-6">
                     <div class="input-group input-group-outline mb-3">
-                        <label for="inspectorExperience" class="form-label">Inspector Experience</label>
+                        <label for="inspectorExperience" class="form-label">الخبرة</label>
                         <input type="text" class="form-control" id="inspectorExperience" name="inspectorExperience">
                     </div>
                     </div>
                     <div class="col-md-6">
                     <div class="input-group input-group-outline me-3">
-                        <label for="inspectorCertificate" class="form-label">Inspector Certificate</label>
+                        <label for="inspectorCertificate" class="form-label">الشهادة</label>
                         <input type="text" class="form-control" id="inspectorCertificate" name="inspectorCertificate">
                     </div>
                     </div>
                     <div class="col-md-6">
                     <div class="input-group input-group-outline mb-3">
-                        <label for="inspectorRank" class="form-label">Inspector Rank</label>
+                        <label for="inspectorRank" class="form-label">الرتبة</label>
                         <input type="text" class="form-control" id="inspectorRank" name="inspectorRank">
                     </div>
                     </div>
                     <div class="col-md-6">
                     <div class="input-group input-group-outline me-3">
-                        <label for="inspectorWorkFoundation" class="form-label">Inspector Work Experience</label>
+                        <label for="inspectorWorkFoundation" class="form-label">الولاية</label>
                         <input type="text" class="form-control" id="inspectorWorkFoundation" name="inspectorWorkFoundation">
                     </div>
                     </div>
@@ -326,13 +326,13 @@ include('header.php');
                 <div class="input-group input-group-outline m-3" id="doctorInputs" style="display: none;">
                     <div class="col-md-6">
                     <div class="input-group input-group-outline mb-3">
-                        <label for="specialty" class="form-label">Specialty</label>
+                        <label for="specialty" class="form-label">التخصص</label>
                         <input type="text" class="form-control" id="specialty" name="specialty">
                     </div>
                     </div>
                     <div class="col-md-6">
                     <div class="input-group input-group-outline me-3">
-                        <label for="drWorkFoundation" class="form-label">Dr Work Foundation</label>
+                        <label for="drWorkFoundation" class="form-label">مكان العمل</label>
                         <input type="text" class="form-control" id="drWorkFoundation" name="drWorkFoundation">
                     </div>
                     </div>
@@ -344,13 +344,13 @@ include('header.php');
                 <div class="input-group input-group-outline m-3" id="trainerInputs" style="display: none;">
                     <div class="col-md-6">
                     <div class="input-group input-group-outline mb-3">
-                        <label for="field" class="form-label">The Field</label>
+                        <label for="field" class="form-label">المجال</label>
                         <input type="text" class="form-control" id="field" name="field">
                     </div>
                     </div>
                     <div class="col-md-6">
                     <div class="input-group input-group-outline me-3">
-                        <label for="trainerExperience" class="form-label">Trainer Experience</label>
+                        <label for="trainerExperience" class="form-label">الخبرة</label>
                         <input type="text" class="form-control" id="trainerExperience" name="trainerExperience">
                     </div>
                     </div>
@@ -359,7 +359,7 @@ include('header.php');
 
                     <!-- novelist Specific Inputs -->
                 <div class="input-group input-group-outline my-3" id="novelistInputs" style="display: none;">
-                  <label for="novelistfield" class="form-label">The field</label>
+                  <label for="novelistfield" class="form-label">المجال</label>
                   <input type="text" class="form-control" id="novelistfield" name="novelistfield">
                 </div>
 
