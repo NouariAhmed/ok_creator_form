@@ -70,7 +70,7 @@ include('header.php');
                     header("Location: display_subjects.php");
                     exit; // Important! Ensure the script stops executing after redirection header is sent
                 } else {
-                    echo '<div class="alert alert-danger text-right">خطأ: ' . mysqli_error($conn) . '</div>';
+                    echo '<div class="alert alert-danger text-right">حدث خطأ:</div>';
                 }
                 // Close the prepared statement
                 mysqli_stmt_close($stmt);
@@ -111,11 +111,11 @@ include('header.php');
                  </select>
              </div>
              <div class="form-group">
-                <label class="form-label">اسم المادة:</label>
+                <label class="form-label">اسم المادة :</label>
                 <input type="text" name="subject_name" id="subject" class="form-control border pe-2" value="<?php echo htmlspecialchars(isset($item['subject_name']) ? $item['subject_name'] : ''); ?>" required>
             </div>       
               <div class="form-group mt-3">
-                  <button type="submit" name="updateData" class="btn btn-primary">Update</button>
+                  <button type="submit" name="updateData" class="btn btn-primary">تحديث</button>
               </div>
           </form>
           <hr>

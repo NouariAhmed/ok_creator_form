@@ -36,41 +36,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   // Validate username
   if (empty($uname)) {
-    $uname_err = "Please enter a full author name.";
+    $uname_err = "يرجى إدخال الإسم الكامل للمؤلف.";
   } elseif (!preg_match("/^[\p{L}\p{N}_\s]+$/u", $uname)) {
-    $uname_err = "author name can only contain letters, numbers, and underscores.";
+    $uname_err = " إسم المؤلف يجب أن يحتوي على حروف.";
   }
    // Validate username
    if (empty($book_title)) {
-    $book_title_err = "Please enter a Book Title.";
+    $book_title_err = "يرجى إدخال نوع الكتاب.";
   } elseif (!preg_match("/^[\p{L}\p{N}_\s]+$/u", $book_title)) {
-    $book_title_err = "Book Title can only contain letters, numbers, spaces, and underscores.";
+    $book_title_err = "نوع الكتاب يجب أن يحتوي على حروف.";
   }
 
   // Validate email
   if (empty($email)) {
-    $email_err = "Please enter an email address.";
+    $email_err = "يرجى إدخال عنوان إيميل صالح.";
   } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $email_err = "Invalid email format.";
+    $email_err = "نوع الإيميل غير صالح.";
   }
 
   // Validate year of birth
   if (empty($year_of_birth)) {
-    $year_of_birth_err = "Please enter a year of birth.";
+    $year_of_birth_err = "يرجى إدخال سنة الميلاد.";
   } elseif (!is_numeric($year_of_birth) || strlen($year_of_birth) !== 4) {
-    $year_of_birth_err = "Year of birth must be a 4-digit number.";
+    $year_of_birth_err = "سنة الميلاد يجب أن تحتوي على 4 أرقام.";
   }
 
   // Validate phone
   if (empty($phone)) {
-    $phone_err = "Please enter author phone number.";
+    $phone_err = "يرجى إدخال رقم هاتف المؤلف.";
   } elseif (!preg_match("/^\+?\d{1,4}?\s?\(?\d{1,4}?\)?[0-9\- ]+$/", $phone)) {
-    $phone_err = "Invalid phone number format.";
+    $phone_err = "رقم هاتف غير صالح.";
   }
 
   // Validate address
   if (empty($address)) {
-    $address_err = "Please enter author address.";
+    $address_err = "يرجى إدخال عنوان إقامة المؤلف.";
   }
 // If there are no errors, proceed with registration
 if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($address_err) && empty($book_type_err) && empty($book_level_err) && empty($subject_err)) {
@@ -154,7 +154,7 @@ if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($y
         mysqli_stmt_execute($stmt_insert_novelist_data);
     }
     // Store the success message in a session variable
-    $_SESSION['register_success_msg'] = "Author Registration successful.";
+    $_SESSION['register_success_msg'] = "تم إضافة المؤلف بنجاح.";
     // Registration successful, redirect to login page or dashboard
     header("Location: add_author.php");
     exit();
@@ -171,7 +171,7 @@ include('header.php');
     <div class="container-fluid py-4">
           <!-- Display the flash message if it exists -->
             <?php if (isset($_SESSION['register_success_msg'])) { ?>
-             <div class="alert alert-success mt-3" role="alert">
+             <div class="alert alert-success mt-3 text-white" role="alert">
                  <?php echo $_SESSION['register_success_msg']; ?>
              </div>
      <?php unset($_SESSION['register_success_msg']); }  ?>
@@ -181,44 +181,7 @@ include('header.php');
             <div class="border rounded p-4 shadow">
     <h6 class="border-bottom pb-2 mb-3">معلومات المؤلف</h6>
            <div class="d-flex">
-               <div class="input-group input-group-outline m-3">
-                <label for="username" class="form-label">اسم المؤلف</label>
-                <input type="text" class="form-control <?php echo (!empty($uname_err)) ? 'is-invalid' : ''; ?>"
-                    id="username" name="txt_uname" value="<?php echo $uname; ?>" required/>
-                    <span class="invalid-feedback"><?php echo $uname_err; ?></span>
-                </div>
-                <div class="input-group input-group-outline my-3">
-                <label for="phone" class="form-label">الهاتف</label>
-                <input type="text" class="form-control <?php echo (!empty($phone_err)) ? 'is-invalid' : ''; ?>" id="phone"
-                  name="txt_phone" value="<?php echo $phone; ?>" />
-                <span class="invalid-feedback"><?php echo $phone_err; ?></span>
-              </div>
-              </div>
-
-              <div class="d-flex">
-              <div class="input-group input-group-outline m-3">
-                <label for="email" class="form-label">الإيميل</label>
-                <input type="email" class="form-control <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>"
-                  id="email" name="txt_email" value="<?php echo $email; ?>" />
-                <span class="invalid-feedback"><?php echo $email_err; ?></span>
-              </div>
-              <div class="input-group input-group-outline my-3">
-                <label for="year_of_birth" class="form-label">سنة الميلاد (YYYY)</label>
-                <input type="text" class="form-control <?php echo (!empty($year_of_birth_err)) ? 'is-invalid' : ''; ?>"
-                  id="year_of_birth" name="txt_year_of_birth" value="<?php echo $year_of_birth; ?>" />
-                <span class="invalid-feedback"><?php echo $year_of_birth_err; ?></span>
-              </div>
-              </div>
-
-              <div class="d-flex">
-              <div class="input-group input-group-outline m-3">
-                <label for="address" class="form-label">العنوان</label>
-                <input type="text" class="form-control <?php echo (!empty($address_err)) ? 'is-invalid' : ''; ?>" id="address"
-                  name="txt_address" value="<?php echo $address; ?>" />
-                <span class="invalid-feedback"><?php echo $address_err; ?></span>
-              </div>
-
-              <div class="input-group input-group-outline my-3">
+           <div class="input-group input-group-outline m-3">
                 <select class="form-control" id="author_type" name="author_type" required>
                   <option value="" disabled selected>-- نوع المؤلف --</option>
                   <option value="student">طالب</option>
@@ -228,6 +191,44 @@ include('header.php');
                   <option value="trainer">مدرب</option>
                   <option value="novelist">روائي</option>
                 </select>
+              </div>
+
+               <div class="input-group input-group-outline my-3">
+                <label for="username" class="form-label">اسم المؤلف</label>
+                <input type="text" class="form-control <?php echo (!empty($uname_err)) ? 'is-invalid' : ''; ?>"
+                    id="username" name="txt_uname" value="<?php echo $uname; ?>" required/>
+                    <span class="invalid-feedback"><?php echo $uname_err; ?></span>
+                </div>
+              </div>
+              <div class="d-flex">
+              <div class="input-group input-group-outline m-3">
+                <label for="phone" class="form-label">الهاتف</label>
+                <input type="text" class="form-control <?php echo (!empty($phone_err)) ? 'is-invalid' : ''; ?>" id="phone"
+                  name="txt_phone" value="<?php echo $phone; ?>" required/>
+                <span class="invalid-feedback"><?php echo $phone_err; ?></span>
+              </div>
+              <div class="input-group input-group-outline my-3">
+                <label for="email" class="form-label">الإيميل</label>
+                <input type="email" class="form-control <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>"
+                  id="email" name="txt_email" value="<?php echo $email; ?>" required/>
+                <span class="invalid-feedback"><?php echo $email_err; ?></span>
+              </div>
+
+              </div>
+
+              <div class="d-flex">
+              <div class="input-group input-group-outline m-3">
+                <label for="address" class="form-label">العنوان</label>
+                <input type="text" class="form-control <?php echo (!empty($address_err)) ? 'is-invalid' : ''; ?>" id="address"
+                  name="txt_address" value="<?php echo $address; ?>" required/>
+                <span class="invalid-feedback"><?php echo $address_err; ?></span>
+              </div>
+
+              <div class="input-group input-group-outline my-3">
+                <label for="year_of_birth" class="form-label">سنة الميلاد (YYYY)</label>
+                <input type="text" class="form-control <?php echo (!empty($year_of_birth_err)) ? 'is-invalid' : ''; ?>"
+                  id="year_of_birth" name="txt_year_of_birth" value="<?php echo $year_of_birth; ?>" required/>
+                <span class="invalid-feedback"><?php echo $year_of_birth_err; ?></span>
               </div>
               </div>
                <!-- Student Specific Inputs -->
@@ -413,7 +414,7 @@ include('header.php');
               </div>
               </div>
 
-                <button type="submit" name="but_submit" class="btn bg-gradient-primary" >Create</button>
+                <button type="submit" name="but_submit" class="btn bg-gradient-primary" >إضـافة</button>
                 <?php if (!empty($register_err)) { ?>
                 <div class="alert alert-danger mt-3" role="alert">
                   <?php echo $register_err; ?>
@@ -462,13 +463,13 @@ include('header.php');
         // Generate the Book Level select options
         const bookLevelsOptions = data.map(level => `<option value="${level.id}">${level.level_name}</option>`);
         // Display the Book Level select
-        bookLevelSelect.innerHTML = '<option value="">Select Book Level</option>' + bookLevelsOptions.join('');
+        bookLevelSelect.innerHTML = '<option value="">-- إختر مستوى الكتاب --</option>' + bookLevelsOptions.join('');
         // Enable the Book Level select
         bookLevelSelect.disabled = false;
         // Clear and disable the Subject select
         clearSubject();
       })
-      .catch(error => console.error('Error fetching book levels:', error));
+      .catch(error => console.error('حدث خطأ:', error));
   }
 
   // Function to fetch subjects using Ajax
@@ -479,7 +480,7 @@ include('header.php');
         // Generate the Subject select options
         const subjectsOptions = data.map(subject => `<option value="${subject.id}">${subject.subject_name}</option>`);
         // Display the Subject select
-        subjectSelect.innerHTML = '<option value="">Select Subject</option>' + subjectsOptions.join('');
+        subjectSelect.innerHTML = '<option value="">-- إختر المادة --</option>' + subjectsOptions.join('');
         // Enable the Subject select
         subjectSelect.disabled = false;
       })
@@ -488,13 +489,13 @@ include('header.php');
 
   // Function to clear and disable the Subject select
   function clearSubject() {
-    subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+    subjectSelect.innerHTML = '<option value="">-- إختر المادة --</option>';
     subjectSelect.disabled = true;
   }
 
   // Function to clear and disable the Book Level and Subject selects
   function clearBookLevelAndSubject() {
-    bookLevelSelect.innerHTML = '<option value="">Select Book Level</option>';
+    bookLevelSelect.innerHTML = '<option value="">-- إختر مستوى الكتاب --</option>';
     bookLevelSelect.disabled = true;
     clearSubject();
   }

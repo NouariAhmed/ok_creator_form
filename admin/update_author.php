@@ -114,41 +114,41 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
             $subject_id = trim($_POST["subject_id"]);
             // Validate username
             if (empty($uname)) {
-                $uname_err = "Please enter a full author name.";
+                $uname_err = "يرجى إدخال الإسم الكامل للمؤلف.";
             } elseif (!preg_match("/^[\p{L}\p{N}_\s]+$/u", $uname)) {
-                $uname_err = "author name can only contain letters, numbers, and underscores.";
+                $uname_err = "إسم المؤلف يجب أن يحتوي على حروف.";
             }
             // Validate username
             if (empty($book_title)) {
-                $book_title_err = "Please enter a Book Title.";
+                $book_title_err = "يرجى إدخال عنوان الكتاب.";
             } elseif (!preg_match("/^[\p{L}\p{N}_\s]+$/u", $book_title)) {
-                $book_title_err = "Book Title can only contain letters, numbers, spaces, and underscores.";
+                $book_title_err = "عنوان الكتاب يجب أن يحتوي على حروف.";
             }
 
             // Validate email
             if (empty($email)) {
-                $email_err = "Please enter an email address.";
+                $email_err = "يرجى إدخال عنوان إيميل صالح.";
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $email_err = "Invalid email format.";
+                $email_err = "نوع الإيميل غير صالح.";
             }
 
             // Validate year of birth
             if (empty($year_of_birth)) {
-                $year_of_birth_err = "Please enter a year of birth.";
+                $year_of_birth_err = "يرجى إدخال سنة الميلاد.";
             } elseif (!is_numeric($year_of_birth) || strlen($year_of_birth) !== 4) {
-                $year_of_birth_err = "Year of birth must be a 4-digit number.";
+                $year_of_birth_err = "سنة الميلاد يجب أن تحتوي على 4 أرقام.";
             }
 
             // Validate phone
             if (empty($phone)) {
-                $phone_err = "Please enter author phone number.";
+                $phone_err = "يرجى إدخال رقم هاتف المؤلف.";
             } elseif (!preg_match("/^\+?\d{1,4}?\s?\(?\d{1,4}?\)?[0-9\- ]+$/", $phone)) {
-                $phone_err = "Invalid phone number format.";
+                $phone_err = "رقم هاتف غير صالح.";
             }
 
             // Validate authorAddress
             if (empty($authorAddress)) {
-                $address_err = "Please enter author address.";
+                $address_err = "يرجى إدخال عنوان إقامة المؤلف.";
             }
             
             // If there are no errors, proceed with registration
@@ -256,33 +256,33 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                     <div class="form-group col-md-6">
                     <input type="hidden" name="author_type_for_update" value="<?php echo htmlspecialchars($author_type); ?>">
 
-                        <label class="form-label">إسم المؤلف:</label>
+                        <label class="form-label">إسم المؤلف :</label>
                         <input type="text" name="authorfullname" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($uname); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                    <label class="form-label">الهاتف:</label>
+                    <label class="form-label">الهاتف :</label>
                     <input type="text" name="phone" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($phone); ?>" required>
                 </div>
                 </div>
 
                 <div class="row">
                 <div class="form-group col-md-6">
-                    <label class="form-label">الإيميل:</label>
+                    <label class="form-label">الإيميل :</label>
                     <input type="email" name="email" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($email); ?>" required>
                 </div>
                 <div class="form-group col-md-6">
-                    <label class="form-label">سنة الميلاد:</label>
+                    <label class="form-label">سنة الميلاد :</label>
                     <input type="text" name="year_of_birth" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($year_of_birth); ?>" required>
                 </div>
                 </div>
 
                 <div class="row">
                 <div class="form-group col-md-6">
-                    <label class="form-label">عنوان المؤلف:</label>
+                    <label class="form-label">عنوان المؤلف :</label>
                     <input type="text" name="authorAddress" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($authorAddress); ?>" required>
                 </div>
                 <div class="form-group col-md-6">
-                <label class="form-label">نوع المؤلف:</label>
+                <label class="form-label">نوع المؤلف :</label>
                     <input type="text" name="author_type" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($author_type); ?>" disabled>
                 </div>
                 </div>
@@ -291,22 +291,22 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                 <?php if ($author_type === 'student') {?>
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">مستوى الطالب:</label>
+                        <label class="form-label">مستوى الطالب :</label>
                         <input type="text" name="studentLevel" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($studentLevel); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">التخصص:</label>
+                        <label class="form-label">التخصص :</label>
                         <input type="text" name="studentSpecialty" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($studentSpecialty); ?>" required>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">معدل البكالوريا:</label>
+                        <label class="form-label">معدل البكالوريا :</label>
                         <input type="text" name="baccalaureateRate" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($baccalaureateRate); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">سنة البكالوريا:</label>
+                        <label class="form-label">سنة البكالوريا :</label>
                         <input type="text" name="baccalaureateYear" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($baccalaureateYear); ?>" required>
                     </div>
                 </div>
@@ -314,22 +314,22 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                 <?php } elseif ($author_type === 'teacher') {?>
                     <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">الخبرة:</label>
+                        <label class="form-label">الخبرة :</label>
                         <input type="text" name="teacherExperience" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($teacherExperience); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">الشهادة:</label>
+                        <label class="form-label">الشهادة :</label>
                         <input type="text" name="teacherCertificate" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($teacherCertificate); ?>" required>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">الرتبة:</label>
+                        <label class="form-label">الرتبة :</label>
                         <input type="text" name="teacherRank" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($teacherRank); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">مؤسسة العمل:</label>
+                        <label class="form-label">مؤسسة العمل :</label>
                         <input type="text" name="workFoundation" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($workFoundation); ?>" required>
                     </div>
                 </div>
@@ -337,18 +337,18 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                 <?php  } elseif ($author_type === 'inspector') {?>
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">خبرة المفتش:</label>
+                        <label class="form-label">خبرة المفتش :</label>
                         <input type="text" name="inspectorExperience" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($inspectorExperience); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label class="form-label">الشهادة:</label>
+                        <label class="form-label">الشهادة :</label>
                         <input type="text" name="inspectorCertificate" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($inspectorCertificate); ?>" required>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">الرتبة:</label>
+                        <label class="form-label">الرتبة :</label>
                         <input type="text" name="inspectorRank" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($inspectorRank); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
@@ -452,7 +452,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
         </div>
         </div>
     <div class="form-group mt-3">
-                  <button type="submit" name="updateData" class="btn btn-primary">Update</button>
+                  <button type="submit" name="updateData" class="btn btn-primary">تحديث</button>
               </div>
           </form>
           

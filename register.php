@@ -13,30 +13,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   // Validate username
   if (empty($uname)) {
-    $uname_err = "Please enter a username.";
+    $uname_err = "يرجى إدخال اسم المستخدم.";
   }elseif (!preg_match("/^[a-zA-Z0-9_]+$/", $uname)) {
-    $uname_err = "Username can only contain letters, numbers, and underscores.";
+    $uname_err = "إسم المستخدم يجب أن يحتوى فقط على حروف،أرقام،مطات.";
 }
 
   // Validate email
   if (empty($email)) {
-    $email_err = "Please enter an email address.";
+    $email_err = "يرجى إدخال الإيميل.";
   } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $email_err = "Invalid email format.";
+    $email_err = "نوع الإيميل غير صالح.";
   }
 
   // Validate password
   if (empty($pwd)) {
-    $pwd_err = "Please enter a password.";
+    $pwd_err = "يرجى إدخال كلمة المرور.";
   } elseif (strlen($pwd) < 6) {
-    $pwd_err = "Password must be at least 6 characters.";
+    $pwd_err = "كلمة المرور يجب أن تحتوي على الأقل 6 أحرف";
   }
 
   // Validate confirm password
   if (empty($confirm_pwd)) {
-    $confirm_pwd_err = "Please confirm the password.";
+    $confirm_pwd_err = "يرجى تأكيد كلمة المرور.";
   } elseif ($pwd !== $confirm_pwd) {
-    $confirm_pwd_err = "Passwords do not match.";
+    $confirm_pwd_err = "كلمتا المرور غير متطابقتين.";
   }
 
 // If there are no errors, proceed with registration
@@ -60,10 +60,10 @@ if (empty($uname_err) && empty($email_err) && empty($pwd_err)&& empty($confirm_p
 
     if (mysqli_stmt_num_rows($stmt_check_email) > 0) {
         // Email already exists, show error message
-        $email_err = "This email is already taken. Please use a different email.";
+        $email_err = "الإيميل موجود بالفعل، يرجى إدخال إيميل آخر.";
     } elseif (mysqli_stmt_num_rows($stmt_check_username) > 0) {
         // Username already exists, show error message
-        $uname_err = "This username is already taken. Please choose a different username.";
+        $uname_err = "إسم المستخدم موجود بالفعل، يرجى إدخال إسم مستخدم آخر.";
     } else {
         // Insert the new user record into the database
         $sql_insert_user = "INSERT INTO users (username, email, pass) VALUES (?, ?, ?)";
@@ -73,7 +73,7 @@ if (empty($uname_err) && empty($email_err) && empty($pwd_err)&& empty($confirm_p
         mysqli_stmt_bind_param($stmt_insert_user, "sss", $uname, $email, $hashed_pwd);
         mysqli_stmt_execute($stmt_insert_user);
         // Registration successful, show success message
-        $register_success_msg = "Registration successful. You can now log in.";
+        $register_success_msg = "تم التسجيل بنجاح، يمكنك تسجيل الدخول الآن";
 
         // Store the success message in a session variable
         session_start();
@@ -124,33 +124,33 @@ if (empty($uname_err) && empty($email_err) && empty($pwd_err)&& empty($confirm_p
               </div>
             </div>
             <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
-              <div class="card card-plain">
+              <div class="card card-plain" dir="rtl">
                 <div class="card-header">
-                  <h4 class="font-weight-bolder">Sign Up</h4>
-                  <p class="mb-0">Enter your email and password to register</p>
+                  <h4 class="font-weight-bolder">إنشاء حساب</h4>
+                  <p class="mb-0">أدخل اسم المستخدم/الإيميل وكلمة المرور لإنشاء حساب</p>
                 </div>
                 <div class="card-body">
                   <form role="form" method="post" action="">
                     <div class="input-group input-group-outline mb-3">
-                      <label class="form-label">Username</label>
+                      <label class="form-label">إسم المستخدم</label>
                       <input type="text" class="form-control <?php echo (!empty($uname_err)) ? 'is-invalid' : ''; ?>"
                         id="username" name="txt_uname" value="<?php echo $uname; ?>" />
                       <span class="invalid-feedback"><?php echo $uname_err; ?></span>
                     </div>
                     <div class="input-group input-group-outline mb-3">
-                      <label class="form-label">Email</label>
+                      <label class="form-label">الإيميل</label>
                       <input type="email" class="form-control <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>"
                         id="email" name="txt_email" value="<?php echo $email; ?>" />
                       <span class="invalid-feedback"><?php echo $email_err; ?></span>
                     </div>
                     <div class="input-group input-group-outline mb-3">
-                      <label class="form-label">Password</label>
+                      <label class="form-label">كلمة المرور</label>
                       <input type="password" class="form-control <?php echo (!empty($pwd_err)) ? 'is-invalid' : ''; ?>"
                         id="password" name="txt_pwd" />
                       <span class="invalid-feedback"><?php echo $pwd_err; ?></span>
                     </div>
                     <div class="input-group input-group-outline mb-3">
-                      <label class="form-label">Confirm Password</label>
+                      <label class="form-label">تأكيد كلمة المرور</label>
                       <input type="password" class="form-control <?php echo (!empty($confirm_pwd_err)) ? 'is-invalid' : ''; ?>" id="confirm_pwd"
                       name="txt_confirm_pwd" />
                     <span class="invalid-feedback"><?php echo $confirm_pwd_err; ?></span>
@@ -162,7 +162,7 @@ if (empty($uname_err) && empty($email_err) && empty($pwd_err)&& empty($confirm_p
                       </label>
                     </div>
                     <div class="text-center">
-                      <button type="submit" class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0" name="but_submit">Sign Up</button>
+                      <button type="submit" class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0" name="but_submit">إنشـاء</button>
                     </div>
                     <?php if (!empty($register_err)) { ?>
                 <div class="alert alert-danger mt-3" role="alert">
@@ -173,8 +173,8 @@ if (empty($uname_err) && empty($email_err) && empty($pwd_err)&& empty($confirm_p
                 </div>
                 <div class="card-footer text-center pt-0 px-lg-2 px-1">
                   <p class="mb-2 text-sm mx-auto">
-                    Already have an account?
-                    <a href="login.php" class="text-primary text-gradient font-weight-bold">login</a>
+                   لديك حساب بالفعل ؟
+                    <a href="login.php" class="text-primary text-gradient font-weight-bold">تسجيل الدخول</a>
                   </p>
                 </div>
               </div>

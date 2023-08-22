@@ -1,6 +1,6 @@
 
 <?php
-session_start(); // Start the session (if not already started)
+session_start(); 
 
 // Check if the registration success message exists in the session
 if (isset($_SESSION['register_success_msg'])) {
@@ -23,12 +23,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Validate username
     if (empty($uname)) {
-        $uname_err = "Please enter your username.";
+        $uname_err = "يرجى إدخال إسم المستخدم أو كلمة المرور";
     }
 
     // Validate password
     if (empty($pwd)) {
-        $pwd_err = "Please enter your password.";
+        $pwd_err = "يرجى إدخال كلمة المرور.";
     }
 
 // If there are no errors, proceed with login
@@ -54,22 +54,18 @@ if (empty($uname_err) && empty($pwd_err)) {
             session_start();
             $_SESSION["id"] = $id;
             $_SESSION['role'] = $role;
-            $_SESSION['username'] = $username;
-            if ($role == "admin") {
+            $_SESSION['username'] = $username;     
                 // Admin user, redirect to dashboard
                 header("Location: admin/index.php");
-            } else {
-                // Member user, redirect to welcome page
-                header("Location: register.php");
-            }
+
             exit();
         } else {
             // Password is incorrect
-            $login_err = "Invalid email/username or password.";
+            $login_err = "إسم المستخدم /الإيميل أو كلمة المرور غير صحيحة.";
         }
     } else {
         // User does not exist
-        $login_err = "Invalid email/username or password.";
+        $login_err = "إسم المستخدم /الإيميل أو كلمة المرور غير صحيحة";
     }
 
     // Close the statement
@@ -114,7 +110,7 @@ if (empty($uname_err) && empty($pwd_err)) {
             <div class="card z-index-0 fadeIn3 fadeInBottom">
               <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                 <div class="bg-gradient-secondary shadow-primary border-radius-lg py-3 pe-1">
-                  <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">Sign in</h4>
+                  <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">تسجيل الدخول</h4>
                   <div class="row mt-3">
                     <div class="col-2 text-center ms-auto">
                       <a class="btn btn-link px-3" href="javascript:;">
@@ -135,14 +131,14 @@ if (empty($uname_err) && empty($pwd_err)) {
                 </div>
               </div>
               <div class="card-body">
-                <form role="form" method="post" action="" class="text-start">
-                  <div class="input-group input-group-outline my-3">
-                    <label class="form-label">Username/Email</label>
+                <form role="form" method="post" action="">
+                  <div class="input-group input-group-outline my-3" dir="rtl">
+                    <label class="form-label">إسم المستخدم/الإيميل</label>
                     <input type="text" class="form-control <?php echo (!empty($uname_err)) ? 'is-invalid' : ''; ?>" id="username" name="txt_uname" value="<?php echo $uname; ?>" />
                     <span class="invalid-feedback"><?php echo $uname_err; ?></span>
                   </div>
-                  <div class="input-group input-group-outline mb-3">
-                    <label class="form-label">Password</label>
+                  <div class="input-group input-group-outline mb-3" dir="rtl">
+                    <label class="form-label">كلمة المرور</label>
                     <input type="password" class="form-control <?php echo (!empty($pwd_err)) ? 'is-invalid' : ''; ?>" id="password" name="txt_pwd" />
                     <span class="invalid-feedback"><?php echo $pwd_err; ?></span>
                   </div>
@@ -151,19 +147,19 @@ if (empty($uname_err) && empty($pwd_err)) {
                     <label class="form-check-label mb-0 ms-2" for="rememberMe">Remember me</label>
                   </div>
                   <div class="text-center">
-                    <button type="submit" class="btn bg-gradient-info w-100 my-4 mb-2" name="but_submit">Sign in</button>
+                    <button type="submit" class="btn bg-gradient-info w-100 my-4 mb-2" name="but_submit">Log in</button>
                   </div>
                   <p class="mt-4 text-sm text-center">
-                    Don't have an account?
-                    <a href="register.php" class="text-primary text-gradient font-weight-bold">Sign up</a>
+                   لا تملك حسابا بعد؟
+                    <a href="register.php" class="text-primary text-gradient font-weight-bold">إنشاء حساب</a>
                   </p>
                   <?php if (!empty($login_err)) { ?>
-                <div class="alert alert-danger mt-3" role="alert">
+                <div class="alert alert-danger mt-3 text-right text-white" role="alert" dir="rtl">
                   <?php echo $login_err; ?>
                 </div>
               <?php } ?>
               <?php if (isset($register_success_msg)) { ?>
-                <div class="alert alert-success mt-3" role="alert">
+                <div class="alert alert-success mt-3 text-right text-white" role="alert" dir="rtl">
                   <?php echo $register_success_msg; ?>
                 </div>
               <?php } ?>

@@ -92,11 +92,11 @@ include('header.php');
                 </select>
                  </div>
                  <div class="form-group">
-                  <label class="form-label">اسم مستوى الكتاب:</label>
+                  <label class="form-label">مستوى الكتاب :</label>
                   <input type="text" name="level_name" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($level_name); ?>" required>
               </div>
               <div class="form-group mt-3">
-                  <button type="submit" name="updateData" class="btn btn-primary">Update</button>
+                  <button type="submit" name="updateData" class="btn btn-primary">تحديث</button>
               </div>
           </form>
           <hr>

@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Validate user input
         $type_name = htmlspecialchars($_POST['type_name']);
         if (empty($type_name)) {
-            echo "<div class='alert alert-danger text-right'>عنوان الكتاب مطلوب</div>";
+            echo "<div class='alert alert-danger text-right text-white'>عنوان الكتاب مطلوب</div>";
         } else {
             // Prepare and execute SQL query
             $stmt = mysqli_prepare($conn, "INSERT INTO book_types (type_name) VALUES (?)");
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header("Location: display_book_types.php");
                 exit;
             } else {
-                echo "<div class='alert alert-danger text-right'>حدث خطأ</div>";
+                echo "<div class='alert alert-danger text-right text-white'>حدث خطأ</div>";
             }
             mysqli_stmt_close($stmt);
         }
@@ -58,37 +58,37 @@ include('header.php');
       <?php
     // Check if create_update_success session variable is set
         if (isset($_SESSION['create_update_success']) && $_SESSION['create_update_success'] === true) {
-            echo '<div class="alert alert-success text-right">تم إنشاء/تحديث العنصر بنجاح.</div>';
+            echo '<div class="alert alert-success text-right text-white">تم إنشاء/تحديث العنصر بنجاح.</div>';
             // Unset the session variable to avoid displaying the message on page refresh
             unset($_SESSION['create_update_success']);
         }
         // Check if delete_success session variable is set
         if (isset($_SESSION['delete_success']) && $_SESSION['delete_success'] === true) {
-            echo '<div class="alert alert-success text-right">تم حذف العنصر بنجاح.</div>';
+            echo '<div class="alert alert-success text-right text-white">تم حذف العنصر بنجاح.</div>';
             // Unset the session variable to avoid displaying the message on page refresh
             unset($_SESSION['delete_success']);
         }
         // Check if item_not_found session variable is set
         if (isset($_SESSION['item_not_found']) && $_SESSION['item_not_found'] === true) {
-            echo '<div class="alert alert-danger text-right">العنصر غير موجود.</div>';
+            echo '<div class="alert alert-danger text-right text-white">العنصر غير موجود.</div>';
             // Unset the session variable to avoid displaying the message on page refresh
             unset($_SESSION['item_not_found']);
         }
         ?>
         <form role="form" action="" method="post">
-        <h4 class="mb-3">إنشاء نوع كتاب</h4>
+        <h4 class="mb-3">إضـافة نوع كتاب</h4>
           <div class="input-group input-group-outline my-3">
-            <label class="form-label">اسم نوع الكتاب:</label>
+            <label class="form-label">نوع الكتاب :</label>
               <input type="text" name="type_name" class="form-control" value="<?php echo htmlspecialchars(isset($item['type_name']) ? $item['type_name'] : ''); ?>" required>
               </div>
-                <button type="submit" name="submit" class="btn bg-gradient-primary" >Create</button>
+                <button type="submit" name="submit" class="btn bg-gradient-primary" >إضـافة</button>
         </form>
     <div class="row">
         <div class="col-12">
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize pe-3">Book Types table</h6>
+                <h6 class="text-white text-capitalize pe-3">جدول أنواع الكتب</h6>
               </div>
             </div>
             <div class="card-body px-0 pb-2">

@@ -60,29 +60,29 @@ $username = $email = $role ='';
     
             // Validate updated username
             if (empty($updatedUname)) {
-                echo "<div class='alert alert-danger text-right'>Please enter a username.</div>";
+                echo "<div class='alert alert-danger text-right text-white'>يرجى إدخال اسم المستخدم.</div>";
             } elseif (!preg_match("/^[a-zA-Z0-9_]+$/", $updatedUname)) {
-                echo "<div class='alert alert-danger text-right'>Username can only contain letters, numbers, and underscores.</div>";
+                echo "<div class='alert alert-danger text-right text-white'>إسم المستخدم يجب أن يحتوى فقط على حروف،أرقام،مطات.</div>";
             }
     
             // Validate updated email
             if (empty($updatedEmail)) {
-                echo "<div class='alert alert-danger text-right'>Please enter an email address..</div>";
+                echo "<div class='alert alert-danger text-right text-white'>يرجى إدخال الإيميل.</div>";
             } elseif (!filter_var($updatedEmail, FILTER_VALIDATE_EMAIL)) {
-                echo "<div class='alert alert-danger text-right'>Invalid email format.</div>";
+                echo "<div class='alert alert-danger text-right text-white'>نوع الإيميل غير صالح.</div>";
             }
     
             // Validate updated user type
             if (empty($updatedUserType)) {
-                echo "<div class='alert alert-danger text-right'>Please select a user type.</div>";
+                echo "<div class='alert alert-danger text-right text-white'>يرجى إختيار نوع المستخدم.</div>";
             }
     
             // Validate passwords
             if (!empty($password) || !empty($confirmPassword)) {
                 if (empty($password) || empty($confirmPassword)) {
-                    echo "<div class='alert alert-danger text-right'>Please enter both password fields.</div>";
+                    echo "<div class='alert alert-danger text-right text-white'>يرجى إدخال كلا الحقلين (كلمة المرور، تأكيد كلمة المرور)</div>";
                 } elseif ($password !== $confirmPassword) {
-                    echo "<div class='alert alert-danger text-right'>Passwords do not match.</div>";
+                    echo "<div class='alert alert-danger text-right text-white'>كلمتا المرور غير متطابقتين.</div>";
                 } else {
                     // Create a database connection
                     include('../connect.php');
@@ -100,7 +100,7 @@ $username = $email = $role ='';
                         header("Location: display_users.php");
                         exit();
                     } else {
-                        echo "<div class='alert alert-danger text-right'>An error occurred while updating the information.</div>";
+                        echo "<div class='alert alert-danger text-right text-white'>حدث خطأ أثناء تحديث المعلومات</div>";
                     }
                     
                     // Close the statement
@@ -125,11 +125,11 @@ $username = $email = $role ='';
     
                 if (mysqli_stmt_num_rows($stmt_check_email) > 0) {
                     // Email already exists, show error message
-                    echo "<div class='alert alert-danger text-right'>This email is already taken. Please use a different email.</div>";
+                    echo "<div class='alert alert-danger text-right text-white'>الإيميل موجود بالفعل، يرجى إدخال إيميل آخر.</div>";
                     $email = $updatedEmail; // Update the displayed email
                 } elseif (mysqli_stmt_num_rows($stmt_check_username) > 0) {
                     // Username already exists, show error message
-                    echo "<div class='alert alert-danger text-right'>This username is already taken. Please choose a different username.</div>";
+                    echo "<div class='alert alert-danger text-right text-white'>إسم المستخدم موجود بالفعل، يرجى إدخال إسم مستخدم آخر.</div>";
                     $username = $updatedUname; // Update the displayed username
                 } else {
                     // Update the user record without changing the password
@@ -142,7 +142,7 @@ $username = $email = $role ='';
                         header("Location: display_users.php");
                         exit();
                     } else {
-                        echo "<div class='alert alert-danger text-right'>An error occurred while updating the information.</div>";
+                        echo "<div class='alert alert-danger text-right text-white'>حدث خطأ أثناء تحديث المعلومات .</div>";
                     }
                     
                     // Close the statement
@@ -181,12 +181,12 @@ $username = $email = $role ='';
                     <select name="user_type" class="form-control border pe-2" required>
                         <option value="" disabled> -- إختر دور المستخدم -- </option>
                         <option value="admin" <?php if ($role === 'admin') echo 'selected'; ?>>أدمن</option>
-                        <option value="member" <?php if ($role === 'member') echo 'selected'; ?>>عضو</option>
+                        <option value="member" <?php if ($role === 'member') echo 'selected'; ?>>مشرف</option>
                     </select>
                     </div>
 
                     <div class="form-group mt-3">
-                  <button type="submit" name="updateData" class="btn btn-primary">Update</button>
+                  <button type="submit" name="updateData" class="btn btn-primary">تحديث</button>
               </div>
 
                   </form>

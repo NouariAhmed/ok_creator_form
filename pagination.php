@@ -13,7 +13,7 @@
     $filterQueryString = http_build_query($filterQueryArray);
 
     // Display "Previous" button with "disabled" style if on first page
-    echo '<a href="?page=' . $prevPage . '&' . $filterQueryString . '" class="btn btn-secondary text-white ' . ($currentPage === 1 ? 'disabled' : '') . '">Previous</a>';
+    echo '<a href="?page=' . $prevPage . '&' . $filterQueryString . '" class="btn btn-secondary text-white ' . ($currentPage === 1 ? 'disabled' : '') . '">السابق</a>';
 
     // Display page numbers with ellipsis
     if ($startPage > 1) {
@@ -36,6 +36,6 @@
     }
 
     // Display "Next" button with "disabled" style if on last page
-    echo '<a href="?page=' . $nextPage . '&' . $filterQueryString . '" class="btn btn-secondary text-white ' . ($currentPage == $totalPages || $totalPages === 1 ? 'disabled' : '') . '">Next</a>';
+    echo '<a href="?page=' . $nextPage . '&' . $filterQueryString . '" class="btn btn-secondary text-white ' . ($currentPage == $totalPages || $totalPages === 1 ? 'disabled' : '') . '">التالي</a>';
     ?>
 </div>

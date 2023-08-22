@@ -47,7 +47,7 @@ $table = "book_levels";
             header("Location: display_book_levels.php");
             exit;
         } else {
-            echo "<div class='alert alert-danger text-right'>حدث خطأ أثناء الإضافة</div>";
+            echo "<div class='alert alert-danger text-right text-white'>حدث خطأ أثناء الإضافة</div>";
         }
         mysqli_stmt_close($stmt);
     }
@@ -59,19 +59,19 @@ include('header.php');
       <?php
      // Check if create_update_success session variable is set
      if (isset($_SESSION['create_update_success']) && $_SESSION['create_update_success'] === true) {
-        echo '<div class="alert alert-success text-right">تم إنشاء/تحديث العنصر بنجاح.</div>';
+        echo '<div class="alert alert-success text-right text-white">تم إنشاء/تحديث العنصر بنجاح.</div>';
         // Unset the session variable to avoid displaying the message on page refresh
         unset($_SESSION['create_update_success']);
     }
     // Check if delete_success session variable is set
     if (isset($_SESSION['delete_success']) && $_SESSION['delete_success'] === true) {
-        echo '<div class="alert alert-success text-right">تم حذف العنصر بنجاح.</div>';
+        echo '<div class="alert alert-success text-right text-white">تم حذف العنصر بنجاح.</div>';
         // Unset the session variable to avoid displaying the message on page refresh
         unset($_SESSION['delete_success']);
     }
     // Check if item_not_found session variable is set
     if (isset($_SESSION['item_not_found']) && $_SESSION['item_not_found'] === true) {
-        echo '<div class="alert alert-danger text-right">العنصر غير موجود.</div>';
+        echo '<div class="alert alert-danger text-right text-white">العنصر غير موجود.</div>';
         // Unset the session variable to avoid displaying the message on page refresh
         unset($_SESSION['item_not_found']);
     }
@@ -81,10 +81,10 @@ include('header.php');
 
 
         <form role="form" action="" method="post">
-        <h4 class="mb-3">إنشاء مستوى كتاب</h4>
+        <h4 class="mb-3">إضـافة مستوى كتاب</h4>
         <input type="hidden" name="id" value="<?php echo htmlspecialchars(isset($item['id']) ? $item['id'] : ''); ?>">
           <div class="input-group input-group-outline my-3">
-            <label class="form-label">اسم مستوى الكتاب:</label>
+            <label class="form-label"> مستوى الكتاب :</label>
             <input type="text" name="level_name" class="form-control" value="<?php echo htmlspecialchars(isset($item['level_name']) ? $item['level_name'] : ''); ?>" required>
               </div>
               <div class="input-group input-group-outline my-3">
@@ -104,14 +104,14 @@ include('header.php');
                     ?>
                 </select>
                  </div>
-                 <button type="submit" name="submit" class="btn bg-gradient-primary" >Create</button>
+                 <button type="submit" name="submit" class="btn bg-gradient-primary" >إضـافة</button>
          </form>
     <div class="row">
         <div class="col-12">
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize pe-3">Book Levels table</h6>
+                <h6 class="text-white text-capitalize pe-3">جدول مستويات الكتب</h6>
               </div>
             </div>
             <div class="card-body px-0 pb-2">

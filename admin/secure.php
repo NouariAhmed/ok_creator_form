@@ -1,8 +1,13 @@
 <?php
-
-if (!isset($_SESSION['id']) || $_SESSION['role'] !== "admin") {
-  header("Location: ../login.php");
-  exit();
+if (!isset($_SESSION['id'])) {
+    header("Location: ../login.php");
+    exit();
 }
 
+$allowedRoles = ["admin", "member"];
+
+if (!in_array($_SESSION['role'], $allowedRoles)) {
+    header("Location: ../login.php");
+    exit();
+}
 ?>

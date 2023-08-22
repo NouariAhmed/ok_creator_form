@@ -51,34 +51,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   // Validate username
   if (empty($uname)) {
-    $uname_err = "Please enter a username.";
+    $uname_err = "يرجى إدخال اسم المستخدم.";
   }elseif (!preg_match("/^[a-zA-Z0-9_]+$/", $uname)) {
-    $uname_err = "Username can only contain letters, numbers, and underscores.";
+    $uname_err = "إسم المستخدم يجب أن يحتوى فقط على حروف،أرقام،مطات.";
 }
 
   // Validate email
   if (empty($email)) {
-    $email_err = "Please enter an email address.";
+    $email_err = "يرجى إدخال الإيميل.";
   } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $email_err = "Invalid email format.";
+    $email_err = "نوع الإيميل غير صالح.";
   }
 
   // Validate password
   if (empty($pwd)) {
-    $pwd_err = "Please enter a password.";
+    $pwd_err = "يرجى إدخال كلمة السر.";
   } elseif (strlen($pwd) < 6) {
-    $pwd_err = "Password must be at least 6 characters.";
+    $pwd_err = "كلمة السر يجب أن تحتوي على الأقل 6 أحرف.";
   }
 
   // Validate confirm password
   if (empty($confirm_pwd)) {
-    $confirm_pwd_err = "Please confirm the password.";
+    $confirm_pwd_err = "يرجى تأكيد كلمة المرور.";
   } elseif ($pwd !== $confirm_pwd) {
-    $confirm_pwd_err = "Passwords do not match.";
+    $confirm_pwd_err = "كلمتا المرور غير متطابقتين.";
   }
   // Validate User Type
   if (empty($user_type)) {
-    $user_type_err = "Please select a user type.";
+    $user_type_err = "يرجى إختيار نوع المستخدم.";
   }
   
 // If there are no errors, proceed with registration
@@ -102,10 +102,10 @@ if (empty($uname_err) && empty($email_err) && empty($pwd_err)&& empty($confirm_p
 
     if (mysqli_stmt_num_rows($stmt_check_email) > 0) {
         // Email already exists, show error message
-        $email_err = "This email is already taken. Please use a different email.";
+        $email_err = "الإيميل موجود بالفعل، يرجى إدخال إيميل آخر.";
     } elseif (mysqli_stmt_num_rows($stmt_check_username) > 0) {
         // Username already exists, show error message
-        $uname_err = "This username is already taken. Please choose a different username.";
+        $uname_err = "إسم المستخدم موجود بالفعل، يرجى إدخال إسم مستخدم آخر.";
     } else {
        // Insert the new user record into the database
         $sql_insert_user = "INSERT INTO users (username, email, pass, role) VALUES (?, ?, ?, ?)";
@@ -136,19 +136,19 @@ include('header.php');
                 <?php
                 // Check if create_update_success session variable is set
                     if (isset($_SESSION['create_update_success']) && $_SESSION['create_update_success'] === true) {
-                        echo '<div class="alert alert-success text-right">تم إنشاء/تحديث العنصر بنجاح.</div>';
+                        echo '<div class="alert alert-success text-right text-white">تم إنشاء/تحديث العنصر بنجاح.</div>';
                         // Unset the session variable to avoid displaying the message on page refresh
                         unset($_SESSION['create_update_success']);
                     }
                     // Check if delete_success session variable is set
                     if (isset($_SESSION['delete_success']) && $_SESSION['delete_success'] === true) {
-                        echo '<div class="alert alert-success text-right">تم حذف العنصر بنجاح.</div>';
+                        echo '<div class="alert alert-success text-right text-white">تم حذف العنصر بنجاح.</div>';
                         // Unset the session variable to avoid displaying the message on page refresh
                         unset($_SESSION['delete_success']);
                     }
                     // Check if item_not_found session variable is set
                     if (isset($_SESSION['item_not_found']) && $_SESSION['item_not_found'] === true) {
-                        echo '<div class="alert alert-danger text-right">العنصر غير موجود.</div>';
+                        echo '<div class="alert alert-danger text-right text-white">العنصر غير موجود.</div>';
                         // Unset the session variable to avoid displaying the message on page refresh
                         unset($_SESSION['item_not_found']);
                     }
@@ -190,7 +190,7 @@ include('header.php');
                    </select>
                     </div>
                                    
-                    <button type="submit" name="submit" class="btn bg-gradient-primary" >Create</button>
+                    <button type="submit" name="submit" class="btn bg-gradient-primary" >إضـافة</button>
                   </form>
 
             <div class="row">
@@ -198,7 +198,7 @@ include('header.php');
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                     <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                        <h6 class="text-white text-capitalize pe-3">Users table</h6>
+                        <h6 class="text-white text-capitalize pe-3">جدول المستخدمين</h6>
                     </div>
                     </div>
                     <div class="card-body px-0 pb-2">

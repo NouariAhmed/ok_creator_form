@@ -10,7 +10,7 @@
    Okacha Admin
   </title>
   <!--     Fonts and icons     -->
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+  <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/droid-arabic-kufi" type="text/css"/>
   <!-- Nucleo Icons -->
   <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
@@ -32,7 +32,7 @@
       <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute start-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0" href="index.php">
         <img src="../assets/img/ok-logo.png" class="navbar-brand-img h-100" alt="main_logo">
-        <span class="me-1 font-weight-bold text-white">Admin Panel</span>
+        <span class="me-1 font-weight-bold text-white">لوحة التحكم</span>
       </a>
     </div>
     <hr class="horizontal light mt-0 mb-2">
@@ -46,7 +46,7 @@
             <span class="nav-link-text me-1">المؤلفون</span>
           </a>
         </li>
-
+        <?php if ($_SESSION['role'] === "admin") { ?>
         <li class="nav-item">
           <a class="nav-link " href="display_book_types.php?page=1">
             <div class="text-white text-center ms-2 d-flex align-items-center justify-content-center">
@@ -82,7 +82,7 @@
             <span class="nav-link-text me-1">المستخدمون</span>
           </a>
         </li>
-    
+        <?php } ?>
     <div class="sidenav-footer position-absolute w-100 bottom-0 ">
       <div class="mx-3">
         <a class="btn bg-gradient-primary mt-4 w-100" href="../logout.php" type="button">تسجيل الخروج</a>
@@ -96,11 +96,16 @@
       <div class="container-fluid py-1 px-3">
         <div class="collapse navbar-collapse mt-sm-0 mt-2 px-0" id="navbar">
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-            <div class="input-group input-group-outline">
-              <label class="form-label"> بحث...</label>
-              <input type="text" class="form-control">
+          <form role="form" method="post" action="search_result.php">
+          <div style="display: flex; align-items: center;">
+            <div class="input-group input-group-outline" style="flex: 1;">
+              <label class="form-label"> بحث عن مؤلف...</label>
+              <input type="text" name="search_query" class="form-control" required>
             </div>
-          </div>
+            <button type="submit" class="btn bg-gradient-primary" style="margin-right: 10px; margin-top:8px;"> بحث </button>
+            </div>
+            </form>
+            </div>
           <ul class="navbar-nav me-auto ms-0 justify-content-end">
             <li class="nav-item d-flex align-items-center">
               <a href="../logout.php" class="nav-link text-body font-weight-bold px-0">

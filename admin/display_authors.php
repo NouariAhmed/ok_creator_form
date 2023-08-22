@@ -120,19 +120,19 @@ include('header.php');
       <?php
     // Check if create_update_success session variable is set
         if (isset($_SESSION['create_update_success']) && $_SESSION['create_update_success'] === true) {
-            echo '<div class="alert alert-success text-right">تم إنشاء/تحديث العنصر بنجاح.</div>';
+            echo '<div class="alert alert-success text-right text-white">تم إنشاء/تحديث العنصر بنجاح.</div>';
             // Unset the session variable to avoid displaying the message on page refresh
             unset($_SESSION['create_update_success']);
         }
         // Check if delete_success session variable is set
         if (isset($_SESSION['delete_success']) && $_SESSION['delete_success'] === true) {
-            echo '<div class="alert alert-success text-right">تم حذف العنصر بنجاح.</div>';
+            echo '<div class="alert alert-success text-right text-white">تم حذف العنصر بنجاح.</div>';
             // Unset the session variable to avoid displaying the message on page refresh
             unset($_SESSION['delete_success']);
         }
         // Check if item_not_found session variable is set
         if (isset($_SESSION['item_not_found']) && $_SESSION['item_not_found'] === true) {
-            echo '<div class="alert alert-danger text-right">العنصر غير موجود.</div>';
+            echo '<div class="alert alert-danger text-right text-white">العنصر غير موجود.</div>';
             // Unset the session variable to avoid displaying the message on page refresh
             unset($_SESSION['item_not_found']);
         }
@@ -140,7 +140,7 @@ include('header.php');
        
         <h4 class="mb-3">إضافة مؤلف</h4>
           <div class="input-group input-group-outline my-3">
-          <a href="add_author.php" class="btn btn-secondary">Create</a>
+          <a href="add_author.php" class="btn btn-secondary">إضـافة</a>
               </div>
                 
           <form role="form">
@@ -199,14 +199,14 @@ include('header.php');
       </select>
        </div>
 
-          <button type="submit"  class="btn bg-gradient-primary" >Filter</button> 
+          <button type="submit"  class="btn bg-gradient-primary" >فلترة</button> 
         </form>
     <div class="row">
         <div class="col-12">
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize pe-3">Teachers table</h6>
+                <h6 class="text-white text-capitalize pe-3">جدول الأساتذة</h6>
               </div>
             </div>
             <div class="card-body px-0 pb-2">

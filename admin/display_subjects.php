@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: display_subjects.php");
         exit; // Important! Ensure the script stops executing after redirection header is sent
     } else {
-        echo '<div class="alert alert-danger text-right">خطأ: ' . mysqli_error($conn) . '</div>';
+        echo '<div class="alert alert-danger text-right text-white">حدث خطأ</div>';
     }
         // Close the prepared statement
         mysqli_stmt_close($stmt);
@@ -66,25 +66,25 @@ include('header.php');
       <?php
         // Check if create_update_success session variable is set
         if (isset($_SESSION['create_update_success']) && $_SESSION['create_update_success'] === true) {
-            echo '<div class="alert alert-success text-right">تم إنشاء/تحديث العنصر بنجاح.</div>';
+            echo '<div class="alert alert-success text-right text-white">تم إنشاء/تحديث العنصر بنجاح.</div>';
             // Unset the session variable to avoid displaying the message on page refresh
             unset($_SESSION['create_update_success']);
         }
         // Check if delete_success session variable is set
         if (isset($_SESSION['delete_success']) && $_SESSION['delete_success'] === true) {
-            echo '<div class="alert alert-success text-right">تم حذف العنصر بنجاح.</div>';
+            echo '<div class="alert alert-success text-right text-white">تم حذف العنصر بنجاح.</div>';
             // Unset the session variable to avoid displaying the message on page refresh
             unset($_SESSION['delete_success']);
         }
         // Check if item_not_found session variable is set
         if (isset($_SESSION['item_not_found']) && $_SESSION['item_not_found'] === true) {
-            echo '<div class="alert alert-danger text-right">العنصر غير موجود.</div>';
+            echo '<div class="alert alert-danger text-right text-white">العنصر غير موجود.</div>';
             // Unset the session variable to avoid displaying the message on page refresh
             unset($_SESSION['item_not_found']);
         }
         ?>
         <form role="form" action="" method="post">
-        <h4 class="mb-3">إنشاء مادة جديدة</h4>
+        <h4 class="mb-3">إضافة مادة جديدة</h4>
         <input type="hidden" name="id" value="<?php echo htmlspecialchars(isset($item['id']) ? $item['id'] : ''); ?>">
 
         <div class="input-group input-group-outline my-3">
@@ -126,14 +126,14 @@ include('header.php');
                 <input type="text" name="subject_name" id="subject" class="form-control" value="<?php echo htmlspecialchars(isset($item['subject_name']) ? $item['subject_name'] : ''); ?>" required>
             </div>
 
-                 <button type="submit" name="submit" class="btn bg-gradient-primary" >Create</button>
+                 <button type="submit" name="submit" class="btn bg-gradient-primary" >إضـافة</button>
          </form>
     <div class="row">
         <div class="col-12">
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize pe-3">Subjects table</h6>
+                <h6 class="text-white text-capitalize pe-3">جدول المواد</h6>
               </div>
             </div>
             <div class="card-body px-0 pb-2">
@@ -237,13 +237,13 @@ fetch('../get_book_levels.php?type_id=' + bookType)
 // Generate the Book Level select options
 const bookLevelsOptions = data.map(level => `<option value="${level.id}">${level.level_name}</option>`);
 // Display the Book Level select
-bookLevelSelect.innerHTML = '<option value="">Select Book Level</option>' + bookLevelsOptions.join('');
+bookLevelSelect.innerHTML = '<option value="">-- إختر مستوى الكتاب --</option>' + bookLevelsOptions.join('');
 // Enable the Book Level select
 bookLevelSelect.disabled = false;
 // Clear and disable the Subject select
 clearSubject();
 })
-.catch(error => console.error('Error fetching book levels:', error));
+.catch(error => console.error('حدث خطأ:', error));
 }
 
 // Function to fetch subjects using Ajax
@@ -254,22 +254,22 @@ fetch('../get_subjects.php?level_id=' + bookLevel)
 // Generate the Subject select options
 const subjectsOptions = data.map(subject => `<option value="${subject.id}">${subject.subject_name}</option>`);
 // Display the Subject select
-subjectSelect.innerHTML = '<option value="">Select Subject</option>' + subjectsOptions.join('');
+subjectSelect.innerHTML = '<option value="">-- إختر المادة --</option>' + subjectsOptions.join('');
 // Enable the Subject select
 subjectSelect.disabled = false;
 })
-.catch(error => console.error('Error fetching subjects:', error));
+.catch(error => console.error('حدث خطأ:', error));
 }
 
 // Function to clear and disable the Subject select
 function clearSubject() {
-subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+subjectSelect.innerHTML = '<option value="">-- إختر المادة --</option>';
 subjectSelect.disabled = true;
 }
 
 // Function to clear and disable the Book Level and Subject selects
 function clearBookLevelAndSubject() {
-bookLevelSelect.innerHTML = '<option value="">Select Book Level</option>';
+bookLevelSelect.innerHTML = '<option value="">-- إختر مستوى الكتاب --</option>';
 bookLevelSelect.disabled = true;
 clearSubject();
 }

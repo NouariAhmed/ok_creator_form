@@ -71,11 +71,11 @@ include('header.php');
           <form role="form" action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $id; ?>" method="post">
               <h4 class="mb-3">تحديث نوع كتاب</h4>
               <div class="form-group">
-                  <label class="form-label">اسم نوع الكتاب:</label>
+                  <label class="form-label">نوع الكتاب :</label>
                   <input type="text" name="type_name" class="form-control border pe-2" value="<?php echo htmlspecialchars($type_name); ?>" required>
               </div>
               <div class="form-group mt-3">
-                  <button type="submit" name="updateData" class="btn btn-primary">Update</button>
+                  <button type="submit" name="updateData" class="btn btn-primary">تحديث</button>
               </div>
           </form>
           <hr>
