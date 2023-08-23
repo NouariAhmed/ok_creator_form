@@ -85,7 +85,7 @@
         <?php } ?>
     <div class="sidenav-footer position-absolute w-100 bottom-0 ">
       <div class="mx-3">
-        <a class="btn bg-gradient-primary mt-4 w-100" href="../logout.php" type="button">تسجيل الخروج</a>
+        <a class="btn bg-gradient-primary mt-4 w-100" href="../logout.php" type="button" onclick="return confirm('هل أنت متأكد من تسجيل الخروج؟');">تسجيل الخروج</a>
       </div>
      </div>
         
@@ -102,13 +102,13 @@
               <label class="form-label"> بحث عن مؤلف...</label>
               <input type="text" name="search_query" class="form-control" required>
             </div>
-            <button type="submit" class="btn bg-gradient-primary" style="margin-right: 10px; margin-top:8px;"> بحث </button>
+            <button type="submit" class="btn bg-gradient-primary" style="margin-right: 15px; margin-top:8px;"> بحث </button>
             </div>
             </form>
             </div>
           <ul class="navbar-nav me-auto ms-0 justify-content-end">
             <li class="nav-item d-flex align-items-center">
-              <a href="../logout.php" class="nav-link text-body font-weight-bold px-0">
+              <a href="../logout.php" class="nav-link text-body font-weight-bold px-0" onclick="return confirm('هل أنت متأكد من تسجيل الخروج؟');">
                 <i class="fa fa-user me-sm-1"></i>
                 <span class="d-sm-inline d-none">تسجيل الخروج</span>
               </a>

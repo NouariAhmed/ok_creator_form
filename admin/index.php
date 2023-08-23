@@ -19,10 +19,28 @@ $result_subjects = mysqli_query($conn, "SELECT COUNT(*) AS subject_count FROM su
 $row = mysqli_fetch_assoc($result_subjects);
 $subjectCount = $row['subject_count'];
 
+// Check if the welcome message should be shown
+$showWelcomeMessage = false;
+if (isset($_SESSION['username']) && isset($_SESSION['showWelcomeMessage']) && $_SESSION['showWelcomeMessage']) {
+    $showWelcomeMessage = true;
+    // Unset the flag to prevent showing the message on subsequent page loads
+    $_SESSION['showWelcomeMessage'] = false;
+}
 mysqli_close($conn);
 ?>
-    <div class="container-fluid py-4">
+      <div class="container-fluid py-4">
       <div class="row">
+<!-- Display welcome message if user is logged in -->
+<?php if ($showWelcomeMessage) { ?>
+
+       <div class="col-12 mb-4">
+          <div class="alert alert-secondary text-center text-white">
+          مرحبًا <?php echo $_SESSION['username']; ?>، أهلاً بك في لوحة التحكم عمل موفق &#x1F60A;
+          </div>
+        </div>
+        <?php 
+  } 
+  ?>
         <div class="col-lg-3 col-sm-6 mb-lg-0 mb-4">
           <div class="card">
             <div class="card-header p-3 pt-2">

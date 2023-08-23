@@ -236,18 +236,19 @@ include('header.php');
                 ?>
                     <tr>
                     <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm pe-3"><?php echo htmlspecialchars($item["id"]);?></h6>
+                      <h6 class="mb-0 text-sm pe-4"><?php echo htmlspecialchars($item["id"]);?></h6>
                       </td>
                       <td>
+                         <!--
                         <div class="d-flex px-2 py-1">
                           <div>
                             <img src="../assets/img/team-2.jpg" class="avatar avatar-sm ms-3 border-radius-lg" alt="user1">
-                          </div>
+                          </div> -->
                           <div class="d-flex flex-column justify-content-center">
                             <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["authorfullname"]);?></h6>
                             <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["phone"]);?></p>
+                            <!-- </div> -->
                           </div>
-                        </div>
                       </td>
                       <td class="align-middle text-sm">
                       <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["book_title"]);?></h6>
@@ -264,6 +265,30 @@ include('header.php');
                       <td class="align-middle text-sm">
                       <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["authorAddress"]);?></h6>
                       <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["email"]);?></p>
+                  
+                      <!-- Social Media Icons -->
+                      <div class="ms-auto">
+                          <?php if (!empty($item["fbLink"])) { ?>
+                            <a href="<?php echo htmlspecialchars($item["fbLink"]); ?>" target="_blank">
+                              <i class="fab fa-facebook"></i>
+                            </a>
+                          <?php } ?>
+                          <?php if (!empty($item["instaLink"])) { ?>
+                            <a href="<?php echo htmlspecialchars($item["instaLink"]); ?>" target="_blank">
+                              <i class="fab fa-instagram"></i>
+                            </a>
+                          <?php } ?>
+                          <?php if (!empty($item["youtubeLink"])) { ?>
+                            <a href="<?php echo htmlspecialchars($item["youtubeLink"]); ?>" target="_blank">
+                              <i class="fab fa-youtube"></i>
+                            </a>
+                          <?php } ?>
+                          <?php if (!empty($item["tiktokLink"])) { ?>
+                            <a href="<?php echo htmlspecialchars($item["tiktokLink"]); ?>" target="_blank">
+                              <i class="fab fa-tiktok"></i>
+                            </a>
+                          <?php } ?>
+                        </div>
                       </td>
                       <td class="align-middle text-sm">
                       <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["inserted_by_username"]);?></h6>
@@ -283,6 +308,10 @@ include('header.php');
                       </td>
 
                       <td class="align-middle text-center">
+                            <?php if (!empty($item["userfile"])): ?>
+                                <a href="<?php echo htmlspecialchars($item["userfile"]); ?>" class="btn badge-sm bg-gradient-secondary" target="_blank">
+                                    <i class="material-icons-round align-middle" style="font-size: 18px;">print</i></a>
+                            <?php endif; ?>
                             <a href="update_author.php?id=<?php echo htmlspecialchars($item["id"]);?>&type=<?php echo htmlspecialchars($item["author_type"]);?>&book_type_id=<?php echo htmlspecialchars($item["book_type_id"]); ?>" class="btn badge-sm bg-gradient-primary"> <i class="material-icons-round align-middle" style="font-size: 18px;">edit</i></a>
                             <a href="delete_author.php?id=<?php echo htmlspecialchars($item["id"]);?>&type=<?php echo htmlspecialchars($item["author_type"]);?>" class="btn badge-sm bg-gradient-danger"> <i class="material-icons-round align-middle" style="font-size: 18px;">delete</i></a>
                       </td>

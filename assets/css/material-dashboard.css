@@ -12993,7 +12993,7 @@ textarea.form-control-lg {
   .card .card-header {
     padding: 1.5rem; }
   .card .card-body {
-    font-family: "Roboto", Helvetica, Arial, sans-serif;
+    font-family: "DroidArabicKufiRegular", Helvetica, Arial, sans-serif;
     padding: 1.5rem; }
   .card.card-plain {
     background-color: transparent;
@@ -16088,7 +16088,7 @@ p, .p {
 
 h1, .h1, .h1, h2, .h2, .h2, h3, .h3, .h3 {
   font-weight: 600;
-  font-family: "Roboto Slab", sans-serif; }
+  font-family: "DroidArabicKufiRegular"; }
 
 h4, .h4, .h4, h5, .h5, .h5, h6, .h6, .h6 {
   font-weight: 600; }

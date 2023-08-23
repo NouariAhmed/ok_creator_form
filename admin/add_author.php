@@ -1,8 +1,8 @@
 <?php
 include('../connect.php');
 // Initialize variables
-$uname = $book_title = $email = $year_of_birth = $phone = $address = $book_type = $book_level = $subject = "";
-$uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $address_err = $book_type_err = $book_level_err = $subject_err = $register_err = "";
+$uname = $book_title = $email = $year_of_birth = $phone = $address = $book_type = $book_level = $subject = $fbLink = $instaLink = $youtubeLink = $tiktokLink ="";
+$uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $address_err = $book_type_err = $book_level_err = $subject_err = $register_err = $file_err ="";
 
 // Fetch book types from the database
 $sql_fetch_book_types = "SELECT id, type_name FROM book_types";
@@ -28,6 +28,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
  $year_of_birth = trim($_POST["txt_year_of_birth"]);
  $phone = trim($_POST["txt_phone"]);
  $address = trim($_POST["txt_address"]);
+
+ $fbLink = trim($_POST["fbLink"]);
+ $instaLink = trim($_POST["instaLink"]);
+ $youtubeLink = trim($_POST["youtubeLink"]);
+ $tiktokLink = trim($_POST["tiktokLink"]);
+
  $book_type = $_POST["book_type"];
  $book_level = $_POST["book_level"];
  $subject = $_POST["subject"];
@@ -47,12 +53,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $book_title_err = "نوع الكتاب يجب أن يحتوي على حروف.";
   }
 
-  // Validate email
-  if (empty($email)) {
-    $email_err = "يرجى إدخال عنوان إيميل صالح.";
-  } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $email_err = "نوع الإيميل غير صالح.";
-  }
+  if (!empty($email)) {
+    // Validate email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $email_err = "يرجى إدخال عنوان إيميل صالح.";
+    } 
+}
 
   // Validate year of birth
   if (empty($year_of_birth)) {
@@ -72,8 +78,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (empty($address)) {
     $address_err = "يرجى إدخال عنوان إقامة المؤلف.";
   }
+ // Validate File
+    // Check if a file is uploaded
+    if (isset($_FILES['uploadedFile']) && $_FILES['uploadedFile']['error'] === UPLOAD_ERR_OK) {
+      // Perform username validation before proceeding with the file upload
+          // Check if the file is an image or PDF
+          $file = $_FILES['uploadedFile'];
+          $allowedTypes = array('image/jpeg', 'image/png', 'image/gif', 'application/pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+          if (!in_array($file['type'], $allowedTypes)) {
+          
+              $file_err = "نوع غير صحيح، الأنواع المقبولة: JPEG, PNG, GIF, PDF And Docx.";
+          }
+
+          // Check file size (max 5MB)
+          $maxFileSize = 10 * 1024 * 1024; // 10 MB in bytes
+          if ($file['size'] > $maxFileSize) {
+              $file_err = "يجب أن لا يتجاوز حجم الملف (10 MB).";
+          }
+  }
+
 // If there are no errors, proceed with registration
-if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($address_err) && empty($book_type_err) && empty($book_level_err) && empty($subject_err)) {
+if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($address_err) && empty($book_type_err) && empty($book_level_err) && empty($subject_err) && empty($file_err)) {
     // Create a database connection
 
     include('../connect.php');
@@ -81,17 +106,29 @@ if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($y
     $user_id = $_SESSION['id'];
     $inserted_by = $_SESSION['username'];
 
+    $uploadDirectory = "authors_cv/"; // Set the path to your desired directory
+    // Create the directory if it does not exist
+    if (!is_dir($uploadDirectory)) {
+        mkdir($uploadDirectory, 0755, true);
+    }
 
+    // Generate a unique filename
+    $uniqueFileName = uniqid() . "_" . basename($file['name']);
+    $uploadedFile = $uploadDirectory . $uniqueFileName;
+    // Get the file type from the uploaded file
+    $fileType = $_FILES['uploadedFile']['type'];
+    // Move the uploaded file to the destination directory
+    move_uploaded_file($file['tmp_name'], $uploadedFile);
     // Insert the new user record into the database inserted_by_username
-    $sql_insert_user = "INSERT INTO authors (authorfullname, book_title, email, year_of_birth, phone, authorAddress, author_type, created_at, inserted_by_username,inserted_by_user_id, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)";
+    $sql_insert_user = "INSERT INTO authors (authorfullname, book_title, email, year_of_birth, phone, authorAddress, author_type, created_at, inserted_by_username, fbLink, instaLink, youtubeLink, tiktokLink, userfile, filetype, inserted_by_user_id, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt_insert_user = mysqli_prepare($conn, $sql_insert_user);
-    mysqli_stmt_bind_param($stmt_insert_user, "ssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $address, $author_type, $inserted_by, $user_id, $book_type, $book_level, $subject);
+    mysqli_stmt_bind_param($stmt_insert_user, "ssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $address, $author_type, $inserted_by, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $user_id, $book_type, $book_level, $subject);
     
     mysqli_stmt_execute($stmt_insert_user);
 
-    // Retrieve the user ID of the inserted user
-    $author_id = mysqli_insert_id($conn);
-
+        // Retrieve the user ID of the inserted user
+        $author_id = mysqli_insert_id($conn);
+        
         // Insert student-specific or teacher-specific data based on user role
         if ($author_type === 'student') {
           $studentLevel = trim($_POST["studentLevel"]);
@@ -175,7 +212,7 @@ include('header.php');
                  <?php echo $_SESSION['register_success_msg']; ?>
              </div>
      <?php unset($_SESSION['register_success_msg']); }  ?>
-        <form role="form" action="" method="post">
+        <form role="form" action="" method="post" enctype="multipart/form-data">
             <h4 class="mb-3">إضافة مؤلف</h4>
 
             <div class="border rounded p-4 shadow">
@@ -210,7 +247,7 @@ include('header.php');
               <div class="input-group input-group-outline my-3">
                 <label for="email" class="form-label">الإيميل</label>
                 <input type="email" class="form-control <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>"
-                  id="email" name="txt_email" value="<?php echo $email; ?>" required/>
+                  id="email" name="txt_email" value="<?php echo $email; ?>"/>
                 <span class="invalid-feedback"><?php echo $email_err; ?></span>
               </div>
 
@@ -357,18 +394,21 @@ include('header.php');
                     </div>
                 </div>
                 </div>
-
+                <div class="d-flex">
+                <div class="col-md-6">
                     <!-- novelist Specific Inputs -->
-                <div class="input-group input-group-outline my-3" id="novelistInputs" style="display: none;">
+                <div class="input-group input-group-outline m-3" id="novelistInputs" style="display: none;">
                   <label for="novelistfield" class="form-label">المجال</label>
                   <input type="text" class="form-control" id="novelistfield" name="novelistfield">
+                </div>
+                </div>
                 </div>
 
                 </div>
             <!-- Author Info End-->
              
               
-              
+                <!-- Book Info Section-->
               <div class="border rounded p-4 my-4 shadow">
           <h6 class="border-bottom pb-2 mb-3">معلومات الكتاب</h6>
               <div class="d-flex">
@@ -413,7 +453,40 @@ include('header.php');
                 </div>
               </div>
               </div>
+              <!-- Social Section-->
+              <div class="border rounded p-4 shadow">
+                <h6 class="border-bottom pb-2 mb-3">معلومات وسائل التواصل</h6>
+                    <div class="d-flex">
+                      <div class="input-group input-group-outline m-3">
+                        <label for="fbLink" class="form-label">رابط الفيسبوك</label>
+                        <input type="text" class="form-control" id="fbLink" name="fbLink">
+                    </div>
+                    <div class="input-group input-group-outline my-3">
+                        <label for="instaLink" class="form-label">رابط الإنستغرام</label>
+                        <input type="text" class="form-control" id="instaLink" name="instaLink">
+                    </div>
 
+                    </div>
+                    <div class="d-flex">
+                    <div class="input-group input-group-outline m-3">
+                        <label for="youtubeLink" class="form-label">رابط قناة اليوتيوب</label>
+                        <input type="text" class="form-control" id="youtubeLink" name="youtubeLink">
+                    </div>
+                    <div class="input-group input-group-outline my-3">
+                        <label for="tiktokLink" class="form-label">رابط التيكتوك</label>
+                        <input type="text" class="form-control" id="tiktokLink" name="tiktokLink">
+                    </div>
+                  
+                    </div>   
+              </div>
+            <!-- File Section-->
+            <div class="border rounded p-4 shadow">
+                          <h6 class="border-bottom pb-2 mb-3">السيرة الذاتية</h6>
+   <div class="input-group input-group-outline m-3">
+                                <input type="file" class="form-control <?php echo (!empty($file_err)) ? 'is-invalid' : ''; ?>" id="file" name="uploadedFile" />
+                                <span class="invalid-feedback"><?php echo $file_err; ?></span>
+                            </div>
+            </div>    
                 <button type="submit" name="but_submit" class="btn bg-gradient-primary" >إضـافة</button>
                 <?php if (!empty($register_err)) { ?>
                 <div class="alert alert-danger mt-3" role="alert">

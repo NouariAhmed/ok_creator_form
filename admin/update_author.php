@@ -5,7 +5,7 @@ include('secure.php');
 include('header.php');
 include('../connect.php');
 include('../dash_functions.php'); 
-$uname = $book_title = $email = $year_of_birth = $phone = $authorAddress = $book_type_id = $book_level_id = $subject_id = "";
+$uname = $book_title = $email = $year_of_birth = $phone = $authorAddress = $book_type_id = $book_level_id = $subject_id = $fbLink = $instaLink = $youtubeLink = $tiktokLink ="";
 $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $address_err = $book_type_err = $book_level_err = $subject_err = $register_err = "";
 
 ?>
@@ -49,6 +49,11 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
             $year_of_birth = htmlspecialchars($item['year_of_birth']);
             $phone = htmlspecialchars($item['phone']);
             $authorAddress = htmlspecialchars($item['authorAddress']);
+
+            $fbLink = htmlspecialchars($item['fbLink']);
+            $instaLink = htmlspecialchars($item['instaLink']);
+            $youtubeLink = htmlspecialchars($item['youtubeLink']);
+            $tiktokLink = htmlspecialchars($item['tiktokLink']);
 
             $book_type_id = $item['book_type_id'];
             $book_level_id = $item['book_level_id'];
@@ -109,6 +114,11 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
             $phone = trim($_POST["phone"]);
             $authorAddress = trim($_POST["authorAddress"]);
 
+            $fbLink = trim($_POST["fbLink"]);
+            $instaLink = trim($_POST["instaLink"]);
+            $youtubeLink = trim($_POST["youtubeLink"]);
+            $tiktokLink = trim($_POST["tiktokLink"]);
+
             $book_type_id = trim($_POST["book_type_id"]);
             $book_level_id = trim($_POST["book_level_id"]);
             $subject_id = trim($_POST["subject_id"]);
@@ -124,13 +134,13 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
             } elseif (!preg_match("/^[\p{L}\p{N}_\s]+$/u", $book_title)) {
                 $book_title_err = "عنوان الكتاب يجب أن يحتوي على حروف.";
             }
-
+        if (!empty($email)) {
             // Validate email
-            if (empty($email)) {
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $email_err = "يرجى إدخال عنوان إيميل صالح.";
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $email_err = "نوع الإيميل غير صالح.";
-            }
+            } 
+        }
+           
 
             // Validate year of birth
             if (empty($year_of_birth)) {
@@ -156,13 +166,13 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                 // Create a database connection
 
                 include('../connect.php');
-
-            // Update the author data
-            $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, authorAddress = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
-            $stmt_update_author = mysqli_prepare($conn, $sql_update_author);
-            mysqli_stmt_bind_param($stmt_update_author, "ssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $authorAddress, $book_type_id, $book_level_id, $subject_id, $id);
-            mysqli_stmt_execute($stmt_update_author);
            
+            // Update the author data including social media links
+            $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
+            $stmt_update_author = mysqli_prepare($conn, $sql_update_author);
+            mysqli_stmt_bind_param($stmt_update_author, "ssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $book_type_id, $book_level_id, $subject_id, $id);
+            mysqli_stmt_execute($stmt_update_author);
+
     
             
             if (mysqli_stmt_execute($stmt_update_author)) {
@@ -251,7 +261,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
              <form role="form" action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $id; ?>" method="post">
               <h4 class="mb-3">تحديث مؤلف</h4>
               <div class="border rounded p-4 shadow">
-                 <h6 class="border-bottom pb-2 mb-3">معلومات المؤلف</h6>
+                 <h6 class="border-bottom pb-2 mb-3">تحديث معلومات المؤلف</h6>
                 <div class="row">
                     <div class="form-group col-md-6">
                     <input type="hidden" name="author_type_for_update" value="<?php echo htmlspecialchars($author_type); ?>">
@@ -268,7 +278,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                 <div class="row">
                 <div class="form-group col-md-6">
                     <label class="form-label">الإيميل :</label>
-                    <input type="email" name="email" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($email); ?>" required>
+                    <input type="email" name="email" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($email); ?>">
                 </div>
                 <div class="form-group col-md-6">
                     <label class="form-label">سنة الميلاد :</label>
@@ -389,9 +399,9 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                     </div>
                 <?php } ?>
                 </div>
-
+                <!-- Updete Book Section-->
                 <div class="border rounded p-4 shadow mt-4">
-                 <h6 class="border-bottom pb-2 mb-3">تحديث معلومات المؤلف</h6>
+                 <h6 class="border-bottom pb-2 mb-3">تحديث معلومات الكتاب</h6>
 
                 <div class="d-flex">
                 <div class="input-group input-group-outline my-3">
@@ -451,6 +461,32 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
             </div>
         </div>
         </div>
+        <!-- Updete Social Section-->
+        <div class="border rounded p-4 shadow">
+            <h6 class="border-bottom pb-2 mb-3">تحديث معلومات وسائل التواصل</h6>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="form-label">رابط الفيسبوك :</label>
+                        <input type="text" name="fbLink" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($fbLink); ?>">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="form-label">رابط الإنستغرام :</label>
+                        <input type="text" name="instaLink" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($instaLink); ?>">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="form-label">رابط قناة اليوتيوب :</label>
+                        <input type="text" name="youtubeLink" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($youtubeLink); ?>">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="form-label">رابط التيكتوك :</label>
+                        <input type="text" name="tiktokLink" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($tiktokLink); ?>">
+                    </div>
+                </div>
+
+                </div>
+
     <div class="form-group mt-3">
                   <button type="submit" name="updateData" class="btn btn-primary">تحديث</button>
               </div>

@@ -54,7 +54,8 @@ if (empty($uname_err) && empty($pwd_err)) {
             session_start();
             $_SESSION["id"] = $id;
             $_SESSION['role'] = $role;
-            $_SESSION['username'] = $username;     
+            $_SESSION['username'] = $username;
+            $_SESSION['showWelcomeMessage'] = true;      
                 // Admin user, redirect to dashboard
                 header("Location: admin/index.php");
 
