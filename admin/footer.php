@@ -63,6 +63,63 @@
       </div>
     </div>
   </div>
+  <?php
+  include('../connect.php');
+   // Perform your database query
+   $query = "SELECT author_type, COUNT(*) AS author_count FROM authors GROUP BY author_type"; // Adjust the query based on your database schema
+   $result = mysqli_query($conn, $query);
+
+   // Initialize arrays to hold data
+   $authorTypeLabels = array();
+   $authorTypeCounts = array();
+
+   // Fetch and process the data
+   while ($row = mysqli_fetch_assoc($result)) {
+       $authorTypeLabels[] = $row['author_type'];
+       $authorTypeCounts[] = $row['author_count'];
+   }
+   // Get the number of inserted authors for each admin 
+  $sql_admin_author_counts = "
+      SELECT inserted_by_username, COUNT(*) AS author_count
+      FROM authors
+      GROUP BY inserted_by_username";
+  $result_admin_author_counts = mysqli_query($conn, $sql_admin_author_counts);
+
+  // Create arrays to store admin IDs or usernames and author counts
+  $adminLabels = array();
+  $authorCountsByAdmin = array();
+
+  // Fetch and store the data in the arrays
+  while ($row = mysqli_fetch_assoc($result_admin_author_counts)) {
+    
+      $adminId = $row['inserted_by_username'];
+      $adminLabels[] = $adminId; // You can replace this with admin username if needed
+      $authorCountsByAdmin[] = $row['author_count'];
+  }
+  // Get the number of inserted authors for each month
+  $sql_monthly_author_counts = "
+      SELECT YEAR(created_at) AS year, MONTH(created_at) AS month, COUNT(*) AS author_count
+      FROM authors
+      GROUP BY YEAR(created_at), MONTH(created_at)";
+  $result_monthly_author_counts = mysqli_query($conn, $sql_monthly_author_counts);
+
+  // Create arrays to store month labels and author counts
+  $monthLabels = array();
+  $authorCountsByMonth = array();
+
+  // Define an array of month names
+  $monthNames = array(
+      1 => "January", 2 => "February", 3 => "March", 4 => "April", 5 => "May", 6 => "June",
+      7 => "July", 8 => "August", 9 => "September", 10 => "October", 11 => "November", 12 => "December"
+  );
+
+  // Fetch and store the data in the arrays
+  while ($row = mysqli_fetch_assoc($result_monthly_author_counts)) {
+      $monthLabel = $monthNames[$row['month']] . ' ' . $row['year'];
+      $monthLabels[] = $monthLabel;
+      $authorCountsByMonth[] = $row['author_count'];
+  }
+  ?>
   <!--   Core JS Files   -->
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>
@@ -74,19 +131,19 @@
 
     new Chart(ctx, {
       type: "bar",
-      data: {
-        labels: ["M", "T", "W", "T", "F", "S", "S"],
-        datasets: [{
-          label: "Sales",
-          tension: 0.4,
-          borderWidth: 0,
-          borderRadius: 4,
-          borderSkipped: false,
-          backgroundColor: "rgba(255, 255, 255, .8)",
-          data: [50, 20, 10, 22, 50, 10, 40],
-          maxBarThickness: 6
-        }, ],
-      },
+            data: {
+                labels: <?php echo json_encode($authorTypeLabels); ?>,
+                datasets: [{
+                    label: "عدد المؤلفين",
+                    tension: 0.4,
+                    borderWidth: 0,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                    backgroundColor: "rgba(255, 255, 255, .8)",
+                    data: <?php echo json_encode($authorTypeCounts); ?>,
+                    maxBarThickness: 6
+                }],
+            },
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -154,26 +211,18 @@
     var ctx2 = document.getElementById("chart-line").getContext("2d");
 
     new Chart(ctx2, {
-      type: "line",
-      data: {
-        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [{
-          label: "Mobile apps",
-          tension: 0,
-          borderWidth: 0,
-          pointRadius: 5,
-          pointBackgroundColor: "rgba(255, 255, 255, .8)",
-          pointBorderColor: "transparent",
-          borderColor: "rgba(255, 255, 255, .8)",
-          borderColor: "rgba(255, 255, 255, .8)",
-          borderWidth: 4,
-          backgroundColor: "transparent",
-          fill: true,
-          data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
-          maxBarThickness: 6
-
-        }],
-      },
+  type: "bar", // Change the chart type to "bar"
+  data: {
+    labels: <?php echo json_encode($adminLabels); ?>,
+    datasets: [{
+      label: "عدد المؤلفين",
+      backgroundColor: "rgba(255, 255, 255, .8)",
+      data: <?php echo json_encode($authorCountsByAdmin); ?>,
+      borderWidth: 0,
+      borderRadius: 4,
+      maxBarThickness: 50
+    }],
+  },
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -239,9 +288,9 @@
     new Chart(ctx3, {
       type: "line",
       data: {
-        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        labels: <?php echo json_encode($monthLabels); ?>,
         datasets: [{
-          label: "Mobile apps",
+          label: "عدد المؤلفين",
           tension: 0,
           borderWidth: 0,
           pointRadius: 5,
@@ -251,9 +300,8 @@
           borderWidth: 4,
           backgroundColor: "transparent",
           fill: true,
-          data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
+          data: <?php echo json_encode($authorCountsByMonth); ?>,
           maxBarThickness: 6
-
         }],
       },
       options: {

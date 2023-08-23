@@ -26,6 +26,13 @@ if (isset($_SESSION['username']) && isset($_SESSION['showWelcomeMessage']) && $_
     // Unset the flag to prevent showing the message on subsequent page loads
     $_SESSION['showWelcomeMessage'] = false;
 }
+$result = mysqli_query($conn, "
+    SELECT *
+    FROM authors
+    ORDER BY id DESC
+    LIMIT 5
+");
+$items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 mysqli_close($conn);
 ?>
       <div class="container-fluid py-4">
@@ -107,7 +114,6 @@ mysqli_close($conn);
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-          
             </div>
           </div>
         </div>
@@ -123,12 +129,12 @@ mysqli_close($conn);
               </div>
             </div>
             <div class="card-body">
-              <h6 class="mb-0 ">مشاهدات الموقع</h6>
-              <p class="text-sm ">آخر أداء للحملة</p>
+              <h6 class="mb-0 ">عدد المؤلفين حسب النوع</h6>
+              <p class="text-sm ">آخر الإحصائيات</p>
               <hr class="dark horizontal">
               <div class="d-flex ">
                 <i class="material-icons text-sm my-auto ms-1">schedule</i>
-                <p class="mb-0 text-sm"> الحملة أرسلت قبل يومين </p>
+                <p class="mb-0 text-sm"> سنة 2023 </p>
               </div>
             </div>
           </div>
@@ -143,12 +149,12 @@ mysqli_close($conn);
               </div>
             </div>
             <div class="card-body">
-              <h6 class="mb-0 "> المبيعات اليومية </h6>
-              <p class="text-sm "> (<span class="font-weight-bolder">+15%</span>) زيادة في مبيعات اليوم. </p>
+              <h6 class="mb-0 "> عدد المؤلفين - أدمن </h6>
+              <p class="text-sm "> عدد المؤلفين لكل أدمن </p>
               <hr class="dark horizontal">
               <div class="d-flex ">
                 <i class="material-icons text-sm my-auto ms-1">schedule</i>
-                <p class="mb-0 text-sm"> تم التحديث منذ 4 دقائق </p>
+                <p class="mb-0 text-sm"> سنة 2023 </p>
               </div>
             </div>
           </div>
@@ -163,292 +169,76 @@ mysqli_close($conn);
               </div>
             </div>
             <div class="card-body">
-              <h6 class="mb-0 ">المهام المكتملة</h6>
-              <p class="text-sm ">آخر أداء للحملة</p>
+              <h6 class="mb-0 "> عدد المؤلفين - شهر </h6>
+              <p class="text-sm "> عدد المؤلفين المضافين في كل شهر </p>
               <hr class="dark horizontal">
               <div class="d-flex ">
                 <i class="material-icons text-sm my-auto me-1">schedule</i>
-                <p class="mb-0 text-sm">تم تحديثه للتو</p>
+                <p class="mb-0 text-sm"> سنة 2023 </p>
               </div>
             </div>
           </div>
         </div>
       </div>
+
       <div class="row my-4">
-        <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+        <div class="col-12 mb-md-0 mb-4">
           <div class="card">
             <div class="card-header pb-0">
               <div class="row mb-3">
                 <div class="col-6">
-                  <h6>المشاريع</h6>
-                  <p class="text-sm">
-                    <i class="fa fa-check text-info" aria-hidden="true"></i>
-                    <span class="font-weight-bold ms-1">30 انتهى</span> هذا الشهر
+                  <h6>المؤلفون</h6>
+                  <p class="text-sm font-weight-bold">
+                  <i class="fa fa-check text-success" aria-hidden="true"></i>
+                   آخر خمسة مؤلفين تم إضافتهم
                   </p>
-                </div>
-                <div class="col-6 my-auto text-start">
-                  <div class="dropdown float-start ps-4">
-                    <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fa fa-ellipsis-v text-secondary"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-n4" aria-labelledby="dropdownTable">
-                      <li><a class="dropdown-item border-radius-md" href="javascript:;">عمل</a></li>
-                      <li><a class="dropdown-item border-radius-md" href="javascript:;">عمل آخر</a></li>
-                      <li><a class="dropdown-item border-radius-md" href="javascript:;">شيء آخر هنا</a></li>
-                    </ul>
-                  </div>
                 </div>
               </div>
             </div>
             <div class="card-body p-0 pb-2">
               <div class="table-responsive">
-                <table class="table align-items-center mb-0">
+                <table class="table table-hover align-items-center mb-0">
                   <thead>
                     <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">المشروع</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">أعضاء</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ميزانية</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">إكمال</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7">المعرف</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المؤلف</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">عنوان الكتاب</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">من طرف</th>
                     </tr>
                   </thead>
                   <tbody>
+                  <?php
+                foreach ($items as $item) {
+                ?>
                     <tr>
+                      <td class="align-middle text-sm">
+                       <h6 class="mb-0 text-sm pe-4"><?php echo htmlspecialchars($item["id"]);?></h6>
+                      </td>
                       <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="../assets/img/small-logos/logo-xd.svg" class="avatar avatar-sm ms-3">
-                          </div>
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Material XD الإصدار</h6>
+                            <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["authorfullname"]);?></h6>
+                            <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["phone"]);?></p>
+                            <!-- </div> -->
                           </div>
-                        </div>
                       </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                            <img alt="Image placeholder" src="../assets/img/team-1.jpg">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                            <img alt="Image placeholder" src="../assets/img/team-2.jpg">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alexander Smith">
-                            <img alt="Image placeholder" src="../assets/img/team-3.jpg">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                            <img alt="Image placeholder" src="../assets/img/team-4.jpg">
-                          </a>
-                        </div>
+                      <td class="align-middle text-sm">
+                        <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["book_title"]);?></h6>
                       </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> $14,000 </span>
-                      </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">60%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-info w-60" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
+                      <td class="align-middle text-sm">
+                        <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["inserted_by_username"]);?></h6>
+                        <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["created_at"]);?></p>
                       </td>
                     </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="../assets/img/small-logos/logo-atlassian.svg" class="avatar avatar-sm ms-3">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">أضف مسار التقدم إلى التطبيق الداخلي</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                            <img alt="Image placeholder" src="../assets/img/team-2.jpg">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                            <img alt="Image placeholder" src="../assets/img/team-4.jpg">
-                          </a>
-                        </div>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> $3,000 </span>
-                      </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">10%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-info w-10" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="../assets/img/small-logos/logo-slack.svg" class="avatar avatar-sm ms-3">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">إصلاح أخطاء النظام الأساسي</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                            <img alt="Image placeholder" src="../assets/img/team-3.jpg">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                            <img alt="Image placeholder" src="../assets/img/team-1.jpg">
-                          </a>
-                        </div>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> غير مضبوط </span>
-                      </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">100%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="../assets/img/small-logos/logo-spotify.svg" class="avatar avatar-sm ms-3">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">إطلاق تطبيق الهاتف المحمول الخاص بنا</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                            <img alt="Image placeholder" src="../assets/img/team-4.jpg">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                            <img alt="Image placeholder" src="../assets/img/team-3.jpg">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alexander Smith">
-                            <img alt="Image placeholder" src="../assets/img/team-4.jpg">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                            <img alt="Image placeholder" src="../assets/img/team-1.jpg">
-                          </a>
-                        </div>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> $20,500 </span>
-                      </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">100%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="../assets/img/small-logos/logo-jira.svg" class="avatar avatar-sm ms-3">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">أضف صفحة التسعير الجديدة</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                            <img alt="Image placeholder" src="../assets/img/team-4.jpg">
-                          </a>
-                        </div>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> $500 </span>
-                      </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">25%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-info w-25" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="25"></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="../assets/img/small-logos/logo-invision.svg" class="avatar avatar-sm ms-3">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">إعادة تصميم متجر جديد على الإنترنت</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                            <img alt="Image placeholder" src="../assets/img/team-1.jpg">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                            <img alt="Image placeholder" src="../assets/img/team-4.jpg">
-                          </a>
-                        </div>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> $2,000 </span>
-                      </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">40%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-info w-40" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="40"></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
+                    <?php
+                }
+                ?>
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
         </div>
+        <!--
         <div class="col-lg-4 col-md-6">
           <div class="card h-100">
             <div class="card-header pb-0">
@@ -518,7 +308,9 @@ mysqli_close($conn);
             </div>
           </div>
         </div>
+-->
       </div>
+
 <?php
 include('footer.php');
 ?>
