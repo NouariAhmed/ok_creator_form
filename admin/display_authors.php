@@ -96,6 +96,7 @@ if ($selectedBookLevel !== 'all') {
 if ($selectedSubject !== 'all') {
 $sql .= " AND subject_id = ?";
 }
+$sql .= " ORDER BY id DESC";
 $sql .= " LIMIT $startIndex, $itemsPerPage";
 
 $stmt = mysqli_prepare($conn, $sql);
@@ -384,7 +385,7 @@ include('header.php');
                       <td class="align-middle text-center">
                             <?php if (!empty($item["userfile"])): ?>
                                 <a href="<?php echo htmlspecialchars($item["userfile"]); ?>" class="btn badge-sm bg-gradient-secondary" target="_blank">
-                                    <i class="material-icons-round align-middle" style="font-size: 18px;">print</i></a>
+                                    <i class="fas fa-file-pdf align-middle" style="font-size: 18px;"></i></a>
                             <?php endif; ?>
                             <a href="update_author.php?id=<?php echo htmlspecialchars($item["id"]);?>&type=<?php echo htmlspecialchars($item["author_type"]);?>&book_type_id=<?php echo htmlspecialchars($item["book_type_id"]); ?>" class="btn badge-sm bg-gradient-primary"> <i class="material-icons-round align-middle" style="font-size: 18px;">edit</i></a>
                             <a href="delete_author.php?id=<?php echo htmlspecialchars($item["id"]);?>&type=<?php echo htmlspecialchars($item["author_type"]);?>" class="btn badge-sm bg-gradient-danger"> <i class="material-icons-round align-middle" style="font-size: 18px;">delete</i></a>

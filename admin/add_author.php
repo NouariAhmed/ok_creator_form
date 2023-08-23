@@ -111,14 +111,16 @@ if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($y
     if (!is_dir($uploadDirectory)) {
         mkdir($uploadDirectory, 0755, true);
     }
-
+    $uploadedFile = '';
+   if (!empty($_FILES['uploadedFile']['name'])) {
     // Generate a unique filename
-    $uniqueFileName = uniqid() . "_" . basename($file['name']);
+    $uniqueFileName = uniqid() . "_" . basename($_FILES['uploadedFile']['name']);
     $uploadedFile = $uploadDirectory . $uniqueFileName;
     // Get the file type from the uploaded file
     $fileType = $_FILES['uploadedFile']['type'];
     // Move the uploaded file to the destination directory
-    move_uploaded_file($file['tmp_name'], $uploadedFile);
+    move_uploaded_file($_FILES['uploadedFile']['tmp_name'], $uploadedFile);
+}
     // Insert the new user record into the database inserted_by_username
     $sql_insert_user = "INSERT INTO authors (authorfullname, book_title, email, year_of_birth, phone, authorAddress, author_type, created_at, inserted_by_username, fbLink, instaLink, youtubeLink, tiktokLink, userfile, filetype, inserted_by_user_id, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt_insert_user = mysqli_prepare($conn, $sql_insert_user);
@@ -207,11 +209,61 @@ include('header.php');
 ?>
     <div class="container-fluid py-4">
           <!-- Display the flash message if it exists -->
-            <?php if (isset($_SESSION['register_success_msg'])) { ?>
-             <div class="alert alert-success mt-3 text-white" role="alert">
-                 <?php echo $_SESSION['register_success_msg']; ?>
-             </div>
-     <?php unset($_SESSION['register_success_msg']); }  ?>
+<?php if (isset($_SESSION['register_success_msg'])) { ?>
+    <div class="progress-container">
+        <div class="progress-bar" id="myProgressBar">
+            <div class="progress-text">يتم إدخال المؤلف</div>
+        </div>
+    </div>
+    <div class="alert alert-success mt-3 text-white" role="alert" id="successMessage" style="display: none;">
+        <?php echo $_SESSION['register_success_msg']; ?>
+    </div>
+    <style>
+        .progress-container {
+            height: 30px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: #4caf50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+            position: relative;
+        }
+
+        .progress-text {
+            position: absolute;
+        }
+    </style>
+    <script>
+        var progressBar = document.getElementById("myProgressBar");
+        var progressText = document.querySelector(".progress-text");
+        var successMessage = document.getElementById("successMessage");
+
+        // Simulate progress
+        var progress = 0;
+        var interval = setInterval(function () {
+            progress += 10;
+            progressBar.style.width = progress + "%";
+            progressText.textContent = "يتم إدخال المؤلف " + progress + "%";
+            if (progress >= 100) {
+                clearInterval(interval);
+                progressBar.style.display = "none";
+                progressText.style.display = "none";
+                successMessage.style.display = "block";
+            }
+        }, 250);
+    </script>
+<?php unset($_SESSION['register_success_msg']); }  ?>
+
+
         <form role="form" action="" method="post" enctype="multipart/form-data">
             <h4 class="mb-3">إضافة مؤلف</h4>
 
