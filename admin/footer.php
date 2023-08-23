@@ -65,19 +65,33 @@
   </div>
   <?php
   include('../connect.php');
-   // Perform your database query
-   $query = "SELECT author_type, COUNT(*) AS author_count FROM authors GROUP BY author_type"; // Adjust the query based on your database schema
-   $result = mysqli_query($conn, $query);
+   // Mapping of English author types to Arabic translations
+    $authorTypeTranslations = array(
+      'student' => 'طالب',
+      'teacher' => 'أستاذ',
+      'inspector' => 'مفتش',
+      'doctor' => 'طبيب',
+      'trainer' => 'مدرب',
+      'novelist' => 'روائي'
+    );
 
-   // Initialize arrays to hold data
-   $authorTypeLabels = array();
-   $authorTypeCounts = array();
+    // Perform your database query
+    $query = "SELECT author_type, COUNT(*) AS author_count FROM authors GROUP BY author_type"; // Adjust the query based on your database schema
+    $result = mysqli_query($conn, $query);
 
-   // Fetch and process the data
-   while ($row = mysqli_fetch_assoc($result)) {
-       $authorTypeLabels[] = $row['author_type'];
-       $authorTypeCounts[] = $row['author_count'];
-   }
+    // Initialize arrays to hold data
+    $authorTypeLabels = array();
+    $authorTypeCounts = array();
+
+    // Fetch and process the data
+    while ($row = mysqli_fetch_assoc($result)) {
+      $englishAuthorType = $row['author_type'];
+      $arabicAuthorType = isset($authorTypeTranslations[$englishAuthorType]) ? $authorTypeTranslations[$englishAuthorType] : $englishAuthorType;
+      
+      $authorTypeLabels[] = $arabicAuthorType;
+      $authorTypeCounts[] = $row['author_count'];
+    }
+
    // Get the number of inserted authors for each admin 
   $sql_admin_author_counts = "
       SELECT inserted_by_username, COUNT(*) AS author_count
@@ -96,6 +110,7 @@
       $adminLabels[] = $adminId; // You can replace this with admin username if needed
       $authorCountsByAdmin[] = $row['author_count'];
   }
+
   // Get the number of inserted authors for each month
   $sql_monthly_author_counts = "
       SELECT YEAR(created_at) AS year, MONTH(created_at) AS month, COUNT(*) AS author_count
@@ -109,8 +124,8 @@
 
   // Define an array of month names
   $monthNames = array(
-      1 => "January", 2 => "February", 3 => "March", 4 => "April", 5 => "May", 6 => "June",
-      7 => "July", 8 => "August", 9 => "September", 10 => "October", 11 => "November", 12 => "December"
+      1 => "جانفي", 2 => "فيفري", 3 => "مارس", 4 => "أفريل", 5 => "ماي", 6 => "جوان",
+      7 => "جويلية", 8 => "أوت", 9 => "سبتمبر", 10 => "أكتوبر", 11 => "نوفمبر", 12 => "ديسمبر"
   );
 
   // Fetch and store the data in the arrays

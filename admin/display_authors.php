@@ -96,7 +96,7 @@ if ($selectedBookLevel !== 'all') {
 if ($selectedSubject !== 'all') {
 $sql .= " AND subject_id = ?";
 }
-$sql .= " ORDER BY id DESC";
+$sql .= " ORDER BY communicate_date DESC";
 $sql .= " LIMIT $startIndex, $itemsPerPage";
 
 $stmt = mysqli_prepare($conn, $sql);
@@ -215,8 +215,9 @@ include('header.php');
                 <table class="table align-items-center mb-0 table-hover">
                   <thead>
                     <tr>
-                      <th class="text-secondary text-lg font-weight-bolder opacity-7 " >المعرف</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 ">المعرف</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المؤلف</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">ت التواصل</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">عنوان الكتاب</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">نوع الكتاب</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المستوى</th>
@@ -260,7 +261,7 @@ include('header.php');
                 ?>
                     <tr>
                     <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm pe-4"><?php echo htmlspecialchars($item["id"]);?></h6>
+                      <h6 class="mb-0 text-sm pe-4"><?php echo htmlspecialchars($item["id"]);?>#</h6>
                       </td>
                       <td>
                          <!--
@@ -273,6 +274,9 @@ include('header.php');
                             <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["phone"]);?></p>
                             <!-- </div> -->
                           </div>
+                      </td>
+                      <td class="align-middle text-sm">
+                      <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["communicate_date"]);?></h6>
                       </td>
                       <td class="align-middle text-sm">
                       <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["book_title"]);?></h6>

@@ -46,7 +46,10 @@
             <span class="nav-link-text me-1">المؤلفون</span>
           </a>
         </li>
-        <?php if ($_SESSION['role'] === "admin") { ?>
+        <?php
+        $currentDate = date("Y-m-d");
+
+        if ($_SESSION['role'] === "admin") { ?>
         <li class="nav-item">
           <a class="nav-link " href="display_book_types.php?page=1">
             <div class="text-white text-center ms-2 d-flex align-items-center justify-content-center">
@@ -85,6 +88,27 @@
         <?php } ?>
     <div class="sidenav-footer position-absolute w-100 bottom-0 ">
       <div class="mx-3">
+      <p class="text-white text-center mb-2 fs-4" id="currentDateTime"></p>
+      <script>
+// Function to update the current date and time
+function updateDateTime() {
+    const currentDateTimeElement = document.getElementById('currentDateTime');
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    currentDateTimeElement.textContent = `${hours}.${minutes}.${seconds} ${year}/${month}/${day}`;
+  }
+
+  // Update the date and time every second
+  setInterval(updateDateTime, 1000);
+</script>
         <a class="btn bg-gradient-primary mt-4 w-100" href="../logout.php" type="button" onclick="return confirm('هل أنت متأكد من تسجيل الخروج؟');">تسجيل الخروج</a>
       </div>
      </div>

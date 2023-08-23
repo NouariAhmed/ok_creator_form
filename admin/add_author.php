@@ -1,8 +1,8 @@
 <?php
 include('../connect.php');
 // Initialize variables
-$uname = $book_title = $email = $year_of_birth = $phone = $address = $book_type = $book_level = $subject = $fbLink = $instaLink = $youtubeLink = $tiktokLink ="";
-$uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $address_err = $book_type_err = $book_level_err = $subject_err = $register_err = $file_err ="";
+$uname = $book_title = $email = $year_of_birth = $phone = $address = $book_type = $book_level = $subject = $fbLink = $instaLink = $youtubeLink = $tiktokLink = $communicate_date ="";
+$uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $address_err = $book_type_err = $book_level_err = $subject_err = $register_err = $file_err = $communicate_date_err="";
 
 // Fetch book types from the database
 $sql_fetch_book_types = "SELECT id, type_name FROM book_types";
@@ -28,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
  $year_of_birth = trim($_POST["txt_year_of_birth"]);
  $phone = trim($_POST["txt_phone"]);
  $address = trim($_POST["txt_address"]);
+ $communicate_date = trim($_POST["communicate_date"]);
 
  $fbLink = trim($_POST["fbLink"]);
  $instaLink = trim($_POST["instaLink"]);
@@ -78,6 +79,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (empty($address)) {
     $address_err = "يرجى إدخال عنوان إقامة المؤلف.";
   }
+    // Validate communicate_date
+    if (empty($communicate_date)) {
+      $communicate_date_err = "يرجى إدخال تاريخ تواصل المؤلف مع دار النشر  عكاشة.";
+    }
  // Validate File
     // Check if a file is uploaded
     if (isset($_FILES['uploadedFile']) && $_FILES['uploadedFile']['error'] === UPLOAD_ERR_OK) {
@@ -98,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 
 // If there are no errors, proceed with registration
-if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($address_err) && empty($book_type_err) && empty($book_level_err) && empty($subject_err) && empty($file_err)) {
+if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($address_err) && empty($book_type_err) && empty($book_level_err) && empty($subject_err) && empty($file_err) && empty($communicate_date_err)) {
     // Create a database connection
 
     include('../connect.php');
@@ -122,9 +127,9 @@ if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($y
     move_uploaded_file($_FILES['uploadedFile']['tmp_name'], $uploadedFile);
 }
     // Insert the new user record into the database inserted_by_username
-    $sql_insert_user = "INSERT INTO authors (authorfullname, book_title, email, year_of_birth, phone, authorAddress, author_type, created_at, inserted_by_username, fbLink, instaLink, youtubeLink, tiktokLink, userfile, filetype, inserted_by_user_id, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql_insert_user = "INSERT INTO authors (authorfullname, book_title, email, year_of_birth, phone, authorAddress, author_type, created_at, inserted_by_username, communicate_date, fbLink, instaLink, youtubeLink, tiktokLink, userfile, filetype, inserted_by_user_id, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt_insert_user = mysqli_prepare($conn, $sql_insert_user);
-    mysqli_stmt_bind_param($stmt_insert_user, "ssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $address, $author_type, $inserted_by, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $user_id, $book_type, $book_level, $subject);
+    mysqli_stmt_bind_param($stmt_insert_user, "sssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $address, $author_type, $inserted_by, $communicate_date, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $user_id, $book_type, $book_level, $subject);
     
     mysqli_stmt_execute($stmt_insert_user);
 
@@ -281,44 +286,61 @@ include('header.php');
                   <option value="novelist">روائي</option>
                 </select>
               </div>
-
-               <div class="input-group input-group-outline my-3">
+              <div class="input-group input-group-outline my-3">
+              <?php if (empty($uname)): ?>
                 <label for="username" class="form-label">اسم المؤلف</label>
-                <input type="text" class="form-control <?php echo (!empty($uname_err)) ? 'is-invalid' : ''; ?>"
-                    id="username" name="txt_uname" value="<?php echo $uname; ?>" required/>
-                    <span class="invalid-feedback"><?php echo $uname_err; ?></span>
-                </div>
+              <?php endif; ?>
+              <input type="text" class="form-control <?php echo (!empty($uname_err)) ? 'is-invalid' : ''; ?>"
+                id="username" name="txt_uname" value="<?php echo $uname; ?>" required
+                <?php if (!empty($uname)) echo 'placeholder="اسم المؤلف"'; ?> />
+              <span class="invalid-feedback"><?php echo $uname_err; ?></span>
+            </div>
+
               </div>
               <div class="d-flex">
               <div class="input-group input-group-outline m-3">
+              <?php if (empty($phone)): ?>
                 <label for="phone" class="form-label">الهاتف</label>
-                <input type="text" class="form-control <?php echo (!empty($phone_err)) ? 'is-invalid' : ''; ?>" id="phone"
-                  name="txt_phone" value="<?php echo $phone; ?>" required/>
-                <span class="invalid-feedback"><?php echo $phone_err; ?></span>
-              </div>
-              <div class="input-group input-group-outline my-3">
+              <?php endif; ?>
+              <input type="text" class="form-control <?php echo (!empty($phone_err)) ? 'is-invalid' : ''; ?>"
+                id="phone" name="txt_phone" value="<?php echo $phone; ?>" required
+                <?php if (!empty($phone)) echo 'placeholder="الهاتف"'; ?> />
+              <span class="invalid-feedback"><?php echo $phone_err; ?></span>
+            </div>
+            <div class="input-group input-group-outline my-3">
+              <?php if (empty($email)): ?>
                 <label for="email" class="form-label">الإيميل</label>
-                <input type="email" class="form-control <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>"
-                  id="email" name="txt_email" value="<?php echo $email; ?>"/>
-                <span class="invalid-feedback"><?php echo $email_err; ?></span>
-              </div>
+              <?php endif; ?>
+              <input type="email" class="form-control <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>"
+                id="email" name="txt_email" value="<?php echo $email; ?>"
+                <?php if (!empty($email)) echo 'placeholder="الإيميل"'; ?> />
+              <span class="invalid-feedback"><?php echo $email_err; ?></span>
+            </div>
 
               </div>
 
               <div class="d-flex">
               <div class="input-group input-group-outline m-3">
+              <?php if (empty($address)): ?>
                 <label for="address" class="form-label">العنوان</label>
-                <input type="text" class="form-control <?php echo (!empty($address_err)) ? 'is-invalid' : ''; ?>" id="address"
-                  name="txt_address" value="<?php echo $address; ?>" required/>
-                <span class="invalid-feedback"><?php echo $address_err; ?></span>
-              </div>
+              <?php endif; ?>
+              <input type="text" class="form-control <?php echo (!empty($address_err)) ? 'is-invalid' : ''; ?>"
+                id="address" name="txt_address" value="<?php echo $address; ?>" required
+                <?php if (!empty($address)) echo 'placeholder="العنوان"'; ?> />
+              <span class="invalid-feedback"><?php echo $address_err; ?></span>
+            </div>
 
               <div class="input-group input-group-outline my-3">
+              <?php if (empty($year_of_birth)): ?>
                 <label for="year_of_birth" class="form-label">سنة الميلاد (YYYY)</label>
-                <input type="text" class="form-control <?php echo (!empty($year_of_birth_err)) ? 'is-invalid' : ''; ?>"
-                  id="year_of_birth" name="txt_year_of_birth" value="<?php echo $year_of_birth; ?>" required/>
-                <span class="invalid-feedback"><?php echo $year_of_birth_err; ?></span>
-              </div>
+              <?php endif; ?>
+              <input type="text" class="form-control <?php echo (!empty($year_of_birth_err)) ? 'is-invalid' : ''; ?>"
+                id="year_of_birth" name="txt_year_of_birth"
+                value="<?php echo $year_of_birth; ?>" required
+                <?php if (!empty($year_of_birth)) echo 'placeholder="سنة الميلاد (YYYY)"'; ?> />
+              <span class="invalid-feedback"><?php echo $year_of_birth_err; ?></span>
+            </div>
+            
               </div>
                <!-- Student Specific Inputs -->
             <div class="d-flex">
@@ -465,10 +487,12 @@ include('header.php');
           <h6 class="border-bottom pb-2 mb-3">معلومات الكتاب</h6>
               <div class="d-flex">
                 <div class="input-group input-group-outline m-3">
+                <?php if (empty($book_title)): ?>
                   <label for="book_title" class="form-label">عنوان الكتاب</label>
-                  <input type="text" class="form-control <?php echo (!empty($book_title_err)) ? 'is-invalid' : ''; ?>"
-                    id="book_title" name="book_title" value="<?php echo $book_title; ?>" />
-                  <span class="invalid-feedback"><?php echo $book_title_err; ?></span>
+                <?php endif; ?>
+                <input type="text" class="form-control <?php echo (!empty($book_title_err)) ? 'is-invalid' : ''; ?>"
+                  id="book_title" name="book_title" value="<?php echo $book_title; ?>" />
+                <span class="invalid-feedback"><?php echo $book_title_err; ?></span>
               </div>
 
                 <div class="input-group input-group-outline my-3">
@@ -504,32 +528,52 @@ include('header.php');
                   </select>
                 </div>
               </div>
+
+              
+              <div class="form-group col-md-6">
+                        <label class="form-label me-4">تاريخ التواصل :</label>
+                        <input type="date" name="communicate_date" class="form-control border pe-2 mb-3 me-3 <?php echo (!empty($communicate_date_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($communicate_date); ?>" required>
+                        <span class="invalid-feedback"><?php echo $communicate_date_err; ?></span>
+                    </div>
               </div>
+              
               <!-- Social Section-->
               <div class="border rounded p-4 shadow">
                 <h6 class="border-bottom pb-2 mb-3">معلومات وسائل التواصل</h6>
                     <div class="d-flex">
                       <div class="input-group input-group-outline m-3">
-                        <label for="fbLink" class="form-label">رابط الفيسبوك</label>
-                        <input type="text" class="form-control" id="fbLink" name="fbLink">
+                      <?php if (empty($fbLink)): ?>
+                      <label for="fbLink" class="form-label">رابط الفيسبوك</label>
+                    <?php endif; ?>
+                    <input type="text" class="form-control" id="fbLink" name="fbLink" value="<?php echo $fbLink; ?>"
+                      <?php if (!empty($fbLink)) echo 'placeholder="رابط الفيسبوك"'; ?> />
                     </div>
                     <div class="input-group input-group-outline my-3">
-                        <label for="instaLink" class="form-label">رابط الإنستغرام</label>
-                        <input type="text" class="form-control" id="instaLink" name="instaLink">
+                    <?php if (empty($instaLink)): ?>
+                    <label for="instaLink" class="form-label">رابط الإنستغرام</label>
+                  <?php endif; ?>
+                  <input type="text" class="form-control" id="instaLink" name="instaLink" value="<?php echo $instaLink; ?>"
+                    <?php if (!empty($instaLink)) echo 'placeholder="رابط الإنستغرام"'; ?> />
+                    </div>
                     </div>
 
-                    </div>
                     <div class="d-flex">
                     <div class="input-group input-group-outline m-3">
-                        <label for="youtubeLink" class="form-label">رابط قناة اليوتيوب</label>
-                        <input type="text" class="form-control" id="youtubeLink" name="youtubeLink">
+                    <?php if (empty($youtubeLink)): ?>
+                    <label for="youtubeLink" class="form-label">رابط قناة اليوتيوب</label>
+                  <?php endif; ?>
+                  <input type="text" class="form-control" id="youtubeLink" name="youtubeLink" value="<?php echo $youtubeLink; ?>"
+                    <?php if (!empty($youtubeLink)) echo 'placeholder="رابط قناة اليوتيوب"'; ?> />
                     </div>
                     <div class="input-group input-group-outline my-3">
-                        <label for="tiktokLink" class="form-label">رابط التيكتوك</label>
-                        <input type="text" class="form-control" id="tiktokLink" name="tiktokLink">
+                    <?php if (empty($tiktokLink)): ?>
+                    <label for="tiktokLink" class="form-label">رابط التيكتوك</label>
+                  <?php endif; ?>
+                  <input type="text" class="form-control" id="tiktokLink" name="tiktokLink" value="<?php echo $tiktokLink; ?>"
+                    <?php if (!empty($tiktokLink)) echo 'placeholder="رابط التيكتوك"'; ?> />
                     </div>
-                  
-                    </div>   
+                    </div> 
+
               </div>
             <!-- File Section-->
             <div class="border rounded p-4 shadow">
