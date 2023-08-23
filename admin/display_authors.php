@@ -222,11 +222,34 @@ include('header.php');
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المادة</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">العنوان</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">من طرف</th>
+                        <!-- Teacher-specific columns -->
+                      <?php if ($selectedCategory === 'teacher') { ?>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الشهادة</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الخبرة</th>
-                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الرتبة ومؤسسة العمل</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الرتبة والمؤسسة</th>
+                       <!-- Student-specific columns -->
+                      <?php } elseif ($selectedCategory === 'student') { ?>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">مستوى الطالب</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">تخصص الطالب</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المعدل والسنة</th>
+                      <?php } elseif ($selectedCategory === 'inspector') { ?>
+                      <!-- Inspector-specific columns -->
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الشهادة</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الخبرة</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الرتبة والولاية</th>
+                      <?php } elseif ($selectedCategory === 'doctor') { ?>
+                      <!-- Doctor-specific columns -->
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">تخصص الطبيب</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">مكان العمل</th>
+                      <?php } elseif ($selectedCategory === 'trainer') { ?>
+                      <!-- Trainer-specific columns -->
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المجال</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الخبرة</th>
+                      <?php } elseif ($selectedCategory === 'novelist') { ?>
+                      <!-- Novelist-specific columns -->
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المجال</th>
+                      <?php } ?>
                       <th class="text-center text-secondary text-lg font-weight-bolder opacity-7">الإجراءات</th>
-                    
                       <th class="text-secondary opacity-7"></th>
                     </tr>
                   </thead>
@@ -294,19 +317,70 @@ include('header.php');
                       <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["inserted_by_username"]);?></h6>
                       <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["created_at"]);?></p>
                       </td>
-                      <!-- Get Special Data For Teacher ! --> 
-                      <?php $teacherData = getTeacherData($conn, $item['id']); ?>
-                      <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm"><?php echo $teacherData['teacherCertificate']; ?></h6>
-                      </td>
-                      <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm"><?php echo $teacherData['teacherExperience']; ?></h6>
-                      </td>
-                      <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm"><?php echo $teacherData['teacherRank']; ?></h6>
-                      <p class="text-xs text-secondary mb-0"><?php echo $teacherData['workFoundation']; ?>></p>
-                      </td>
-
+                                <?php if ($selectedCategory === 'teacher') { ?>
+                                    <!-- Display teacher-specific columns -->
+                                    <?php $teacherData = getTeacherData($conn, $item['id']); ?>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $teacherData['teacherCertificate']; ?></h6>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $teacherData['teacherExperience']; ?></h6>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $teacherData['teacherRank']; ?></h6>
+                                        <p class="text-xs text-secondary mb-0"><?php echo $teacherData['workFoundation']; ?></p>
+                                    </td>
+                                <?php } elseif ($selectedCategory === 'student') { ?>
+                                    <!-- Display student-specific columns -->
+                                    <?php $studentData = getStudentData($conn, $item['id']); ?>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $studentData['studentLevel']; ?></h6>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $studentData['studentSpecialty']; ?></h6>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $studentData['baccalaureateRate']; ?></h6>
+                                        <p class="text-xs text-secondary mb-0"><?php echo $studentData['baccalaureateYear']; ?></p>
+                                    </td>
+                                  <?php } elseif ($selectedCategory === 'inspector') { ?>
+                                    <!-- Display inspector-specific columns -->
+                                    <?php $inspectorData = getInspectorData($conn, $item['id']); ?>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $inspectorData['inspectorCertificate']; ?></h6>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $inspectorData['inspectorExperience']; ?></h6>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $inspectorData['inspectorRank']; ?></h6>
+                                        <p class="text-xs text-secondary mb-0"><?php echo $inspectorData['inspectorWorkFoundation']; ?></p>
+                                    </td>
+                                <?php } elseif ($selectedCategory === 'doctor') { ?>
+                                    <!-- Display doctor-specific columns -->
+                                    <?php $doctorData = getDoctorData($conn, $item['id']); ?>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $doctorData['specialty']; ?></h6>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $doctorData['drWorkFoundation']; ?></h6>
+                                    </td>
+                                <?php } elseif ($selectedCategory === 'trainer') { ?>
+                                    <!-- Display trainer-specific columns -->
+                                    <?php $trainerData = getTrainerData($conn, $item['id']); ?>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $trainerData['field']; ?></h6>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $trainerData['trainerExperience']; ?></h6>
+                                    </td>
+                                <?php } elseif ($selectedCategory === 'novelist') { ?>
+                                    <!-- Display novelist-specific columns -->
+                                    <?php $novelistData = getNovelistData($conn, $item['id']); ?>
+                                    <td class="align-middle text-sm">
+                                        <h6 class="mb-0 text-sm"><?php echo $novelistData['novelistfield']; ?></h6>
+                                    </td>
+                                <?php } ?>
                       <td class="align-middle text-center">
                             <?php if (!empty($item["userfile"])): ?>
                                 <a href="<?php echo htmlspecialchars($item["userfile"]); ?>" class="btn badge-sm bg-gradient-secondary" target="_blank">
