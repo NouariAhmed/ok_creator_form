@@ -217,13 +217,12 @@ include('header.php');
                     <tr>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 ">المعرف</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المؤلف</th>
-                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">ت التواصل</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">عنوان الكتاب</th>
-                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">نوع الكتاب</th>
-                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المستوى</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">النوع والمستوى</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المادة</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">العنوان</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">من طرف</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">ملاحظات</th>
                         <!-- Teacher-specific columns -->
                       <?php if ($selectedCategory === 'teacher') { ?>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الشهادة</th>
@@ -252,7 +251,6 @@ include('header.php');
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المجال</th>
                       <?php } ?>
                       <th class="text-center text-secondary text-lg font-weight-bolder opacity-7">الإجراءات</th>
-                      <th class="text-secondary opacity-7"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -261,7 +259,8 @@ include('header.php');
                 ?>
                     <tr>
                     <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm pe-4"><?php echo htmlspecialchars($item["id"]);?>#</h6>
+                    <h6 class="mb-0 text-sm pe-3"><?php echo htmlspecialchars($item["communicate_date"]);?></h6>
+                    <p class="text-xs text-secondary mb-0 pe-3"><?php echo htmlspecialchars($item["id"]);?>#</p>
                       </td>
                       <td>
                          <!--
@@ -272,26 +271,39 @@ include('header.php');
                           <div class="d-flex flex-column justify-content-center">
                             <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["authorfullname"]);?></h6>
                             <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["phone"]);?></p>
+                            <p class="text-xs text-primary mb-0"><?php echo htmlspecialchars($item["author_type"]);?></p>
                             <!-- </div> -->
                           </div>
                       </td>
                       <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["communicate_date"]);?></h6>
-                      </td>
-                      <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["book_title"]);?></h6>
-                      </td>
-                      <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm"><?php echo getBookTypeName($conn, $item['book_type_id']); ?></h6>
+                      <h6 class="mb-0 text-sm">
+                      <?php
+    $bookTitle = htmlspecialchars($item["book_title"]);
+    $titelWords = explode(' ', $bookTitle);
+    
+    $titelWordGroups = array_chunk($titelWords, 4);
+    foreach ($titelWordGroups as $titleGroup) {
+        echo implode(' ', $titleGroup) . "<br>";
+    }
+    ?>
                       </td>
                       <td class="align-middle text-sm">
                       <h6 class="mb-0 text-sm"><?php echo getBookLevelName($conn, $item['book_level_id']); ?></h6>
+                      <p class="text-xs text-secondary mb-0"><?php echo getBookTypeName($conn, $item['book_type_id']); ?></p>
                       </td>
                       <td class="align-middle text-sm">
                       <h6 class="mb-0 text-sm"><?php echo getSubjectName($conn, $item['subject_id']); ?></h6>
                       </td>
                       <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["authorAddress"]);?></h6>
+                      <h6 class="mb-0 text-sm"><?php
+    $address = htmlspecialchars($item["authorAddress"]);
+    $words = explode(' ', $address);
+    
+    $wordGroups = array_chunk($words, 4);
+    foreach ($wordGroups as $group) {
+        echo implode(' ', $group) . "<br>";
+    }
+    ?></h6>
                       <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["email"]);?></p>
                   
                       <!-- Social Media Icons -->
@@ -322,6 +334,35 @@ include('header.php');
                       <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["inserted_by_username"]);?></h6>
                       <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["created_at"]);?></p>
                       </td>
+                      <td class="align-middle text-sm">
+    <h6 class="mb-0 text-sm">
+        <?php if (!empty($item['notes'])): ?>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="populateModal('<?php echo $item['notes']; ?>')">
+                <i class="fas fa-comment-alt align-middle" style="font-size: 18px;"></i>
+            </button>
+        <?php endif; ?>
+    </h6>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">ملاحظات خاصة بالمؤلف: <?php echo $item['authorfullname']; ?></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalContent"></div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">غلق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</td>
+
+
                                 <?php if ($selectedCategory === 'teacher') { ?>
                                     <!-- Display teacher-specific columns -->
                                     <?php $teacherData = getTeacherData($conn, $item['id']); ?>
@@ -385,6 +426,9 @@ include('header.php');
                                     <td class="align-middle text-sm">
                                         <h6 class="mb-0 text-sm"><?php echo $novelistData['novelistfield']; ?></h6>
                                     </td>
+                                    
+
+
                                 <?php } ?>
                       <td class="align-middle text-center">
                             <?php if (!empty($item["userfile"])): ?>

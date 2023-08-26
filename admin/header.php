@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <link rel = "icon" href = "../assets/img/ok-logo.png" type = "image/x-icon">
+	<meta name="description" content="طلبات ومعلومات المؤلفين - دار النشر مكتبة عكاشة">
+  <meta name="keywords" content="authors okacha">
+  <meta name="author" content="Okacha programming">
+	<meta property="og:title" content="طلبات ومعلومات المؤلفين - دار النشر مكتبة عكاشة">
+  <meta property="og:description" content="إضافة ودراسة طلبات المؤلفين لدار النشر مكتبة عكاشة">
   <title>
-   Okacha Admin
+   Okacha Authors
   </title>
   <!--     Fonts and icons     -->
   <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/droid-arabic-kufi" type="text/css"/>

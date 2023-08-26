@@ -1,7 +1,7 @@
 <?php
 include('../connect.php');
 // Initialize variables
-$uname = $book_title = $email = $year_of_birth = $phone = $address = $book_type = $book_level = $subject = $fbLink = $instaLink = $youtubeLink = $tiktokLink = $communicate_date ="";
+$uname = $book_title = $email = $year_of_birth = $phone = $address = $book_type = $book_level = $subject = $fbLink = $instaLink = $youtubeLink = $tiktokLink = $communicate_date = $notes ="";
 $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $address_err = $book_type_err = $book_level_err = $subject_err = $register_err = $file_err = $communicate_date_err="";
 
 // Fetch book types from the database
@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
  $phone = trim($_POST["txt_phone"]);
  $address = trim($_POST["txt_address"]);
  $communicate_date = trim($_POST["communicate_date"]);
+ $notes = trim($_POST["notes"]);
 
  $fbLink = trim($_POST["fbLink"]);
  $instaLink = trim($_POST["instaLink"]);
@@ -127,9 +128,9 @@ if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($y
     move_uploaded_file($_FILES['uploadedFile']['tmp_name'], $uploadedFile);
 }
     // Insert the new user record into the database inserted_by_username
-    $sql_insert_user = "INSERT INTO authors (authorfullname, book_title, email, year_of_birth, phone, authorAddress, author_type, created_at, inserted_by_username, communicate_date, fbLink, instaLink, youtubeLink, tiktokLink, userfile, filetype, inserted_by_user_id, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql_insert_user = "INSERT INTO authors (authorfullname, book_title, email, year_of_birth, phone, authorAddress, author_type, created_at, inserted_by_username, communicate_date, fbLink, instaLink, youtubeLink, tiktokLink, userfile, filetype, notes, inserted_by_user_id, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt_insert_user = mysqli_prepare($conn, $sql_insert_user);
-    mysqli_stmt_bind_param($stmt_insert_user, "sssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $address, $author_type, $inserted_by, $communicate_date, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $user_id, $book_type, $book_level, $subject);
+    mysqli_stmt_bind_param($stmt_insert_user, "ssssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $address, $author_type, $inserted_by, $communicate_date, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $notes, $user_id, $book_type, $book_level, $subject);
     
     mysqli_stmt_execute($stmt_insert_user);
 
@@ -577,11 +578,16 @@ include('header.php');
               </div>
             <!-- File Section-->
             <div class="border rounded p-4 shadow">
-                          <h6 class="border-bottom pb-2 mb-3">السيرة الذاتية</h6>
-   <div class="input-group input-group-outline m-3">
-                                <input type="file" class="form-control <?php echo (!empty($file_err)) ? 'is-invalid' : ''; ?>" id="file" name="uploadedFile" />
-                                <span class="invalid-feedback"><?php echo $file_err; ?></span>
-                            </div>
+               <h6 class="border-bottom pb-2 mb-3">السيرة الذاتية + ملاحظات</h6>
+                  <div class="input-group input-group-outline m-3">
+                    <input type="file" class="form-control <?php echo (!empty($file_err)) ? 'is-invalid' : ''; ?>" id="file" name="uploadedFile" />
+                      <span class="invalid-feedback"><?php echo $file_err; ?></span>
+              </div>
+              <div class="input-group input-group-outline my-3">
+                  <label for="notes" class="form-label">ملاحظات</label>
+              <textarea class="form-control" id="notes" name="notes" rows="4"><?php echo $notes; ?></textarea>
+          </div>
+
             </div>    
                 <button type="submit" name="but_submit" class="btn bg-gradient-primary" >إضـافة</button>
                 <?php if (!empty($register_err)) { ?>

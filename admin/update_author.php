@@ -49,6 +49,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
             $year_of_birth = htmlspecialchars($item['year_of_birth']);
             $phone = htmlspecialchars($item['phone']);
             $authorAddress = htmlspecialchars($item['authorAddress']);
+            $notes = htmlspecialchars($item['notes']);
 
             $fbLink = htmlspecialchars($item['fbLink']);
             $instaLink = htmlspecialchars($item['instaLink']);
@@ -113,6 +114,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
             $year_of_birth = trim($_POST["year_of_birth"]);
             $phone = trim($_POST["phone"]);
             $authorAddress = trim($_POST["authorAddress"]);
+            $notes = trim($_POST["notes"]);
 
             $fbLink = trim($_POST["fbLink"]);
             $instaLink = trim($_POST["instaLink"]);
@@ -140,8 +142,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                 $email_err = "يرجى إدخال عنوان إيميل صالح.";
             } 
         }
-           
-
+        
             // Validate year of birth
             if (empty($year_of_birth)) {
                 $year_of_birth_err = "يرجى إدخال سنة الميلاد.";
@@ -168,9 +169,9 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                 include('../connect.php');
            
             // Update the author data including social media links
-            $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
+            $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, notes = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
             $stmt_update_author = mysqli_prepare($conn, $sql_update_author);
-            mysqli_stmt_bind_param($stmt_update_author, "ssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $book_type_id, $book_level_id, $subject_id, $id);
+            mysqli_stmt_bind_param($stmt_update_author, "sssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $notes, $book_type_id, $book_level_id, $subject_id, $id);
             mysqli_stmt_execute($stmt_update_author);
 
     
@@ -485,6 +486,17 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                     </div>
                 </div>
 
+                </div>
+                        <!-- Updete Notes Section-->
+        <div class="border rounded p-4 shadow">
+            <h6 class="border-bottom pb-2 mb-3">تحديث الملاحظات</h6>
+                <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="notes" class="form-label">تحديث الملاحظات:</label>                   
+              <textarea class="form-control border pe-2 mb-3" id="notes" name="notes" rows="4"><?php echo htmlspecialchars($notes); ?></textarea>
+          </div>
+                
+                </div>
                 </div>
 
     <div class="form-group mt-3">
