@@ -335,34 +335,32 @@ include('header.php');
                       <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["created_at"]);?></p>
                       </td>
                       <td class="align-middle text-sm">
-    <h6 class="mb-0 text-sm">
-        <?php if (!empty($item['notes'])): ?>
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="populateModal('<?php echo $item['notes']; ?>')">
-                <i class="fas fa-comment-alt align-middle" style="font-size: 18px;"></i>
-            </button>
-        <?php endif; ?>
-    </h6>
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">ملاحظات خاصة بالمؤلف: <?php echo $item['authorfullname']; ?></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="modalContent"></div>
-                </div>
-                <div class="modal-footer d-flex justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">غلق</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</td>
-
-
+                        <h6 class="mb-0 text-sm">
+                            <?php if (!empty($item['notes'])): ?>
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="populateModal('<?php echo $item['notes']; ?>')">
+                                    <i class="fas fa-comment-alt align-middle" style="font-size: 18px;"></i>
+                                </button>
+                            <?php endif; ?>
+                        </h6>
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">ملاحظات خاصة بالمؤلف: <?php echo $item['authorfullname']; ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="modalContent"></div>
+                                    </div>
+                                    <div class="modal-footer d-flex justify-content-center">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">غلق</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </td>
                                 <?php if ($selectedCategory === 'teacher') { ?>
                                     <!-- Display teacher-specific columns -->
                                     <?php $teacherData = getTeacherData($conn, $item['id']); ?>
