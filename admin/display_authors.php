@@ -257,6 +257,7 @@ include('header.php');
                           <div class="d-flex flex-column justify-content-center">
                             <h6 class="mb-0 text-sm"><?php echo htmlspecialchars($item["authorfullname"]);?></h6>
                             <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["phone"]);?></p>
+                            <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["second_phone"]);?></p>
                             <p class="text-xs text-primary mb-0"><?php echo htmlspecialchars($item["author_type"]);?></p>
                             <!-- </div> -->
                           </div>

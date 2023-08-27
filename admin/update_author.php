@@ -5,8 +5,8 @@ include('secure.php');
 include('header.php');
 include('../connect.php');
 include('../dash_functions.php'); 
-$uname = $book_title = $email = $year_of_birth = $phone = $authorAddress = $book_type_id = $book_level_id = $subject_id = $fbLink = $instaLink = $youtubeLink = $tiktokLink ="";
-$uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $address_err = $book_type_err = $book_level_err = $subject_err = $register_err = "";
+$uname = $book_title = $email = $year_of_birth = $phone = $second_phone = $authorAddress = $book_type_id = $book_level_id = $subject_id = $fbLink = $instaLink = $youtubeLink = $tiktokLink ="";
+$uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $second_phone_err = $address_err = $book_type_err = $book_level_err = $subject_err = "";
 
 ?>
 <div class="container-fluid py-4">
@@ -48,8 +48,10 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
             $email = htmlspecialchars($item['email']);
             $year_of_birth = htmlspecialchars($item['year_of_birth']);
             $phone = htmlspecialchars($item['phone']);
+            $second_phone = htmlspecialchars($item['second_phone']);
             $authorAddress = htmlspecialchars($item['authorAddress']);
             $notes = htmlspecialchars($item['notes']);
+            
 
             $fbLink = htmlspecialchars($item['fbLink']);
             $instaLink = htmlspecialchars($item['instaLink']);
@@ -113,8 +115,10 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
             $email = trim($_POST["email"]);
             $year_of_birth = trim($_POST["year_of_birth"]);
             $phone = trim($_POST["phone"]);
+            $second_phone = trim($_POST["second_phone"]);
             $authorAddress = trim($_POST["authorAddress"]);
             $notes = trim($_POST["notes"]);
+            
 
             $fbLink = trim($_POST["fbLink"]);
             $instaLink = trim($_POST["instaLink"]);
@@ -150,12 +154,46 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                 $year_of_birth_err = "سنة الميلاد يجب أن تحتوي على 4 أرقام.";
             }
 
-            // Validate phone
-            if (empty($phone)) {
-                $phone_err = "يرجى إدخال رقم هاتف المؤلف.";
-            } elseif (!preg_match("/^\+?\d{1,4}?\s?\(?\d{1,4}?\)?[0-9\- ]+$/", $phone)) {
+            $phonePattern = "/^\+?\d{1,4}?\s?\(?\d{1,4}?\)?[0-9\- ]+$/";
+
+            // Validate primary phone
+            if (!empty($phone) && !preg_match($phonePattern, $phone)) {
                 $phone_err = "رقم هاتف غير صالح.";
+            } else {
+                // Check if phone number already exists in the database (in phone or second_phone column)
+                $existingPhoneQuery = "SELECT id, authorfullname FROM authors WHERE (phone = ? OR second_phone = ?) AND id != ?";
+                $stmt_existingPhone = mysqli_prepare($conn, $existingPhoneQuery);
+                mysqli_stmt_bind_param($stmt_existingPhone, "ssi", $phone, $phone, $id);
+                mysqli_stmt_execute($stmt_existingPhone);
+                mysqli_stmt_store_result($stmt_existingPhone);
+                if (mysqli_stmt_num_rows($stmt_existingPhone) > 0) {
+                    mysqli_stmt_bind_result($stmt_existingPhone, $existingAuthorId, $existingAuthorName);
+                    mysqli_stmt_fetch($stmt_existingPhone);
+                    $phone_err = "رقم الهاتف مستخدم بالفعل مع المؤلف: $existingAuthorName (رقم المؤلف: $existingAuthorId)";
+                }
+                mysqli_stmt_close($stmt_existingPhone);
             }
+            
+            // Validate secondary phone
+            if (!empty($second_phone) && !preg_match($phonePattern, $second_phone)) {
+                $second_phone_err = "رقم هاتف ثانوي غير صالح.";
+            } else {
+                // Check if secondary phone number already exists in the database (in phone or second_phone column)
+                if (!empty($second_phone)) {
+                    $existingSecondPhoneQuery = "SELECT id, authorfullname FROM authors WHERE (phone = ? OR second_phone = ?) AND id != ?";
+                    $stmt_existingSecondPhone = mysqli_prepare($conn, $existingSecondPhoneQuery);
+                    mysqli_stmt_bind_param($stmt_existingSecondPhone, "ssi", $second_phone, $second_phone, $id);
+                    mysqli_stmt_execute($stmt_existingSecondPhone);
+                    mysqli_stmt_store_result($stmt_existingSecondPhone);
+                    if (mysqli_stmt_num_rows($stmt_existingSecondPhone) > 0) {
+                        mysqli_stmt_bind_result($stmt_existingSecondPhone, $existingAuthorId, $existingAuthorName);
+                        mysqli_stmt_fetch($stmt_existingSecondPhone);
+                        $second_phone_err = "رقم الهاتف الثانوي مستخدم بالفعل مع المؤلف: $existingAuthorName (رقم المؤلف: $existingAuthorId)";
+                    }
+                    mysqli_stmt_close($stmt_existingSecondPhone);
+                }
+            }
+
 
             // Validate authorAddress
             if (empty($authorAddress)) {
@@ -163,15 +201,14 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
             }
             
             // If there are no errors, proceed with registration
-            if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($address_err) && empty($book_type_err) && empty($book_level_err) && empty($subject_err)) {
+            if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($second_phone_err) && empty($address_err) && empty($book_type_err) && empty($book_level_err) && empty($subject_err)) {
                 // Create a database connection
-
                 include('../connect.php');
            
             // Update the author data including social media links
-            $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, notes = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
+            $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, second_phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, notes = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
             $stmt_update_author = mysqli_prepare($conn, $sql_update_author);
-            mysqli_stmt_bind_param($stmt_update_author, "sssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $notes, $book_type_id, $book_level_id, $subject_id, $id);
+            mysqli_stmt_bind_param($stmt_update_author, "ssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $second_phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $notes, $book_type_id, $book_level_id, $subject_id, $id);
             mysqli_stmt_execute($stmt_update_author);
 
     
@@ -254,8 +291,6 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                  exit;
 
         }
-            // Close the connection
-            mysqli_close($conn);
         }
             }
     ?>
@@ -268,29 +303,34 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                     <input type="hidden" name="author_type_for_update" value="<?php echo htmlspecialchars($author_type); ?>">
 
                         <label class="form-label">إسم المؤلف :</label>
-                        <input type="text" name="authorfullname" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($uname); ?>" required>
+                        <input type="text" name="authorfullname" class="form-control border pe-2 mb-3 <?php echo (!empty($uname_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($uname); ?>" required>
+                        <span class="invalid-feedback"><?php echo $uname_err; ?></span>
                     </div>
                     <div class="form-group col-md-6">
                     <label class="form-label">الهاتف :</label>
-                    <input type="text" name="phone" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($phone); ?>" required>
+                    <input type="text" name="phone" class="form-control border pe-2 mb-3 <?php echo (!empty($phone_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($phone); ?>" required>
+                    <span class="invalid-feedback"><?php echo $phone_err; ?></span>
                 </div>
                 </div>
 
                 <div class="row">
                 <div class="form-group col-md-6">
                     <label class="form-label">الإيميل :</label>
-                    <input type="email" name="email" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($email); ?>">
+                    <input type="email" name="email" class="form-control border pe-2 mb-3 <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($email); ?>">
+                    <span class="invalid-feedback"><?php echo $email_err; ?></span>
                 </div>
                 <div class="form-group col-md-6">
                     <label class="form-label">سنة الميلاد :</label>
-                    <input type="text" name="year_of_birth" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($year_of_birth); ?>" required>
+                    <input type="text" name="year_of_birth" class="form-control border pe-2 mb-3 <?php echo (!empty($year_of_birth_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($year_of_birth); ?>" required>
+                    <span class="invalid-feedback"><?php echo $year_of_birth_err; ?></span>
                 </div>
                 </div>
 
                 <div class="row">
                 <div class="form-group col-md-6">
                     <label class="form-label">عنوان المؤلف :</label>
-                    <input type="text" name="authorAddress" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($authorAddress); ?>" required>
+                    <input type="text" name="authorAddress" class="form-control border pe-2 mb-3 <?php echo (!empty($address_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($authorAddress); ?>" required>
+                    <span class="invalid-feedback"><?php echo $address_err; ?></span>
                 </div>
                 <div class="form-group col-md-6">
                 <label class="form-label">نوع المؤلف :</label>
@@ -399,6 +439,14 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $a
                         </div>
                     </div>
                 <?php } ?>
+
+                <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">رقم الهاتف الثاني :</label>
+                            <input type="text" name="second_phone" class="form-control border pe-2 mb-3 <?php echo (!empty($second_phone_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($second_phone); ?>">
+                            <span class="invalid-feedback"><?php echo $second_phone_err; ?></span>
+                        </div>
+                    </div>
                 </div>
                 <!-- Updete Book Section-->
                 <div class="border rounded p-4 shadow mt-4">

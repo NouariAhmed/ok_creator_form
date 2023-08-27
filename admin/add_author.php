@@ -1,8 +1,8 @@
 <?php
 include('../connect.php');
 // Initialize variables
-$uname = $book_title = $email = $year_of_birth = $phone = $address = $book_type = $book_level = $subject = $fbLink = $instaLink = $youtubeLink = $tiktokLink = $communicate_date = $notes ="";
-$uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $address_err = $book_type_err = $book_level_err = $subject_err = $register_err = $file_err = $communicate_date_err="";
+$uname = $book_title = $email = $year_of_birth = $phone = $second_phone = $address = $book_type = $book_level = $subject = $fbLink = $instaLink = $youtubeLink = $tiktokLink = $communicate_date = $notes ="";
+$uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $second_phone_err = $address_err = $book_type_err = $book_level_err = $subject_err = $register_err = $file_err = $communicate_date_err="";
 
 // Fetch book types from the database
 $sql_fetch_book_types = "SELECT id, type_name FROM book_types";
@@ -16,8 +16,6 @@ $result_book_levels = mysqli_query($conn, $sql_fetch_book_levels);
 $sql_fetch_subjects = "SELECT id, subject_name, book_level_id FROM subjects";
 $result_subjects = mysqli_query($conn, $sql_fetch_subjects);
 
-// Close the connection (since we don't need it anymore for the form rendering)
-mysqli_close($conn);
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -27,6 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
  $email = trim($_POST["txt_email"]);
  $year_of_birth = trim($_POST["txt_year_of_birth"]);
  $phone = trim($_POST["txt_phone"]);
+ $second_phone = trim($_POST["second_phone"]);
  $address = trim($_POST["txt_address"]);
  $communicate_date = trim($_POST["communicate_date"]);
  $notes = trim($_POST["notes"]);
@@ -69,13 +68,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $year_of_birth_err = "سنة الميلاد يجب أن تحتوي على 4 أرقام.";
   }
 
-  // Validate phone
-  if (empty($phone)) {
-    $phone_err = "يرجى إدخال رقم هاتف المؤلف.";
-  } elseif (!preg_match("/^\+?\d{1,4}?\s?\(?\d{1,4}?\)?[0-9\- ]+$/", $phone)) {
-    $phone_err = "رقم هاتف غير صالح.";
-  }
+  $phonePattern = "/^\+?\d{1,4}?\s?\(?\d{1,4}?\)?[0-9\- ]+$/";
 
+  // Validate primary phone
+  if (!empty($phone) && !preg_match($phonePattern, $phone)) {
+      $phone_err = "رقم هاتف غير صالح.";
+  } else {
+      // Check if phone number already exists in the database (in phone or second_phone column)
+      $existingPhoneQuery = "SELECT id, authorfullname FROM authors WHERE phone = ? OR second_phone = ?";
+      $stmt_existingPhone = mysqli_prepare($conn, $existingPhoneQuery);
+      mysqli_stmt_bind_param($stmt_existingPhone, "ss", $phone, $phone);
+      mysqli_stmt_execute($stmt_existingPhone);
+      mysqli_stmt_store_result($stmt_existingPhone);
+      if (mysqli_stmt_num_rows($stmt_existingPhone) > 0) {
+          mysqli_stmt_bind_result($stmt_existingPhone, $existingAuthorId, $existingAuthorName);
+          mysqli_stmt_fetch($stmt_existingPhone);
+          $phone_err = "رقم الهاتف مستخدم بالفعل مع المؤلف: $existingAuthorName (رقم المؤلف: $existingAuthorId)";
+      }
+      mysqli_stmt_close($stmt_existingPhone);
+  }
+  
+  // Validate secondary phone
+  if (!empty($second_phone) && !preg_match($phonePattern, $second_phone)) {
+      $second_phone_err = "رقم هاتف ثانوي غير صالح.";
+  } else {
+      // Check if secondary phone number already exists in the database (in phone or second_phone column)
+      if (!empty($second_phone)) {
+          $existingSecondPhoneQuery = "SELECT id, authorfullname FROM authors WHERE phone = ? OR second_phone = ?";
+          $stmt_existingSecondPhone = mysqli_prepare($conn, $existingSecondPhoneQuery);
+          mysqli_stmt_bind_param($stmt_existingSecondPhone, "ss", $second_phone, $second_phone);
+          mysqli_stmt_execute($stmt_existingSecondPhone);
+          mysqli_stmt_store_result($stmt_existingSecondPhone);
+          if (mysqli_stmt_num_rows($stmt_existingSecondPhone) > 0) {
+              mysqli_stmt_bind_result($stmt_existingSecondPhone, $existingAuthorId, $existingAuthorName);
+              mysqli_stmt_fetch($stmt_existingSecondPhone);
+              $second_phone_err = "رقم الهاتف الثانوي مستخدم بالفعل مع المؤلف: $existingAuthorName (رقم المؤلف: $existingAuthorId)";
+          }
+          mysqli_stmt_close($stmt_existingSecondPhone);
+      }
+  }
   // Validate address
   if (empty($address)) {
     $address_err = "يرجى إدخال عنوان إقامة المؤلف.";
@@ -104,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 
 // If there are no errors, proceed with registration
-if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($address_err) && empty($book_type_err) && empty($book_level_err) && empty($subject_err) && empty($file_err) && empty($communicate_date_err)) {
+if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($second_phone_err) && empty($address_err) && empty($book_type_err) && empty($book_level_err) && empty($subject_err) && empty($file_err) && empty($communicate_date_err)) {
     // Create a database connection
 
     include('../connect.php');
@@ -128,9 +159,9 @@ if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($y
     move_uploaded_file($_FILES['uploadedFile']['tmp_name'], $uploadedFile);
 }
     // Insert the new user record into the database inserted_by_username
-    $sql_insert_user = "INSERT INTO authors (authorfullname, book_title, email, year_of_birth, phone, authorAddress, author_type, created_at, inserted_by_username, communicate_date, fbLink, instaLink, youtubeLink, tiktokLink, userfile, filetype, notes, inserted_by_user_id, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql_insert_user = "INSERT INTO authors (authorfullname, book_title, email, year_of_birth, phone, second_phone, authorAddress, author_type, created_at, inserted_by_username, communicate_date, fbLink, instaLink, youtubeLink, tiktokLink, userfile, filetype, notes, inserted_by_user_id, book_type_id, book_level_id, subject_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt_insert_user = mysqli_prepare($conn, $sql_insert_user);
-    mysqli_stmt_bind_param($stmt_insert_user, "ssssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $address, $author_type, $inserted_by, $communicate_date, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $notes, $user_id, $book_type, $book_level, $subject);
+    mysqli_stmt_bind_param($stmt_insert_user, "sssssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $second_phone, $address, $author_type, $inserted_by, $communicate_date, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $notes, $user_id, $book_type, $book_level, $subject);
     
     mysqli_stmt_execute($stmt_insert_user);
 
@@ -308,14 +339,15 @@ include('header.php');
                 <?php if (!empty($phone)) echo 'placeholder="الهاتف"'; ?> />
               <span class="invalid-feedback"><?php echo $phone_err; ?></span>
             </div>
+
             <div class="input-group input-group-outline my-3">
-              <?php if (empty($email)): ?>
-                <label for="email" class="form-label">الإيميل</label>
+              <?php if (empty($second_phone)): ?>
+                <label for="second_phone" class="form-label">الهاتف الثاني</label>
               <?php endif; ?>
-              <input type="email" class="form-control <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>"
-                id="email" name="txt_email" value="<?php echo $email; ?>"
-                <?php if (!empty($email)) echo 'placeholder="الإيميل"'; ?> />
-              <span class="invalid-feedback"><?php echo $email_err; ?></span>
+              <input type="text" class="form-control <?php echo (!empty($second_phone_err)) ? 'is-invalid' : ''; ?>"
+                id="second_phone" name="second_phone" value="<?php echo $second_phone; ?>"
+                <?php if (!empty($second_phone)) echo 'placeholder="الهاتف الثاني"'; ?> />
+              <span class="invalid-feedback"><?php echo $second_phone_err; ?></span>
             </div>
 
               </div>
@@ -343,6 +375,21 @@ include('header.php');
             </div>
             
               </div>
+
+              <div class="d-flex">
+                <div class="col-md-6 ps-3">
+                  <div class="input-group input-group-outline m-3">
+                  <?php if (empty($email)): ?>
+                    <label for="email" class="form-label">الإيميل</label>
+                  <?php endif; ?>
+                  <input type="email" class="form-control <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>"
+                    id="email" name="txt_email" value="<?php echo $email; ?>"
+                    <?php if (!empty($email)) echo 'placeholder="الإيميل"'; ?> />
+                  <span class="invalid-feedback"><?php echo $email_err; ?></span>
+                  </div>
+                </div>
+              </div>
+            
                <!-- Student Specific Inputs -->
             <div class="d-flex">
             <div class="input-group input-group-outline m-3" id="studentInputs" style="display: none;">
@@ -470,7 +517,7 @@ include('header.php');
                 </div>
                 </div>
                 <div class="d-flex">
-                <div class="col-md-6">
+                <div class="col-md-6 ps-3">
                     <!-- novelist Specific Inputs -->
                 <div class="input-group input-group-outline m-3" id="novelistInputs" style="display: none;">
                   <label for="novelistfield" class="form-label">المجال</label>
@@ -531,7 +578,7 @@ include('header.php');
               </div>
 
               
-              <div class="form-group col-md-6">
+              <div class="form-group col-md-6 ps-3">
                         <label class="form-label me-4">تاريخ التواصل :</label>
                         <input type="date" name="communicate_date" class="form-control border pe-2 mb-3 me-3 <?php echo (!empty($communicate_date_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($communicate_date); ?>" required>
                         <span class="invalid-feedback"><?php echo $communicate_date_err; ?></span>
@@ -579,11 +626,11 @@ include('header.php');
             <!-- File Section-->
             <div class="border rounded p-4 shadow">
                <h6 class="border-bottom pb-2 mb-3">السيرة الذاتية + ملاحظات</h6>
-                  <div class="input-group input-group-outline m-3">
+                  <div class="input-group input-group-outline m-3 ps-3">
                     <input type="file" class="form-control <?php echo (!empty($file_err)) ? 'is-invalid' : ''; ?>" id="file" name="uploadedFile" />
                       <span class="invalid-feedback"><?php echo $file_err; ?></span>
               </div>
-              <div class="input-group input-group-outline my-3">
+              <div class="input-group input-group-outline m-3 ps-3">
                   <label for="notes" class="form-label">ملاحظات</label>
               <textarea class="form-control" id="notes" name="notes" rows="4"><?php echo $notes; ?></textarea>
           </div>
