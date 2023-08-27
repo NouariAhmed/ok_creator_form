@@ -126,7 +126,7 @@ function updateDateTime() {
           <form role="form" method="post" action="search_result.php">
           <div style="display: flex; align-items: center;">
             <div class="input-group input-group-outline" style="flex: 1;">
-              <label class="form-label"> بحث عن مؤلف...</label>
+              <label class="form-label">بحث عن مؤلف</label>
               <input type="text" name="search_query" class="form-control" required>
             </div>
             <button type="submit" class="btn bg-gradient-primary" style="margin-right: 15px; margin-top:8px;"> بحث </button>

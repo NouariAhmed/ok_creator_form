@@ -59,7 +59,6 @@ $sql .= " AND subject_id = ?";
 $bindTypes .= 'i'; // Assuming subject_id is an integer
 $bindValues[] = &$selectedSubject;
 }
-// ... (previous code)
 
 $countStmt = mysqli_prepare($conn, $sql);
 
@@ -144,7 +143,7 @@ include('header.php');
           <a href="add_author.php" class="btn btn-secondary">إضـافة</a>
               </div>
                 
-          <form role="form">
+          <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET">
           <h5 class="mb-3">فلترة</h5>
         <div class="input-group input-group-outline my-3">
           <select class="form-control" id="category" name="category">
@@ -161,46 +160,32 @@ include('header.php');
           <div class="input-group input-group-outline my-3">
           <select class="form-control" id="bookType" name="bookType">
           <option value="all" <?php echo $selectedBookType === 'all' ? 'selected' : ''; ?>>-- جميع أنواع الكتب -- </option>
-          <!-- Fetch and display book types dynamically from the database -->
-          <?php
-          $bookTypesQuery = "SELECT * FROM book_types";
-          $bookTypesResult = mysqli_query($conn, $bookTypesQuery);
-          while ($bookTypeRow = mysqli_fetch_assoc($bookTypesResult)) {
-              $isSelected = $selectedBookType == $bookTypeRow['id'] ? 'selected' : '';
-              echo '<option value="' . $bookTypeRow['id'] . '" ' . $isSelected . '>' . $bookTypeRow['type_name'] . '</option>';
-          }
-          ?>
+    <!-- Fetch and display book types dynamically from the database -->
+    <?php
+    $bookTypesQuery = "SELECT * FROM book_types";
+    $bookTypesResult = mysqli_query($conn, $bookTypesQuery);
+    while ($bookTypeRow = mysqli_fetch_assoc($bookTypesResult)) {
+        $isSelected = $selectedBookType == $bookTypeRow['id'] ? 'selected' : '';
+        echo '<option value="' . $bookTypeRow['id'] . '" ' . $isSelected . '>' . $bookTypeRow['type_name'] . '</option>';
+    }
+    ?>
       </select>
       </div>
       <div class="input-group input-group-outline my-3">
-      <select class="form-control" name="bookLevel" id="bookLevel">
-          <option value="all" <?php echo ($selectedBookLevel === 'all') ? 'selected' : ''; ?>>-- جميع المستويات --</option>
-          <!-- Fetch and populate the book levels from the database -->
-          <?php
-          $bookLevels = mysqli_query($conn, "SELECT * FROM book_levels");
-          while ($level = mysqli_fetch_assoc($bookLevels)) {
-              echo '<option value="' . $level['id'] . '" ' . ($selectedBookLevel === $level['id'] ? 'selected' : '') . '>' . $level['level_name'] . '</option>';
-          }
-          ?>
+      <select class="form-control" name="bookLevel" id="bookLevel" <?php echo $selectedBookType === 'all' ? 'disabled' : ''; ?>>
+          <option value="all">-- جميع المستويات --</option>
       </select>
       </div>
 
       <div class="input-group input-group-outline my-3">
-      <select class="form-control" id="subject" name="subject">
-          <option value="all" <?php echo $selectedSubject === 'all' ? 'selected' : ''; ?>>-- جميع المواد --</option>
-          <!-- Fetch and display subjects dynamically from the database -->
-          <?php
-          $subjectsQuery = "SELECT * FROM subjects";
-          $subjectsResult = mysqli_query($conn, $subjectsQuery);
-          while ($subjectRow = mysqli_fetch_assoc($subjectsResult)) {
-              $isSelected = $selectedSubject == $subjectRow['id'] ? 'selected' : '';
-              echo '<option value="' . $subjectRow['id'] . '" ' . $isSelected . '>' . $subjectRow['subject_name'] . '</option>';
-          }
-          ?>
+      <select class="form-control" id="subject" name="subject"  <?php echo ($selectedBookType === 'all' || $selectedBookLevel === 'all') ? 'disabled' : ''; ?>>
+          <option value="all">-- جميع المواد --</option>
       </select>
        </div>
 
           <button type="submit"  class="btn bg-gradient-primary" >فلترة</button> 
+          <button type="button" class="btn btn-secondary" id="clearFilter">مسح الفلتر</button>
+
         </form>
     <div class="row">
         <div class="col-12">
@@ -256,6 +241,7 @@ include('header.php');
                   <tbody>
                   <?php
                 foreach ($items as $item) {
+                      
                 ?>
                     <tr>
                     <td class="align-middle text-sm">
@@ -450,6 +436,75 @@ include('header.php');
           </div>
         </div>
       </div>
+      <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const bookTypeDropdown = document.getElementById("bookType");
+    const bookLevelDropdown = document.getElementById("bookLevel");
+    const subjectDropdown = document.getElementById("subject");
+    const subjectContainer = document.getElementById("subjectContainer");
+
+    bookTypeDropdown.addEventListener("change", function() {
+        const selectedBookType = bookTypeDropdown.value;
+
+        if (selectedBookType !== "all") {
+            // Enable the Book Level dropdown
+            bookLevelDropdown.disabled = false;
+            // Fetch book levels using AJAX
+            fetch(`get_book_levels_for_subject.php?book_type_id=${selectedBookType}`)
+                .then(response => response.json())
+                .then(data => {
+                    bookLevelDropdown.innerHTML = '<option value="all">-- جميع المستويات --</option>';
+                    data.forEach(level => {
+                        bookLevelDropdown.innerHTML += `<option value="${level.id}">${level.level_name}</option>`;
+                    });
+                })
+                .catch(error => console.error(error));
+        } else {
+            // Disable and reset the Book Level dropdown
+            bookLevelDropdown.disabled = true;
+            bookLevelDropdown.innerHTML = '<option value="all">-- جميع المستويات --</option>';
+            // Disable and reset the Subject dropdown
+            subjectDropdown.disabled = true;
+            subjectDropdown.innerHTML = '<option value="all">-- جميع المواد --</option>';
+        }
+    });
+
+    bookLevelDropdown.addEventListener("change", function() {
+        const selectedBookType = bookTypeDropdown.value;
+        const selectedBookLevel = bookLevelDropdown.value;
+
+        if (selectedBookType !== "all" && selectedBookLevel !== "all") {
+            // Enable the Subject dropdown
+            subjectDropdown.disabled = false;
+            // Fetch subjects using AJAX
+            fetch(`get_subjects_for_level.php?book_level_id=${selectedBookLevel}`)
+                .then(response => response.json())
+                .then(data => {
+                    subjectDropdown.innerHTML = '<option value="all">-- جميع المواد --</option>';
+                    data.forEach(subject => {
+                        subjectDropdown.innerHTML += `<option value="${subject.id}">${subject.subject_name}</option>`;
+                    });
+                })
+                .catch(error => console.error(error));
+        } else {
+            // Disable and reset the Subject dropdown
+            subjectDropdown.disabled = true;
+            subjectDropdown.innerHTML = '<option value="all">-- جميع المواد --</option>';
+        }
+    });
+    // Add event listener to the Clear Filter button
+    const clearFilterButton = document.getElementById("clearFilter");
+    clearFilterButton.addEventListener("click", function() {
+        // Clear selected values and disable dropdowns
+        bookTypeDropdown.value = "all";
+        bookLevelDropdown.value = "all";
+        subjectDropdown.value = "all";
+        bookLevelDropdown.disabled = true;
+        subjectDropdown.disabled = true;
+    });
+});
+</script>
+
 <?php
  mysqli_close($conn);
 include('footer.php');
