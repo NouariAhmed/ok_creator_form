@@ -226,8 +226,8 @@ include('header.php');
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 ">المعرف</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المؤلف</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">عنوان الكتاب</th>
-                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">النوع والمستوى</th>
-                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المادة</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المستوى والمادة</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الحالة</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">العنوان</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">من طرف</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">ملاحظات</th>
@@ -270,30 +270,8 @@ include('header.php');
                     <td class="align-middle text-sm">
                     <h6 class="mb-0 text-sm pe-3"><?php echo htmlspecialchars($item["communicate_date"]);?></h6>
                     <p class="text-xs text-secondary mb-0 pe-3"><?php echo htmlspecialchars($item["id"]);?>#</p>
-                    <?php 
-                     $author_status = htmlspecialchars($item["author_status"]);
-                    // Use a switch statement to determine the appropriate badge
-                    switch ($author_status) {
-                      case "مقبول":
-                          echo '<span class="badge badge-sm bg-gradient-success me-2 w-90">مقبول</span>';
-                          break;
-                      case "مرفوض":
-                          echo '<span class="badge badge-sm bg-gradient-danger me-2 w-90">مرفوض</span>';
-                          break;
-                      case "قيد الدراسة":
-                          echo '<span class="badge badge-sm bg-gradient-info me-2 w-90">قيد الدراسة</span>';
-                          break;
-                      case "مؤجل":
-                          echo '<span class="badge badge-sm bg-gradient-warning me-2 w-90">مؤجل</span>';
-                          break;
-                      case "في الانتظار":
-                          echo '<span class="badge badge-sm bg-gradient-secondary me-2 w-90">في الانتظار</span>';
-                          break;
-                      default:
-                          echo '<span class="badge badge-sm bg-gradient-secondary me-2 w-90">Unknown</span>';
-                          break;
-                  }
-                    ?>
+                    
+                
                       </td>
                       <td>
                          <!--
@@ -312,22 +290,67 @@ include('header.php');
                       <td class="align-middle text-sm">
                       <h6 class="mb-0 text-sm">
                       <?php
-    $bookTitle = htmlspecialchars($item["book_title"]);
-    $titelWords = explode(' ', $bookTitle);
-    
-    $titelWordGroups = array_chunk($titelWords, 4);
-    foreach ($titelWordGroups as $titleGroup) {
-        echo implode(' ', $titleGroup) . "<br>";
-    }
-    ?>
+                        $bookTitle = htmlspecialchars($item["book_title"]);
+                        $titelWords = explode(' ', $bookTitle);
+                        
+                        $titelWordGroups = array_chunk($titelWords, 4);
+                        foreach ($titelWordGroups as $titleGroup) {
+                            echo implode(' ', $titleGroup) . "<br>";
+                        }
+                        ?>
                       </td>
                       <td class="align-middle text-sm">
                       <h6 class="mb-0 text-sm"><?php echo getBookLevelName($conn, $item['book_level_id']); ?></h6>
                       <p class="text-xs text-secondary mb-0"><?php echo getBookTypeName($conn, $item['book_type_id']); ?></p>
+                      <p class="text-xs text-primary mb-0 text-bold"><?php echo getSubjectName($conn, $item['subject_id']); ?></p>
                       </td>
                       <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm"><?php echo getSubjectName($conn, $item['subject_id']); ?></h6>
-                      </td>
+                    <?php
+                        $author_status = htmlspecialchars($item["author_status"]);
+                        // Define the available statuses
+                        $availableStatuses = array(
+                            "مقبول" => "bg-gradient-success",
+                            "مرفوض" => "bg-gradient-danger",
+                            "قيد الدراسة" => "bg-gradient-info",
+                            "مؤجل" => "bg-gradient-warning",
+                            "في الانتظار" => "bg-gradient-secondary"
+                        );
+
+                        // Get the index of the current item in the items array
+                        $currentItemIndex = array_search($item, $items);
+
+                        // Determine the CSS class for the dropdown based on the last item
+                        $dropdownClasses = 'dropdown';
+                        if ($currentItemIndex === count($items) - 1) {
+                            $dropdownClasses .= ' dropup'; // Add dropup class for the last author
+                        }
+                        ?>
+
+                      <form method="post" class="d-inline-block">
+                          <input type="hidden" name="author_id" value="<?php echo $item["id"]; ?>">
+                          <div class="<?php echo $dropdownClasses; ?>">
+                              <div class="btn-group">
+                                  <button class="btn btn-sm <?php echo $availableStatuses[$author_status]; ?> dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      <?php echo $author_status; ?>
+                                  </button>
+                                  <ul class="dropdown-menu dropdown-menu-end bg-light">
+                                      <?php foreach ($availableStatuses as $status => $bgClass) { ?>
+                                          <li>
+                                              <a class="dropdown-item status-item text-end"
+                                                data-author-id="<?php echo $item["id"]; ?>"
+                                                data-status="<?php echo $status; ?>"
+                                                href="#"
+                                                onclick="updateStatusCookie(this); return false;">
+                                                <?php echo $status; ?>
+                                              </a>
+                                          </li>
+                                      <?php } ?>
+                                  </ul>
+                              </div>
+                          </div>
+                      </form>
+
+                     </td>
                       <td class="align-middle text-sm">
                       <h6 class="mb-0 text-sm"><?php
     $address = htmlspecialchars($item["authorAddress"]);
@@ -563,6 +586,33 @@ document.addEventListener("DOMContentLoaded", function() {
         subjectDropdown.value = "all";
         bookLevelDropdown.disabled = true;
         subjectDropdown.disabled = true;
+    });
+});
+</script>
+<script>
+$(document).ready(function() {
+    $('.status-item').on('click', function(e) {
+        e.preventDefault();
+
+        var authorId = $(this).data('author-id');
+        var newStatus = $(this).data('status');
+
+        var confirmUpdate = confirm("هل تريد بالفعل تغيير حالة المؤلف الى " + newStatus + "؟");
+
+        if (confirmUpdate) {
+            $.ajax({
+                type: 'POST',
+                url: 'update_author_status.php',
+                data: { author_id: authorId, new_status: newStatus },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        // Refresh the page after successful update
+                        location.reload();
+                    }
+                }
+            });
+        }
     });
 });
 </script>

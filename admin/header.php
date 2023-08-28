@@ -12,6 +12,9 @@
   <title>
    Okacha Authors
   </title>
+  <!--     jquery     -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
   <!--     Fonts and icons     -->
   <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/droid-arabic-kufi" type="text/css"/>
   <!-- Nucleo Icons -->
