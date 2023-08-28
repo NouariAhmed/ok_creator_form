@@ -322,32 +322,42 @@ include('header.php');
                       <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["created_at"]);?></p>
                       </td>
                       <td class="align-middle text-sm">
-                        <h6 class="mb-0 text-sm">
-                            <?php if (!empty($item['notes'])): ?>
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="populateModal('<?php echo $item['notes']; ?>')">
-                                    <i class="fas fa-comment-alt align-middle" style="font-size: 18px;"></i>
-                                </button>
-                            <?php endif; ?>
-                        </h6>
-                        <!-- Modal -->
-                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">ملاحظات خاصة بالمؤلف: <?php echo $item['authorfullname']; ?></h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h6 class="mb-0 text-sm">
+                        <?php if (!empty($item['notes'])): ?>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal_<?php echo $item['id']; ?>">
+                                <i class="fas fa-comment-alt align-middle" style="font-size: 18px;"></i>
+                            </button>
+                        <?php endif; ?>
+                    </h6>
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal_<?php echo $item['id']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalTitle">ملاحظات خاصة بالمؤلف: <?php echo $item['authorfullname']; ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="modalContent">
+                                    <?php
+                        $words = explode(' ', $item['notes']); // Split note content into words
+                        $chunkedWords = array_chunk($words, 12); // Group words into sets of 12
+                        
+                        foreach ($chunkedWords as $wordSet) {
+                            echo '<div class="note-line">' . implode(' ', $wordSet) . '</div>'; // Display each set of words
+                        }
+                        ?>
                                     </div>
-                                    <div class="modal-body">
-                                        <div id="modalContent"></div>
-                                    </div>
-                                    <div class="modal-footer d-flex justify-content-center">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">غلق</button>
-                                    </div>
+                                </div>
+                                <div class="modal-footer d-flex justify-content-center">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">غلق</button>
                                 </div>
                             </div>
                         </div>
-                        </td>
+                    </div>
+                </td>
+
                                 <?php if ($selectedCategory === 'teacher') { ?>
                                     <!-- Display teacher-specific columns -->
                                     <?php $teacherData = getTeacherData($conn, $item['id']); ?>
@@ -439,10 +449,11 @@ include('header.php');
       </div>
       <script>
 document.addEventListener("DOMContentLoaded", function() {
+    const categoryDropdown = document.getElementById("category");
     const bookTypeDropdown = document.getElementById("bookType");
     const bookLevelDropdown = document.getElementById("bookLevel");
     const subjectDropdown = document.getElementById("subject");
-    const subjectContainer = document.getElementById("subjectContainer");
+    
 
     bookTypeDropdown.addEventListener("change", function() {
         const selectedBookType = bookTypeDropdown.value;
@@ -497,6 +508,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const clearFilterButton = document.getElementById("clearFilter");
     clearFilterButton.addEventListener("click", function() {
         // Clear selected values and disable dropdowns
+        categoryDropdown.value = "all";
         bookTypeDropdown.value = "all";
         bookLevelDropdown.value = "all";
         subjectDropdown.value = "all";

@@ -388,10 +388,8 @@
       }
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
-    // Function to display the value of notes on display authors 
-    function populateModal(content) {
-            document.getElementById('modalContent').innerHTML = content;
-        }
+    
+
   </script>
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>

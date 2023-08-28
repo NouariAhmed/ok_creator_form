@@ -6,7 +6,7 @@ include('header.php');
 include('../connect.php');
 include('../dash_functions.php'); 
 $uname = $book_title = $email = $year_of_birth = $phone = $second_phone = $authorAddress = $book_type_id = $book_level_id = $subject_id = $fbLink = $instaLink = $youtubeLink = $tiktokLink ="";
-$uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $second_phone_err = $address_err = $book_type_err = $book_level_err = $subject_err = "";
+$uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $second_phone_err = $address_err = $file_err = $book_type_err = $book_level_err = $subject_err = "";
 
 ?>
 <div class="container-fluid py-4">
@@ -199,16 +199,49 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
             if (empty($authorAddress)) {
                 $address_err = "يرجى إدخال عنوان إقامة المؤلف.";
             }
-            
+
+             // Validate File
+            // Check if a file is uploaded
+            if (isset($_FILES['uploadedFile']) && $_FILES['uploadedFile']['error'] === UPLOAD_ERR_OK) {
+                // Perform username validation before proceeding with the file upload
+                    // Check if the file is an image or PDF
+                    $file = $_FILES['uploadedFile'];
+                    $allowedTypes = array('image/jpeg', 'image/png', 'image/gif', 'application/pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+                    if (!in_array($file['type'], $allowedTypes)) {
+                        $file_err = "نوع غير صحيح، الأنواع المقبولة: JPEG, PNG, GIF, PDF And Docx.";
+                    }
+                    // Check file size (max 5MB)
+                    $maxFileSize = 10 * 1024 * 1024; // 10 MB in bytes
+                    if ($file['size'] > $maxFileSize) {
+                        $file_err = "يجب أن لا يتجاوز حجم الملف (10 MB).";
+                    }
+            }
             // If there are no errors, proceed with registration
-            if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($second_phone_err) && empty($address_err) && empty($book_type_err) && empty($book_level_err) && empty($subject_err)) {
+            if (empty($uname_err) && empty($book_title_err) && empty($email_err) && empty($year_of_birth_err) && empty($phone_err) && empty($second_phone_err) && empty($address_err) && empty($file_err)  && empty($book_type_err) && empty($book_level_err) && empty($subject_err)) {
                 // Create a database connection
-                include('../connect.php');
-           
+               // include('../connect.php');
+                $uploadDirectory = "authors_cv/"; // Set the path to your desired directory
+                // Create the directory if it does not exist
+                if (!is_dir($uploadDirectory)) {
+                    mkdir($uploadDirectory, 0755, true);
+                }
+                
+                $uploadedFile = "";
+               if (!empty($_FILES['uploadedFile']['name'])) {
+                // Generate a unique filename
+                $uniqueFileName = uniqid() . "_" . basename($_FILES['uploadedFile']['name']);
+                $uploadedFile = $uploadDirectory . $uniqueFileName;
+                // Get the file type from the uploaded file
+                $fileType = $_FILES['uploadedFile']['type'];
+                // Move the uploaded file to the destination directory
+                move_uploaded_file($_FILES['uploadedFile']['tmp_name'], $uploadedFile);
+            }
+
+
             // Update the author data including social media links
-            $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, second_phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, notes = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
+            $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, second_phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, userfile = ?, filetype = ?, notes = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
             $stmt_update_author = mysqli_prepare($conn, $sql_update_author);
-            mysqli_stmt_bind_param($stmt_update_author, "ssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $second_phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $notes, $book_type_id, $book_level_id, $subject_id, $id);
+            mysqli_stmt_bind_param($stmt_update_author, "ssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $second_phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $notes, $book_type_id, $book_level_id, $subject_id, $id);
             mysqli_stmt_execute($stmt_update_author);
 
     
@@ -291,10 +324,11 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
                  exit;
 
         }
+
         }
             }
     ?>
-             <form role="form" action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $id; ?>" method="post">
+             <form role="form" enctype="multipart/form-data" action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $id; ?>" method="post">
               <h4 class="mb-3">تحديث مؤلف</h4>
               <div class="border rounded p-4 shadow">
                  <h6 class="border-bottom pb-2 mb-3">تحديث معلومات المؤلف</h6>
@@ -539,7 +573,11 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
         <div class="border rounded p-4 shadow">
             <h6 class="border-bottom pb-2 mb-3">تحديث الملاحظات</h6>
                 <div class="row">
-                <div class="form-group col-md-6">
+                <div class="input-group input-group-outline col-md-6">    
+                    <input type="file" class="form-control <?php echo (!empty($file_err)) ? 'is-invalid' : ''; ?>" id="file" name="uploadedFile" />
+                      <span class="invalid-feedback"><?php echo $file_err; ?></span>
+                    </div>
+                <div class="form-group col-md-12 my-3">
                     <label for="notes" class="form-label">تحديث الملاحظات:</label>                   
               <textarea class="form-control border pe-2 mb-3" id="notes" name="notes" rows="4"><?php echo htmlspecialchars($notes); ?></textarea>
           </div>
