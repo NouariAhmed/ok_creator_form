@@ -26,6 +26,7 @@ $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
  
 // Get the selected category from the query parameter
 $selectedCategory = isset($_GET['category']) ? $_GET['category'] : 'all';
+$selectedStatus = isset($_GET['status']) ? $_GET['status'] : 'all';
 $selectedBookType = isset($_GET['bookType']) ? $_GET['bookType'] : 'all';
 $selectedBookLevel = isset($_GET['bookLevel']) ? $_GET['bookLevel'] : 'all';
 $selectedSubject = isset($_GET['subject']) ? $_GET['subject'] : 'all';
@@ -40,6 +41,12 @@ if ($selectedCategory !== 'all') {
   $sql .= " AND author_type = ?";
   $bindTypes .= 's'; // Assuming author_type is a string
   $bindValues[] = &$selectedCategory;
+}
+
+if ($selectedStatus !== 'all') {
+  $sql .= " AND author_status = ?";
+  $bindTypes .= 's'; // Assuming author_status is a string
+  $bindValues[] = &$selectedStatus;
 }
 
 if ($selectedBookType !== 'all') {
@@ -83,6 +90,10 @@ $sql = "SELECT * FROM $table WHERE 1 = 1"; // Initial SQL with a dummy condition
 
 if ($selectedCategory !== 'all') {
   $sql .= " AND author_type = ?";
+}
+
+if ($selectedStatus !== 'all') {
+  $sql .= " AND author_status = ?";
 }
 
 if ($selectedBookType !== 'all') {
@@ -156,6 +167,18 @@ include('header.php');
           <option value="novelist" <?php echo $selectedCategory === 'novelist' ? 'selected' : ''; ?>>روائي</option> 
           </select>
           </div>
+
+        <div class="input-group input-group-outline my-3">
+          <select class="form-control" id="status" name="status">
+          <option value="all" <?php echo $selectedStatus === 'all' ? 'selected' : ''; ?>>-- جميع الحالات --</option>
+          <option value="مقبول" <?php echo $selectedStatus === 'مقبول' ? 'selected' : ''; ?>>مقبول</option>
+          <option value="مرفوض" <?php echo $selectedStatus === 'مرفوض' ? 'selected' : ''; ?>>مرفوض</option>
+          <option value="قيد الدراسة" <?php echo $selectedStatus === 'قيد الدراسة' ? 'selected' : ''; ?>>قيد الدراسة</option>
+          <option value="مؤجل" <?php echo $selectedStatus === 'مؤجل' ? 'selected' : ''; ?>>مؤجل</option>
+          <option value="في الانتظار" <?php echo $selectedStatus === 'في الانتظار' ? 'selected' : ''; ?>>في الانتظار</option>
+          </select>
+        </div>
+
 
           <div class="input-group input-group-outline my-3">
           <select class="form-control" id="bookType" name="bookType">
@@ -474,6 +497,7 @@ include('header.php');
       <script>
 document.addEventListener("DOMContentLoaded", function() {
     const categoryDropdown = document.getElementById("category");
+    const statusDropdown = document.getElementById("status");
     const bookTypeDropdown = document.getElementById("bookType");
     const bookLevelDropdown = document.getElementById("bookLevel");
     const subjectDropdown = document.getElementById("subject");
@@ -533,6 +557,7 @@ document.addEventListener("DOMContentLoaded", function() {
     clearFilterButton.addEventListener("click", function() {
         // Clear selected values and disable dropdowns
         categoryDropdown.value = "all";
+        statusDropdown.value = "all";
         bookTypeDropdown.value = "all";
         bookLevelDropdown.value = "all";
         subjectDropdown.value = "all";
