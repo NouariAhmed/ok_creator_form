@@ -51,8 +51,8 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
             $second_phone = htmlspecialchars($item['second_phone']);
             $authorAddress = htmlspecialchars($item['authorAddress']);
             $notes = htmlspecialchars($item['notes']);
-            
-
+            $author_status = htmlspecialchars($item['author_status']);
+        
             $fbLink = htmlspecialchars($item['fbLink']);
             $instaLink = htmlspecialchars($item['instaLink']);
             $youtubeLink = htmlspecialchars($item['youtubeLink']);
@@ -118,8 +118,8 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
             $second_phone = trim($_POST["second_phone"]);
             $authorAddress = trim($_POST["authorAddress"]);
             $notes = trim($_POST["notes"]);
+            $author_status = trim($_POST["author_status"]);
             
-
             $fbLink = trim($_POST["fbLink"]);
             $instaLink = trim($_POST["instaLink"]);
             $youtubeLink = trim($_POST["youtubeLink"]);
@@ -239,9 +239,9 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
 
 
             // Update the author data including social media links
-            $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, second_phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, userfile = ?, filetype = ?, notes = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
+            $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, second_phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, userfile = ?, filetype = ?, notes = ?, author_status = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
             $stmt_update_author = mysqli_prepare($conn, $sql_update_author);
-            mysqli_stmt_bind_param($stmt_update_author, "ssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $second_phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $notes, $book_type_id, $book_level_id, $subject_id, $id);
+            mysqli_stmt_bind_param($stmt_update_author, "sssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $second_phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $notes, $author_status, $book_type_id, $book_level_id, $subject_id, $id);
             mysqli_stmt_execute($stmt_update_author);
 
     
@@ -480,7 +480,28 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
                             <input type="text" name="second_phone" class="form-control border pe-2 mb-3 <?php echo (!empty($second_phone_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($second_phone); ?>">
                             <span class="invalid-feedback"><?php echo $second_phone_err; ?></span>
                         </div>
+                        <div class="col-md-6 mt-4">
+                        <div class="input-group input-group-outline mt-2">
+                        <select name="author_status" id="author_status" class="form-control" required>
+                            <option value="" disabled> -- اختر حالة الكاتب -- </option>
+                            <?php
+                            // Define an array of status values
+                            $statusValues = array("مقبول", "مرفوض", "قيد الدراسة", "مؤجل", "في الانتظار");
+                            
+                            // Fetch the currently selected status from the database (assuming $author_status contains the status value)
+                            $selectedStatus = htmlspecialchars($author_status);
+                            
+                            // Loop through status values and create options
+                            foreach ($statusValues as $author_status) {
+                                $selected = ($author_status === $selectedStatus) ? 'selected' : ''; // Check if this option is selected
+                                echo '<option value="' . $author_status . '" ' . $selected . '>' . $author_status . '</option>';
+                            }
+                            ?>
+                        </select>
+                      </div>
+                      </div>
                     </div>
+                    
                 </div>
                 <!-- Updete Book Section-->
                 <div class="border rounded p-4 shadow mt-4">
