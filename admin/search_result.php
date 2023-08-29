@@ -36,8 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 ">المعرف</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المؤلف</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">عنوان الكتاب</th>
-                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">النوع والمستوى</th>
-                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المادة</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">المستوى والمادة</th>
+                      <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">الحالة</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">العنوان</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">من طرف</th>
                       <th class="text-secondary text-lg font-weight-bolder opacity-7 pe-2">ملاحظات</th>
@@ -55,30 +55,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <td class="align-middle text-sm">
                     <h6 class="mb-0 text-sm pe-3"><?php echo htmlspecialchars($item["communicate_date"]);?></h6>
                     <p class="text-xs text-secondary mb-0 pe-3"><?php echo htmlspecialchars($item["id"]);?>#</p>
-                    <?php 
-                     $author_status = htmlspecialchars($item["author_status"]);
-                    // Use a switch statement to determine the appropriate badge
-                    switch ($author_status) {
-                      case "مقبول":
-                          echo '<span class="badge badge-sm bg-gradient-success me-2 w-90">مقبول</span>';
-                          break;
-                      case "مرفوض":
-                          echo '<span class="badge badge-sm bg-gradient-danger me-2 w-90">مرفوض</span>';
-                          break;
-                      case "قيد الدراسة":
-                          echo '<span class="badge badge-sm bg-gradient-info me-2 w-90">قيد الدراسة</span>';
-                          break;
-                      case "مؤجل":
-                          echo '<span class="badge badge-sm bg-gradient-warning me-2 w-90">مؤجل</span>';
-                          break;
-                      case "في الانتظار":
-                          echo '<span class="badge badge-sm bg-gradient-secondary me-2 w-90">في الانتظار</span>';
-                          break;
-                      default:
-                          echo '<span class="badge badge-sm bg-gradient-secondary me-2 w-90">Unknown</span>';
-                          break;
-                  }
-                    ?>
                       </td>
                       <td>
                           <div class="d-flex flex-column justify-content-center">
@@ -104,10 +80,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       <td class="align-middle text-sm">
                       <h6 class="mb-0 text-sm"><?php echo getBookLevelName($conn, $item['book_level_id']); ?></h6>
                       <p class="text-xs text-secondary mb-0"><?php echo getBookTypeName($conn, $item['book_type_id']); ?></p>
+                      <p class="text-xs text-primary mb-0 text-bold"><?php echo getSubjectName($conn, $item['subject_id']); ?></p>
                       </td>
+        
                       <td class="align-middle text-sm">
-                      <h6 class="mb-0 text-sm"><?php echo getSubjectName($conn, $item['subject_id']); ?></h6>
-                      </td>
+                      <?php
+                        $author_status = htmlspecialchars($item["author_status"]);
+                        // Define the available statuses
+                        $availableStatuses = array(
+                            "مقبول" => "bg-gradient-success",
+                            "مرفوض" => "bg-gradient-danger",
+                            "قيد الدراسة" => "bg-gradient-info",
+                            "مؤجل" => "bg-gradient-warning",
+                            "في الانتظار" => "bg-gradient-secondary"
+                        );
+
+                        // Determine the background class for the status
+                        $statusBgClass = $availableStatuses[$author_status];
+
+                        // Get the single status that will be displayed as a button
+                        $singleStatus = array_search($statusBgClass, $availableStatuses);
+                        ?>
+                            <button class="btn btn-sm <?php echo $statusBgClass; ?>" value="<?php echo $singleStatus; ?>">
+                                <?php echo $singleStatus; ?>
+                            </button>
+
+                     </td>
                       <td class="align-middle text-sm">
                       <h6 class="mb-0 text-sm"><?php
                         $address = htmlspecialchars($item["authorAddress"]);
@@ -193,7 +191,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
              </div>
          </div>
      </div>
- 
+
  <?php
   mysqli_close($conn);
   include('footer.php');

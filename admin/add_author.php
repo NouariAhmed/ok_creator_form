@@ -397,25 +397,25 @@ include('header.php');
                 <div class="col-md-6">
                 <div class="input-group input-group-outline mb-3">
                     <label for="studentLevel" class="form-label">المستوى</label>
-                    <input type="text" class="form-control" id="studentLevel" name="studentLevel">
+                    <input type="text" class="form-control" id="studentLevel" name="studentLevel" required>
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline me-3">
                     <label for="studentSpecialty" class="form-label">التخصص</label>
-                    <input type="text" class="form-control" id="studentSpecialty" name="studentSpecialty">
+                    <input type="text" class="form-control" id="studentSpecialty" name="studentSpecialty" required>
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline mb-3">
                     <label for="baccalaureateRate" class="form-label">معدل البكالوريا</label>
-                    <input type="text" class="form-control" id="baccalaureateRate" name="baccalaureateRate">
+                    <input type="text" class="form-control" id="baccalaureateRate" name="baccalaureateRate" required>
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline me-3">
                     <label for="baccalaureateYear" class="form-label">سنة البكالوريا</label>
-                    <input type="text" class="form-control" id="baccalaureateYear" name="baccalaureateYear">
+                    <input type="text" class="form-control" id="baccalaureateYear" name="baccalaureateYear" required>
                 </div>
                 </div>
             </div>
@@ -427,25 +427,25 @@ include('header.php');
                 <div class="col-md-6">
                 <div class="input-group input-group-outline mb-3">
                     <label for="teacherExperience" class="form-label">الخبرة</label>
-                    <input type="text" class="form-control" id="teacherExperience" name="teacherExperience">
+                    <input type="text" class="form-control" id="teacherExperience" name="teacherExperience" required>
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline me-3">
                     <label for="teacherCertificate" class="form-label">الشهادة</label>
-                    <input type="text" class="form-control" id="teacherCertificate" name="teacherCertificate">
+                    <input type="text" class="form-control" id="teacherCertificate" name="teacherCertificate" required>
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline mb-3">
                     <label for="teacherRank" class="form-label">الرتبة</label>
-                    <input type="text" class="form-control" id="teacherRank" name="teacherRank">
+                    <input type="text" class="form-control" id="teacherRank" name="teacherRank" required>
                 </div>
                 </div>
                 <div class="col-md-6">
                 <div class="input-group input-group-outline me-3">
                     <label for="workFoundation" class="form-label">مؤسسة العمل</label>
-                    <input type="text" class="form-control" id="workFoundation" name="workFoundation">
+                    <input type="text" class="form-control" id="workFoundation" name="workFoundation" required>
                 </div>
                 </div>
             </div>
@@ -457,25 +457,25 @@ include('header.php');
                     <div class="col-md-6">
                     <div class="input-group input-group-outline mb-3">
                         <label for="inspectorExperience" class="form-label">الخبرة</label>
-                        <input type="text" class="form-control" id="inspectorExperience" name="inspectorExperience">
+                        <input type="text" class="form-control" id="inspectorExperience" name="inspectorExperience" required>
                     </div>
                     </div>
                     <div class="col-md-6">
                     <div class="input-group input-group-outline me-3">
                         <label for="inspectorCertificate" class="form-label">الشهادة</label>
-                        <input type="text" class="form-control" id="inspectorCertificate" name="inspectorCertificate">
+                        <input type="text" class="form-control" id="inspectorCertificate" name="inspectorCertificate" required>
                     </div>
                     </div>
                     <div class="col-md-6">
                     <div class="input-group input-group-outline mb-3">
                         <label for="inspectorRank" class="form-label">الرتبة</label>
-                        <input type="text" class="form-control" id="inspectorRank" name="inspectorRank">
+                        <input type="text" class="form-control" id="inspectorRank" name="inspectorRank" required>
                     </div>
                     </div>
                     <div class="col-md-6">
                     <div class="input-group input-group-outline me-3">
                         <label for="inspectorWorkFoundation" class="form-label">الولاية</label>
-                        <input type="text" class="form-control" id="inspectorWorkFoundation" name="inspectorWorkFoundation">
+                        <input type="text" class="form-control" id="inspectorWorkFoundation" name="inspectorWorkFoundation" required>
                     </div>
                     </div>
                 </div>
@@ -487,13 +487,13 @@ include('header.php');
                     <div class="col-md-6">
                     <div class="input-group input-group-outline mb-3">
                         <label for="specialty" class="form-label">التخصص</label>
-                        <input type="text" class="form-control" id="specialty" name="specialty">
+                        <input type="text" class="form-control" id="specialty" name="specialty" required>
                     </div>
                     </div>
                     <div class="col-md-6">
                     <div class="input-group input-group-outline me-3">
                         <label for="drWorkFoundation" class="form-label">مكان العمل</label>
-                        <input type="text" class="form-control" id="drWorkFoundation" name="drWorkFoundation">
+                        <input type="text" class="form-control" id="drWorkFoundation" name="drWorkFoundation" required>
                     </div>
                     </div>
                 </div>
@@ -505,13 +505,13 @@ include('header.php');
                     <div class="col-md-6">
                     <div class="input-group input-group-outline mb-3">
                         <label for="field" class="form-label">المجال</label>
-                        <input type="text" class="form-control" id="field" name="field">
+                        <input type="text" class="form-control" id="field" name="field" required>
                     </div>
                     </div>
                     <div class="col-md-6">
                     <div class="input-group input-group-outline me-3">
                         <label for="trainerExperience" class="form-label">الخبرة</label>
-                        <input type="text" class="form-control" id="trainerExperience" name="trainerExperience">
+                        <input type="text" class="form-control" id="trainerExperience" name="trainerExperience" required>
                     </div>
                     </div>
                 </div>
@@ -521,7 +521,7 @@ include('header.php');
                     <!-- novelist Specific Inputs -->
                 <div class="input-group input-group-outline m-3" id="novelistInputs" style="display: none;">
                   <label for="novelistfield" class="form-label">المجال</label>
-                  <input type="text" class="form-control" id="novelistfield" name="novelistfield">
+                  <input type="text" class="form-control" id="novelistfield" name="novelistfield" required>
                 </div>
                 </div>
                 </div>
@@ -539,7 +539,7 @@ include('header.php');
                   <label for="book_title" class="form-label">عنوان الكتاب</label>
                 <?php endif; ?>
                 <input type="text" class="form-control <?php echo (!empty($book_title_err)) ? 'is-invalid' : ''; ?>"
-                  id="book_title" name="book_title" value="<?php echo $book_title; ?>" />
+                  id="book_title" name="book_title" value="<?php echo $book_title; ?>" required/>
                 <span class="invalid-feedback"><?php echo $book_title_err; ?></span>
               </div>
 
@@ -608,10 +608,10 @@ include('header.php');
                     <div class="d-flex">
                     <div class="input-group input-group-outline m-3">
                     <?php if (empty($youtubeLink)): ?>
-                    <label for="youtubeLink" class="form-label">رابط قناة اليوتيوب</label>
+                    <label for="youtubeLink" class="form-label">رابط اليوتيوب</label>
                   <?php endif; ?>
                   <input type="text" class="form-control" id="youtubeLink" name="youtubeLink" value="<?php echo $youtubeLink; ?>"
-                    <?php if (!empty($youtubeLink)) echo 'placeholder="رابط قناة اليوتيوب"'; ?> />
+                    <?php if (!empty($youtubeLink)) echo 'placeholder="رابط اليوتيوب"'; ?> />
                     </div>
                     <div class="input-group input-group-outline my-3">
                     <?php if (empty($tiktokLink)): ?>

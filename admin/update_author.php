@@ -580,7 +580,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
                 </div>
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label class="form-label">رابط قناة اليوتيوب :</label>
+                        <label class="form-label">رابط اليوتيوب :</label>
                         <input type="text" name="youtubeLink" class="form-control border pe-2 mb-3" value="<?php echo htmlspecialchars($youtubeLink); ?>">
                     </div>
                     <div class="form-group col-md-6">
@@ -592,7 +592,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
                 </div>
                         <!-- Updete Notes Section-->
         <div class="border rounded p-4 shadow">
-            <h6 class="border-bottom pb-2 mb-3">تحديث الملاحظات</h6>
+            <h6 class="border-bottom pb-2 mb-3">تحديث الملاحظات + السيرة الذاتية</h6>
                 <div class="row">
                 <div class="input-group input-group-outline col-md-6">    
                     <input type="file" class="form-control <?php echo (!empty($file_err)) ? 'is-invalid' : ''; ?>" id="file" name="uploadedFile" />
