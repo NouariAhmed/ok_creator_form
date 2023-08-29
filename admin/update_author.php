@@ -486,7 +486,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
                             <option value="" disabled> -- اختر حالة الكاتب -- </option>
                             <?php
                             // Define an array of status values
-                            $statusValues = array("مقبول", "مرفوض", "قيد الدراسة", "مؤجل", "في الانتظار");
+                            $statusValues = array("في الانتظار", "قيد الدراسة", "مؤجل", "مقبول", "مرفوض");
                             
                             // Fetch the currently selected status from the database (assuming $author_status contains the status value)
                             $selectedStatus = htmlspecialchars($author_status);

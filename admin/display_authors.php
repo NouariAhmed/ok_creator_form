@@ -171,11 +171,11 @@ include('header.php');
         <div class="input-group input-group-outline my-3">
           <select class="form-control" id="status" name="status">
           <option value="all" <?php echo $selectedStatus === 'all' ? 'selected' : ''; ?>>-- جميع الحالات --</option>
-          <option value="مقبول" <?php echo $selectedStatus === 'مقبول' ? 'selected' : ''; ?>>مقبول</option>
-          <option value="مرفوض" <?php echo $selectedStatus === 'مرفوض' ? 'selected' : ''; ?>>مرفوض</option>
+          <option value="في الانتظار" <?php echo $selectedStatus === 'في الانتظار' ? 'selected' : ''; ?>>في الانتظار</option>
           <option value="قيد الدراسة" <?php echo $selectedStatus === 'قيد الدراسة' ? 'selected' : ''; ?>>قيد الدراسة</option>
           <option value="مؤجل" <?php echo $selectedStatus === 'مؤجل' ? 'selected' : ''; ?>>مؤجل</option>
-          <option value="في الانتظار" <?php echo $selectedStatus === 'في الانتظار' ? 'selected' : ''; ?>>في الانتظار</option>
+          <option value="مقبول" <?php echo $selectedStatus === 'مقبول' ? 'selected' : ''; ?>>مقبول</option>
+          <option value="مرفوض" <?php echo $selectedStatus === 'مرفوض' ? 'selected' : ''; ?>>مرفوض</option>
           </select>
         </div>
 
@@ -309,12 +309,12 @@ include('header.php');
                         $author_status = htmlspecialchars($item["author_status"]);
                         // Define the available statuses
                         $availableStatuses = array(
+                          "في الانتظار" => "bg-gradient-secondary",
+                          "قيد الدراسة" => "bg-gradient-info",
+                          "مؤجل" => "bg-gradient-warning",
                             "مقبول" => "bg-gradient-success",
-                            "مرفوض" => "bg-gradient-danger",
-                            "قيد الدراسة" => "bg-gradient-info",
-                            "مؤجل" => "bg-gradient-warning",
-                            "في الانتظار" => "bg-gradient-secondary"
-                        );
+                            "مرفوض" => "bg-gradient-danger"
+                                                  );
 
                         // Get the index of the current item in the items array
                         $currentItemIndex = array_search($item, $items);

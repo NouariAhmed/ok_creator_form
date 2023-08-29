@@ -88,11 +88,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $author_status = htmlspecialchars($item["author_status"]);
                         // Define the available statuses
                         $availableStatuses = array(
-                            "مقبول" => "bg-gradient-success",
-                            "مرفوض" => "bg-gradient-danger",
+                            "في الانتظار" => "bg-gradient-secondary",
                             "قيد الدراسة" => "bg-gradient-info",
                             "مؤجل" => "bg-gradient-warning",
-                            "في الانتظار" => "bg-gradient-secondary"
+                              "مقبول" => "bg-gradient-success",
+                              "مرفوض" => "bg-gradient-danger"
                         );
 
                         // Determine the background class for the status
