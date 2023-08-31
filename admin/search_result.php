@@ -145,32 +145,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       <p class="text-xs text-secondary mb-0"><?php echo htmlspecialchars($item["created_at"]);?></p>
                       </td>
                       <td class="align-middle text-sm">
-                        <h6 class="mb-0 text-sm">
-                            <?php if (!empty($item['notes'])): ?>
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="populateModal('<?php echo $item['notes']; ?>')">
-                                    <i class="fas fa-comment-alt align-middle" style="font-size: 18px;"></i>
-                                </button>
-                            <?php endif; ?>
-                        </h6>
-                        <!-- Modal -->
-                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">ملاحظات خاصة بالمؤلف: <?php echo $item['authorfullname']; ?></h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h6 class="mb-0 text-sm">
+                        <?php if (!empty($item['notes'])): ?>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal_<?php echo $item['id']; ?>">
+                                <i class="fas fa-comment-alt align-middle" style="font-size: 18px;"></i>
+                            </button>
+                        <?php endif; ?>
+                    </h6>
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal_<?php echo $item['id']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalTitle">ملاحظات خاصة بالمؤلف: <?php echo $item['authorfullname']; ?></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="modalContent">
+                                    <?php
+                        $words = explode(' ', $item['notes']); // Split note content into words
+                        $chunkedWords = array_chunk($words, 9); // Group words into sets of 12
+                        
+                        foreach ($chunkedWords as $wordSet) {
+                            echo '<div class="note-line">' . implode(' ', $wordSet) . '</div>'; // Display each set of words
+                        }
+                        ?>
                                     </div>
-                                    <div class="modal-body">
-                                        <div id="modalContent"></div>
-                                    </div>
-                                    <div class="modal-footer d-flex justify-content-center">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">غلق</button>
-                                    </div>
+                                </div>
+                                <div class="modal-footer d-flex justify-content-center">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">غلق</button>
                                 </div>
                             </div>
                         </div>
-                        </td>
+                    </div>
+                </td>
                         <td class="align-middle text-center">
                             <?php if (!empty($item["userfile"])): ?>
                                 <a href="<?php echo htmlspecialchars($item["userfile"]); ?>" class="btn badge-sm bg-gradient-secondary" target="_blank">

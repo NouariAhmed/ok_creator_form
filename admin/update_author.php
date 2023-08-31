@@ -137,7 +137,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
             // Validate username
             if (empty($book_title)) {
                 $book_title_err = "يرجى إدخال عنوان الكتاب.";
-            } elseif (!preg_match("/^[\p{L}\p{N}_\s]+$/u", $book_title)) {
+            } elseif (!preg_match("/^[\p{L}\p{N}_\s()\/!]+$/u", $book_title)) {
                 $book_title_err = "عنوان الكتاب يجب أن يحتوي على حروف.";
             }
         if (!empty($email)) {
@@ -227,6 +227,7 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
                 }
                 
                 $uploadedFile = "";
+                $fileType = "";
                if (!empty($_FILES['uploadedFile']['name'])) {
                 // Generate a unique filename
                 $uniqueFileName = uniqid() . "_" . basename($_FILES['uploadedFile']['name']);
@@ -237,11 +238,18 @@ $uname_err = $book_title_err = $email_err = $year_of_birth_err = $phone_err = $s
                 move_uploaded_file($_FILES['uploadedFile']['tmp_name'], $uploadedFile);
             }
 
-
-            // Update the author data including social media links
-            $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, second_phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, userfile = ?, filetype = ?, notes = ?, author_status = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
-            $stmt_update_author = mysqli_prepare($conn, $sql_update_author);
-            mysqli_stmt_bind_param($stmt_update_author, "sssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $second_phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $notes, $author_status, $book_type_id, $book_level_id, $subject_id, $id);
+            // Update the author data 
+            if (!empty($uploadedFile)) {
+                // If a new file is uploaded, update userfile and filetype
+                $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, second_phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, userfile = ?, filetype = ?, notes = ?, author_status = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
+                $stmt_update_author = mysqli_prepare($conn, $sql_update_author);
+                mysqli_stmt_bind_param($stmt_update_author, "sssssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $second_phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $uploadedFile, $fileType, $notes, $author_status, $book_type_id, $book_level_id, $subject_id, $id);
+            } else {
+                // If no new file is uploaded, don't update userfile and filetype
+                $sql_update_author = "UPDATE authors SET authorfullname = ?, book_title = ?, email = ?, year_of_birth = ?, phone = ?, second_phone = ?, authorAddress = ?, fbLink = ?, instaLink = ?, youtubeLink = ?, tiktokLink = ?, notes = ?, author_status = ?, book_type_id = ?, book_level_id = ?, subject_id = ? WHERE id = ?";
+                $stmt_update_author = mysqli_prepare($conn, $sql_update_author);
+                mysqli_stmt_bind_param($stmt_update_author, "sssssssssssssiiii", $uname, $book_title, $email, $year_of_birth, $phone, $second_phone, $authorAddress, $fbLink, $instaLink, $youtubeLink, $tiktokLink, $notes, $author_status, $book_type_id, $book_level_id, $subject_id, $id);
+            }
             mysqli_stmt_execute($stmt_update_author);
 
     

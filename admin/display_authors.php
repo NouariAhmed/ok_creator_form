@@ -412,7 +412,7 @@ include('header.php');
                                     <div id="modalContent">
                                     <?php
                         $words = explode(' ', $item['notes']); // Split note content into words
-                        $chunkedWords = array_chunk($words, 12); // Group words into sets of 12
+                        $chunkedWords = array_chunk($words, 9); // Group words into sets of 12
                         
                         foreach ($chunkedWords as $wordSet) {
                             echo '<div class="note-line">' . implode(' ', $wordSet) . '</div>'; // Display each set of words

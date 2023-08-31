@@ -47,11 +47,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } elseif (!preg_match("/^[\p{L}\p{N}_\s]+$/u", $uname)) {
     $uname_err = " إسم المؤلف يجب أن يحتوي على حروف.";
   }
-   // Validate username
+   // Validate book title
    if (empty($book_title)) {
-    $book_title_err = "يرجى إدخال نوع الكتاب.";
-  } elseif (!preg_match("/^[\p{L}\p{N}_\s]+$/u", $book_title)) {
-    $book_title_err = "نوع الكتاب يجب أن يحتوي على حروف.";
+    $book_title_err = "يرجى إدخال عنوان الكتاب.";
+  } elseif (!preg_match("/^[\p{L}\p{N}_\s()\/!]+$/u", $book_title)) {
+    $book_title_err = "عنوان الكتاب يجب أن يحتوي على حروف.";
   }
 
   if (!empty($email)) {
@@ -738,8 +738,18 @@ include('header.php');
   for (const role in roleInputs) {
     if (role === selectedRole) {
       roleInputs[role].style.display = '';
+            // Add the required attribute to input elements within the selected input group
+            const inputs = roleInputs[role].querySelectorAll('input');
+      inputs.forEach(input => {
+        input.setAttribute('required', 'required');
+      });
     } else {
       roleInputs[role].style.display = 'none';
+            // Remove the required attribute from input elements within non-selected input groups
+            const inputs = roleInputs[role].querySelectorAll('input');
+      inputs.forEach(input => {
+        input.removeAttribute('required');
+      });
     }
   }
 });
